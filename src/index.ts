@@ -5,10 +5,17 @@ import {IEventWithParticipants} from "./types";
 import {tKeys} from "./tKeys";
 import {createEventMessage} from "./createEventMessage";
 import {registerBotEventHandler} from "./logger";
+import express from "express"
+import cors from "cors"
+import chalk from "chalk";
 
 dotenv.config()
 
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_ACCESS_TOKEN!, {polling: true});
+const app = express()
+
+app.use(express.json())
+app.use(cors())
 
 //todo remove and use db
 const events: Record<string, IEventWithParticipants> = {}
@@ -22,8 +29,13 @@ bot.on(...registerBotEventHandler('message', async (msg) => {
             keyboard: [
                 [{text: tKeys.webAppButton, web_app: {url: process.env.WEB_APP_URL!}}]
             ],
+            inline_keyboard: [
+                [{text: "Hi", web_app: {url: process.env.WEB_APP_URL!},}]
+            ]
         }
     })
+
+
 }));
 
 bot.on(...registerBotEventHandler("web_app_data", async (msg) => {
@@ -117,5 +129,14 @@ bot.on(...registerBotEventHandler("callback_query", async (msg) => {
         inline_message_id: msg.inline_message_id,
         reply_markup: createQueryReplyMarkup(eventId),
     })
-
 }))
+
+
+app.get("/events", (req, res) => {
+    res.send(events)
+})
+
+const expressAppPort = process.env.EXPRESS_APP_PORT!
+app.listen(expressAppPort, () => {
+    console.log(chalk.bgBlue("EXPRESS STARTED"), chalk.blue(`port -> "${expressAppPort}"`))
+})
