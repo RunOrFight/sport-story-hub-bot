@@ -11,6 +11,8 @@ dotenv.config()
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_ACCESS_TOKEN!, {polling: true});
 
 bot.on('message', async (msg) => {
+    await bot.sendMessage(msg.chat.id, "Hello World")
+
     if (msg.web_app_data?.data) {
         return
     }
@@ -31,6 +33,7 @@ bot.on('message', async (msg) => {
     }
 });
 
+//todo remove and use db
 const events: Record<string, IEventWithParticipants> = {}
 
 bot.on("web_app_data", async (msg) => {
@@ -48,6 +51,8 @@ bot.on("web_app_data", async (msg) => {
         }
 
         const event = {...parsedData, participants: []}
+
+        //todo write to db
         events[parsedData.id] = event
 
         await bot.sendMessage(msg.chat.id, createEventMessage(event), {
@@ -76,7 +81,10 @@ const createQueryReplyMarkup = (eventId: string) => ({
 })
 
 bot.on("inline_query", async (msg) => {
-    const event = events[msg.query]
+    const eventId = msg.query
+
+    //todo read from db
+    const event = events[eventId]
 
     if (!event) {
         return
@@ -105,6 +113,8 @@ bot.on("callback_query", async (msg) => {
     }
 
     const eventId = msg.data?.split("_")[1] ?? ""
+
+    //todo read from db
     const event = events[eventId]
 
     if (!event) {
