@@ -11,8 +11,6 @@ dotenv.config()
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_ACCESS_TOKEN!, {polling: true});
 
 bot.on('message', async (msg) => {
-    await bot.sendMessage(msg.chat.id, "Hello World")
-
     if (msg.web_app_data?.data) {
         return
     }
