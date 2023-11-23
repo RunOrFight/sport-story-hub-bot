@@ -4,7 +4,6 @@ const tKeys = {
     botMessageShare: "Share",
     eventMessageJoin: "Join",
     eventMessageLeave: "Leave",
-    errorMessage: "Something wrong with"
 }
 
 export {tKeys}

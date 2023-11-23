@@ -3,70 +3,55 @@ import dotenv from "dotenv"
 import {isEvent} from "./typeGuards";
 import {IEventWithParticipants} from "./types";
 import {tKeys} from "./tKeys";
-import {createErrorMessage} from "./createErrorMessage";
 import {createEventMessage} from "./createEventMessage";
+import {registerBotEventHandler} from "./logger";
 
 dotenv.config()
 
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_ACCESS_TOKEN!, {polling: true});
 
-bot.on('message', async (msg) => {
-    if (msg.web_app_data?.data) {
-        return
-    }
-
-    try {
-        const chatId = msg.chat.id;
-
-        await bot.sendMessage(chatId, tKeys.useButtonsHint, {
-            reply_markup: {
-                keyboard: [
-                    [{text: tKeys.webAppButton, web_app: {url: process.env.WEB_APP_URL!}}]
-                ],
-            }
-        })
-    } catch (err) {
-        console.log(err)
-        await bot.sendMessage(msg.chat.id, createErrorMessage("bot.on('message')"))
-    }
-});
-
 //todo remove and use db
 const events: Record<string, IEventWithParticipants> = {}
 
-bot.on("web_app_data", async (msg) => {
+bot.on(...registerBotEventHandler('message', async (msg) => {
+    const chatId = msg.chat.id;
+
+
+    await bot.sendMessage(chatId, tKeys.useButtonsHint, {
+        reply_markup: {
+            keyboard: [
+                [{text: tKeys.webAppButton, web_app: {url: process.env.WEB_APP_URL!}}]
+            ],
+        }
+    })
+}));
+
+bot.on(...registerBotEventHandler("web_app_data", async (msg) => {
     const dataString = msg.web_app_data?.data
 
     if (!dataString) {
-        return
+        throw "dataString is not received"
     }
 
+    const parsedData = JSON.parse(dataString)
+    if (!isEvent(parsedData)) {
+        throw `parsedData from ${dataString} doesn't match to IEvent interface`
+    }
 
-    try {
-        const parsedData = JSON.parse(dataString)
-        if (!isEvent(parsedData)) {
-            return
+    const event = {...parsedData, participants: []}
+
+    //todo write to db
+    events[parsedData.id] = event
+
+    await bot.sendMessage(msg.chat.id, createEventMessage(event), {
+        parse_mode: "HTML",
+        reply_markup: {
+            inline_keyboard: [
+                [{switch_inline_query: parsedData.id, text: tKeys.botMessageShare}]
+            ]
         }
-
-        const event = {...parsedData, participants: []}
-
-        //todo write to db
-        events[parsedData.id] = event
-
-        await bot.sendMessage(msg.chat.id, createEventMessage(event), {
-            parse_mode: "HTML",
-            reply_markup: {
-                inline_keyboard: [
-                    [{switch_inline_query: parsedData.id, text: tKeys.botMessageShare}]
-                ]
-            }
-        })
-
-    } catch (err) {
-        console.log(err)
-        await bot.sendMessage(msg.chat.id, createErrorMessage("bot.on('web_app_data')"))
-    }
-})
+    })
+}))
 
 const createQueryReplyMarkup = (eventId: string) => ({
     inline_keyboard: [
@@ -78,72 +63,59 @@ const createQueryReplyMarkup = (eventId: string) => ({
     ]
 })
 
-bot.on("inline_query", async (msg) => {
+bot.on(...registerBotEventHandler("inline_query", async (msg) => {
     const eventId = msg.query
 
     //todo read from db
     const event = events[eventId]
 
     if (!event) {
-        return
+        throw `cannot find event with id: ${eventId}`
     }
 
-    try {
-        await bot.answerInlineQuery(msg.id, [{
-            title: "Event", id: event.id,
-            type: "article",
-            input_message_content: {
-                parse_mode: "HTML",
-                message_text: createEventMessage(event)
-            },
-            reply_markup: createQueryReplyMarkup(event.id)
+    await bot.answerInlineQuery(msg.id, [{
+        title: "Event", id: event.id,
+        type: "article",
+        input_message_content: {
+            parse_mode: "HTML",
+            message_text: createEventMessage(event)
+        },
+        reply_markup: createQueryReplyMarkup(event.id)
 
-        }])
-    } catch (err) {
-        console.log(err)
-        await bot.sendMessage(msg.id, createErrorMessage("bot.on('inline_query')"))
-    }
-})
+    }])
+}))
 
-bot.on("callback_query", async (msg) => {
+bot.on(...registerBotEventHandler("callback_query", async (msg) => {
     if (!msg.from.username) {
-        return
+        throw "message without username received"
     }
 
     const eventId = msg.data?.split("_")[1] ?? ""
 
     //todo read from db
     const event = events[eventId]
-
     if (!event) {
-        return
+        throw `cannot find event with id: ${eventId}`
     }
 
-    try {
-        if (msg.data?.startsWith("join")) {
-            if (event.participants.includes(msg.from.username)) {
-                return
-            }
-            event.participants.push(msg.from.username)
-
-        } else if (msg.data?.startsWith("leave")) {
-            if (!(event.participants.includes(msg.from.username))) {
-                return
-            }
-            event.participants = event.participants.filter((it: string) => it !== msg.from.username)
-
+    if (msg.data?.startsWith("join")) {
+        if (event.participants.includes(msg.from.username)) {
+            throw `username: ${msg.from.username} already in participants`
         }
+        event.participants.push(msg.from.username)
 
-        await bot.editMessageText(createEventMessage(event), {
-            parse_mode: "HTML",
-            inline_message_id: msg.inline_message_id,
-            reply_markup: createQueryReplyMarkup(eventId),
-        })
-
-    } catch (err) {
-        console.log(err)
-        if (msg.message?.chat.id) {
-            await bot.sendMessage(msg.message.chat.id, createErrorMessage("bot.on('callback_query')"))
+    } else if (msg.data?.startsWith("leave")) {
+        if (!(event.participants.includes(msg.from.username))) {
+            throw `username: ${msg.from.username} not in participants`
         }
+        event.participants = event.participants.filter((it: string) => it !== msg.from.username)
+
     }
-})
+
+    await bot.editMessageText(createEventMessage(event), {
+        parse_mode: "HTML",
+        inline_message_id: msg.inline_message_id,
+        reply_markup: createQueryReplyMarkup(eventId),
+    })
+
+}))

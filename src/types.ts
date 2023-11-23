@@ -1,5 +1,7 @@
 type TUnknownObject = Record<string, unknown>
 
+type TAnyPromiseFunction = (...args: any[]) => Promise<any>
+
 interface IEvent {
     id: string;
     date: string;
@@ -12,4 +14,4 @@ interface IEventWithParticipants extends IEvent {
     participants: string[]
 }
 
-export {type IEvent, type IEventWithParticipants, type TUnknownObject}
+export type {IEvent, IEventWithParticipants, TUnknownObject, TAnyPromiseFunction}
