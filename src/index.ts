@@ -131,7 +131,8 @@ bot.on(...registerBotEventHandler("callback_query", async (msg) => {
 
 
 app.get("/events", (req, res) => {
-    res.send(events)
+    // res.send(events)
+    res.send("Hello World")
 })
 
 const expressAppPort = process.env.EXPRESS_APP_PORT!
