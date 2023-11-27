@@ -140,3 +140,5 @@ const expressAppPort = process.env.EXPRESS_APP_PORT!
 app.listen(expressAppPort, () => {
     console.log(chalk.bgBlue("EXPRESS STARTED"), chalk.blue(`port -> "${expressAppPort}"`))
 })
+
+export default app
