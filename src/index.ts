@@ -129,10 +129,17 @@ bot.on(...registerBotEventHandler("callback_query", async (msg) => {
     })
 }))
 
+app.get('/api', (req, res) => {
+    const path = `/api/events`;
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
+    res.end(`Hello! Go to events: <a href="${path}">${path}</a>`);
+});
 
-app.get("/events", (req, res) => {
-    // res.send(events)
-    res.send("Hello World")
+app.get("/api/events", (req, res) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.json({ name: 'John Doe' });
 })
 
 const expressAppPort = process.env.EXPRESS_APP_PORT!
