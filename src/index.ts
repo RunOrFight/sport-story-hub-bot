@@ -29,9 +29,7 @@ bot.on(...registerBotEventHandler('message', async (msg) => {
             keyboard: [
                 [{text: tKeys.webAppButton, web_app: {url: process.env.WEB_APP_URL!}}]
             ],
-            inline_keyboard: [
-                [{text: "Hi", web_app: {url: process.env.WEB_APP_URL!},}]
-            ]
+
         }
     })
 
