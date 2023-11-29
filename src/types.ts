@@ -4,10 +4,10 @@ type TAnyPromiseFunction = (...args: any[]) => Promise<any>
 
 interface IEvent {
     id: string;
-    date: string;
-    price: string;
+    date: Date;
+    price: number | string;
     place: string;
-    participantsCount: string
+    participantsCount: number | string
 }
 
 interface IEventWithParticipants extends IEvent {

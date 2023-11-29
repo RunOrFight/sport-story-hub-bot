@@ -1,7 +1,7 @@
 import {IEventWithParticipants} from "./types";
 
-const getDateFromMsString = (msString: string) => {
-    return new Date(Number(msString)).toDateString()
+const getDateFromMsString = (date: Date) => {
+    return date.toDateString()
 }
 
 const createEventMessage = ({date, place, price, participants, participantsCount}: IEventWithParticipants) => {
