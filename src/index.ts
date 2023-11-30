@@ -1,7 +1,7 @@
 import dotenv from "dotenv"
 import TelegramBot from "node-telegram-bot-api";
 import {registerBotEventHandler} from "./logger";
-import {tKeys} from "./tKeys";
+import {t, tKeys} from "./tKeys";
 import {createEventMessage} from "./createEventMessage";
 import express from "express"
 import cors from "cors"
@@ -69,10 +69,10 @@ const dataSource = new DataSource({
         const chatId = msg.chat.id;
 
 
-        await bot.sendMessage(chatId, tKeys.useButtonsHint, {
+        await bot.sendMessage(chatId, t(tKeys.useButtonsHint), {
             reply_markup: {
                 keyboard: [
-                    [{text: tKeys.webAppButton, web_app: {url: process.env.WEB_APP_URL!}}]
+                    [{text: t(tKeys.webAppButton), web_app: {url: process.env.WEB_APP_URL!}}]
                 ],
 
             }
@@ -110,7 +110,7 @@ const dataSource = new DataSource({
             reply_markup: {
                 inline_keyboard: [
                     //todo eventId
-                    [{switch_inline_query: fullEvent.id.toString(), text: tKeys.botMessageShare}]
+                    [{switch_inline_query: fullEvent.id.toString(), text: t(tKeys.botMessageShare)}]
                 ]
             }
         })
@@ -119,9 +119,9 @@ const dataSource = new DataSource({
     const createQueryReplyMarkup = (eventId: string) => ({
         inline_keyboard: [
             [
-                {text: tKeys.eventMessageJoin, callback_data: `join_${eventId}`},
+                {text: t(tKeys.eventMessageJoin), callback_data: `join_${eventId}`},
                 {
-                    text: tKeys.eventMessageLeave, callback_data: `leave_${eventId}`
+                    text: t(tKeys.eventMessageLeave), callback_data: `leave_${eventId}`
                 }]
         ]
     })
