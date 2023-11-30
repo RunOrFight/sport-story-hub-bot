@@ -19,7 +19,7 @@ interface IEventLocation {
 
 interface IUser {
     username: string;
-    photo: IFile
+    photo?: IFile
 }
 
 interface IEventParticipant {
@@ -40,7 +40,8 @@ interface IEventFull extends Omit<IEventRaw, "locationId"> {
     participants: IEventParticipant[]
     id: number
     status: EEventStatus
+    waitList: IUser[]
 }
 
 
-export type {IEventRaw, IEventFull, IEventLocation, TUnknownObject, TAnyPromiseFunction}
+export type {IEventRaw, IEventFull, IEventLocation, TUnknownObject, TAnyPromiseFunction, IUser}

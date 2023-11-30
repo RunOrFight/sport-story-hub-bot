@@ -8,7 +8,7 @@ import cors from "cors"
 import chalk from "chalk";
 import {DataSource} from "typeorm";
 import {Event} from './entities/Event'
-import {IEventFull} from "./types";
+import {IEventFull, IUser} from "./types";
 import {assertIsRawEvent} from "./typeGuards";
 import {createFullEvent} from "./createFullEvent";
 
@@ -43,6 +43,8 @@ const dataSource = new DataSource({
     // console.log(JSON.stringify(qwe, null, 3))
     //todo remove and use db
     const events: Record<string, IEventFull> = {}
+    const users: IUser[] = []
+
     app.get('/api', (_req, res) => {
         const path = `/api/events`;
         res.setHeader('Content-Type', 'text/html');
@@ -152,7 +154,13 @@ const dataSource = new DataSource({
             throw "message without username received"
         }
 
-        // @ts-ignore
+        let user = users.find((it) => it.username === msg.from.username)!
+
+        if (!user) {
+            user = {username: msg.from.username}
+            users.push(user)
+        }
+
         const eventId = msg.data?.split("_")[1] ?? ""
 
         //todo read from db
@@ -161,21 +169,35 @@ const dataSource = new DataSource({
             throw `cannot find event with id: ${eventId}`
         }
 
+
+        const usernameInParticipants = event.participants.find((it) => it.user.username === user.username)
+
         if (msg.data?.startsWith("join")) {
-            // @ts-ignore
-            if (event.participants.includes(msg.from.username)) {
-                throw `username: ${msg.from.username} already in participants`
+
+            if (event.participants.length >= event.participantsLimit) {
+                event.waitList.push(user)
+            } else {
+                if (usernameInParticipants) {
+                    throw `username: ${msg.from.username} already in participants`
+                }
+
+                event.participants.push({user, id: 1})
             }
-            // @ts-ignore
-            event.participants.push(msg.from.username)
+
 
         } else if (msg.data?.startsWith("leave")) {
-            // @ts-ignore
-            if (!(event.participants.includes(msg.from.username))) {
-                throw `username: ${msg.from.username} not in participants`
+
+            if (event.waitList.find((it) => it.username === user.username)) {
+                event.waitList = event.waitList.filter((it) => it.username !== user.username)
+            } else if (usernameInParticipants) {
+                event.participants = event.participants.filter((it) => it.user.username !== user.username)
+
+                if (event.waitList.length !== 0 && event.participants.length === event.participantsLimit - 1) {
+                    event.participants.push({user: event.waitList[0], id: 123})
+                    event.waitList = event.waitList.filter((it) => it.username !== user.username)
+                }
             }
-            // @ts-ignore
-            event.participants = event.participants.filter((it: string) => it !== msg.from.username)
+
         }
 
         await bot.editMessageText(createEventMessage(event), {

@@ -21,7 +21,7 @@ const createFullEvent = ({dateTime, price, participantsLimit, description, locat
     const location = getLocationById(locationId)
 
     eventId++
-    
+
     return {
         id: eventId,
         location,
@@ -30,7 +30,8 @@ const createFullEvent = ({dateTime, price, participantsLimit, description, locat
         dateTime,
         description,
         status: EEventStatus.WAITING,
-        participants: []
+        participants: [],
+        waitList: []
     }
 }
 
