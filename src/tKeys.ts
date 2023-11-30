@@ -6,7 +6,9 @@ const tKeys = {
     eventMessageLeave: "eventMessageLeave",
     eventMessageParticipants: "eventMessageParticipants",
     eventMessageWaitList: "eventMessageWaitList",
-    eventMessageMap: "eventMessageMap"
+    eventMessageMap: "eventMessageMap",
+    eventMessageWarning1: "eventMessageWarning1",
+    eventMessageWarning2: "eventMessageWarning1"
 
 } as const
 
@@ -26,7 +28,9 @@ const translates: Record<string, Record<string, string>> = {
         eventMessageLeave: "Планы поменялись",
         eventMessageParticipants: "Будут на игре",
         eventMessageWaitList: "Ожидают свободное место",
-        eventMessageMap: "Посмотреть на карте"
+        eventMessageMap: "Посмотреть на карте",
+        eventMessageWarning1: "Это тестовая версия бота. По всем вопросом писать @privetenn",
+        eventMessageWarning2: "Нельзя записаться на событие в формате \"+1\" "
     }
 }
 const t = (key: keyof typeof tKeys) => {

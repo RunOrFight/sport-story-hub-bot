@@ -15,10 +15,12 @@ ${emoji.location} ${location.title}, ${location.address}
 <a rel="noopener noreferrer" href="${location.url}">${t(tKeys.eventMessageMap)}</a> 
 ${emoji.price} ${price}
 
+${emoji.warning} ${t(tKeys.eventMessageWarning1)} ${t(tKeys.eventMessageWarning2)}
+
 ${emoji.participants} ${t(tKeys.eventMessageParticipants)} (${participants.filter((pt) => !pt.waitList).length}/${participantsLimit}):
 ${participants.filter((pt) => !pt.waitList).map((it) => `@${it.user.username}`).join("\n")}
 `
-    const waitListString = `
+        const waitListString = `
 ${emoji.waitList} ${t(tKeys.eventMessageWaitList)} (${participants.filter((pt) => pt.waitList).length}):
 ${participants.filter((pt) => pt.waitList).map((it) => `@${it.user.username}`).join("\n")}
 `
