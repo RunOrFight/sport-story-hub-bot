@@ -16,7 +16,7 @@ Participants (${participants.length}/${participantsLimit}):
 ${participants.map((it) => `@${it.user.username}`).join("\n")}
 
 Wait List (${waitList.length}):
-${waitList.map((it) => `@${it.username}`)}
+${waitList.map((it) => `@${it.username}`).join("\n")}
 `
     } catch (err) {
         throw err

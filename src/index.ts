@@ -194,7 +194,7 @@ const dataSource = new DataSource({
 
                 if (event.waitList.length !== 0 && event.participants.length === event.participantsLimit - 1) {
                     event.participants.push({user: event.waitList[0], id: 123})
-                    event.waitList = event.waitList.filter((it) => it.username !== user.username)
+                    event.waitList = event.waitList.slice(1)
                 }
             }
 
