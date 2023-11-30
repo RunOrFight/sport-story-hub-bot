@@ -6,11 +6,13 @@ import {createEventMessage} from "./createEventMessage";
 import express from "express"
 import cors from "cors"
 import chalk from "chalk";
-import {DataSource} from "typeorm";
-import {Event} from './entities/Event'
-import {IEventFull, IUser} from "./types";
-import {assertIsRawEvent} from "./typeGuards";
-import {createFullEvent} from "./createFullEvent";
+import {Event} from './database/entities/Event'
+import {User} from './database/entities/User'
+import {Location} from "./database/entities/Location";
+import db from './database'
+import "reflect-metadata";
+import {Participant} from "./database/entities/Participant";
+
 
 dotenv.config()
 
@@ -20,30 +22,9 @@ const app = express()
 app.use(express.json())
 app.use(cors());
 
-const dataSource = new DataSource({
-    type: "postgres",
-    host: 'localhost',
-    port: 5432,
-    database: "sport_hub",
-    username: "admin",
-    logging: true,
-    synchronize: true,
-    entities: ["./src/entities/**/*.ts"],
-});
-
 (async function () {
-    // await connectToDb(dataSource);
+    await db.initialize();
 
-    // const users = await dataSource.getRepository(User).createQueryBuilder('users').leftJoinAndSelect('users.photo', 'photo').getMany();
-    // const qwe = await dataSource.getRepository(Event).createQueryBuilder('events')
-    //     .leftJoinAndSelect('events.participants', 'participants')
-    //     .leftJoinAndSelect('participants.user', 'user')
-    //     .leftJoinAndSelect('user.photo', 'photo')
-    //     .getOne();
-    // console.log(JSON.stringify(qwe, null, 3))
-    //todo remove and use db
-    const events: Record<string, IEventFull> = {}
-    const users: IUser[] = []
 
     app.get('/api', (_req, res) => {
         const path = `/api/events`;
@@ -62,9 +43,6 @@ const dataSource = new DataSource({
     const bot = new TelegramBot(process.env.TELEGRAM_BOT_ACCESS_TOKEN!, {polling: true});
     console.log(chalk.bgCyan("TELEGRAM BOT CREATED"))
 
-
-//todo remove and use db
-
     bot.on(...registerBotEventHandler('message', async (msg) => {
         const chatId = msg.chat.id;
 
@@ -74,11 +52,8 @@ const dataSource = new DataSource({
                 keyboard: [
                     [{text: t(tKeys.webAppButton), web_app: {url: process.env.WEB_APP_URL!}}]
                 ],
-
             }
         })
-
-
     }));
 
     bot.on(...registerBotEventHandler("web_app_data", async (msg) => {
@@ -88,29 +63,67 @@ const dataSource = new DataSource({
             throw "dataString is not received"
         }
 
-        const parsedData = assertIsRawEvent(JSON.parse(dataString))
-        const fullEvent = createFullEvent(parsedData)
+        const parsedData = JSON.parse(dataString);
+        const locationRepository = db.getRepository(Location);
+        // TODO: edit 1 to parsedData.locationId
+        const location = await locationRepository.findOne({where: {id: 1}});
 
-        // const event = new Event();
+        if (!location) {
+            throw new Error('erere');
+        }
 
-        // event.date = parsedData.date;
-        // event.price = parsedData.price;
-        // event.place = parsedData.place;
-        // event.currency = parsedData.currency;
-        // event.participantsCount = parsedData.participantsCount;
-        // await dataSource.getRepository(Event).save(event)
+        const newEvent = new Event();
+
+        newEvent.location = location;
+        newEvent.dateTime = parsedData.dateTime;
+        newEvent.price = parsedData.price;
+        newEvent.participantsLimit = parsedData.participantsLimit;
+        newEvent.description = parsedData.description;
+        await db.getRepository(Event).save(newEvent)
 
 
-        //todo write to db
-        events[fullEvent.id] = fullEvent
+        const event = await db.getRepository(Event).createQueryBuilder('events')
+            .where("events.id = :id", {id: newEvent.id})
+            .leftJoinAndSelect('events.location', 'location')
+            .leftJoinAndSelect('location.preview', 'preview')
+            .leftJoinAndSelect('events.participants', 'participants')
+            .leftJoinAndSelect('participants.user', 'user')
+            .leftJoinAndSelect('events.waitList', 'waitList')
+            .leftJoinAndSelect('waitList.user', 'waitListUser')
+            .leftJoinAndSelect('user.photo', 'photo')
+            .getOne();
 
-        await bot.sendMessage(msg.chat.id, createEventMessage(fullEvent), {
+
+        if (!event) {
+            throw new Error('eroeroe');
+        }
+
+
+        // console.log(JSON.stringify(event, null, 4));
+        // id: 2,
+        //     location: {
+        //     id: 234,
+        //         title: 'Box365',
+        //         url: 'https://maps.app.goo.gl/ZeLrHS4BzczpcHAD7',
+        //         address: 'ул. Октябрьская 16/3, Минск',
+        //         preview: {
+        //         id: 1,
+        //             url: 'https://images.prismic.io/box365/ada297cd-86e6-45a1-b9be-cc20376c8f51_D75_5384+copy-min.jpg?auto=compress,format&rect=445,0,4016,4016&w=1200&h=1200'
+        //     }
+        // },
+        // price: '5 BYN',
+        //     participantsLimit: 10,
+        //     dateTime: '2023-11-30T17:30:38.735Z',
+        //     description: 'Regular Match',
+        //     status: 'waiting',
+        //     participants: []
+
+        await bot.sendMessage(msg.chat.id, createEventMessage(event), {
             parse_mode: "HTML",
             disable_web_page_preview: true,
             reply_markup: {
                 inline_keyboard: [
-                    //todo eventId
-                    [{switch_inline_query: fullEvent.id.toString(), text: t(tKeys.botMessageShare)}]
+                    [{switch_inline_query: event.id.toString(), text: tKeys.botMessageShare}]
                 ]
             }
         })
@@ -129,12 +142,24 @@ const dataSource = new DataSource({
     bot.on(...registerBotEventHandler("inline_query", async (msg) => {
         const eventId = msg.query
 
-        //todo read from db
-        const event = events[eventId]
+        const event = await db.getRepository(Event).createQueryBuilder('events')
+            .where("events.id = :id", {id: eventId})
+            .leftJoinAndSelect('events.location', 'location')
+            .leftJoinAndSelect('location.preview', 'preview')
+            .leftJoinAndSelect('events.participants', 'participants')
+            .leftJoinAndSelect('participants.user', 'user')
+            .leftJoinAndSelect('user.photo', 'photo')
+            .leftJoinAndSelect('events.waitList', 'waitList')
+            .leftJoinAndSelect('waitList.user', 'waitListUser')
+            .getOne();
+
+        console.log('HEREHQWEQ')
+
 
         if (!event) {
-            throw `cannot find event with id: ${eventId}`
+            throw new Error(`cannot find event with id: ${eventId}`)
         }
+
 
         await bot.answerInlineQuery(msg.id, [{
             title: "Event", id: event.id.toString(),
@@ -154,50 +179,73 @@ const dataSource = new DataSource({
             throw "message without username received"
         }
 
-        let user = users.find((it) => it.username === msg.from.username)!
+        console.log(msg.data);
+
+        let user = await db.getRepository(User).findOne({where: {username: msg.from.username}})
 
         if (!user) {
-            user = {username: msg.from.username}
-            users.push(user)
+            user = new User()
+            user.username = msg.from.username;
+            await db.getRepository(User).save(user);
+            user = await db.getRepository(User).findOne({where: {username: msg.from.username}})
         }
 
+        if (!user) {
+            throw new Error('user error')
+        }
+
+        // @ts-ignore
         const eventId = msg.data?.split("_")[1] ?? ""
 
-        //todo read from db
-        const event = events[eventId]
+        const event = await db.getRepository(Event).createQueryBuilder('events')
+            .where("events.id = :id", {id: eventId})
+            .leftJoinAndSelect('events.location', 'location')
+            .leftJoinAndSelect('location.preview', 'preview')
+            .leftJoinAndSelect('events.participants', 'participants')
+            .leftJoinAndSelect('participants.user', 'user')
+            .leftJoinAndSelect('events.waitList', 'waitList')
+            .leftJoinAndSelect('waitList.user', 'waitListUser')
+            .leftJoinAndSelect('user.photo', 'photo')
+            .getOne();
         if (!event) {
-            throw `cannot find event with id: ${eventId}`
+            throw new Error(`cannot find event with id: ${eventId}`)
         }
 
-
-        const usernameInParticipants = event.participants.find((it) => it.user.username === user.username)
+        const userInParticipants = event.participants.find((participant: Participant) => participant.user.username === user!.username && !participant.waitList);
+        const userInWaitList = event.participants.find((participant: Participant) => participant.user.username === user!.username && participant.waitList);
 
         if (msg.data?.startsWith("join")) {
 
-            if (event.participants.length >= event.participantsLimit) {
-                event.waitList.push(user)
-            } else {
-                if (usernameInParticipants) {
-                    throw `username: ${msg.from.username} already in participants`
-                }
-
-                event.participants.push({user, id: 1})
+            if (userInParticipants || userInWaitList) {
+                throw `username: ${msg.from.username} already in participants`
             }
 
+            const participant = new Participant()
+
+            participant.event = event;
+            participant.user = user;
+
+            if (event.participantsLimit && event.participants.length >= event.participantsLimit) {
+                participant.waitList = true;
+            }
+
+            await db.getRepository(Participant).save(participant);
 
         } else if (msg.data?.startsWith("leave")) {
 
-            if (event.waitList.find((it) => it.username === user.username)) {
-                event.waitList = event.waitList.filter((it) => it.username !== user.username)
-            } else if (usernameInParticipants) {
-                event.participants = event.participants.filter((it) => it.user.username !== user.username)
+            if (!userInParticipants && !userInWaitList) {
+                throw new Error('user not participant');
+            } else {
+                const participantId = userInParticipants?.id ?? userInWaitList?.id;
+                await db.getRepository(Participant).delete({id: participantId})
 
-                if (event.waitList.length !== 0 && event.participants.length === event.participantsLimit - 1) {
-                    event.participants.push({user: event.waitList[0], id: 123})
-                    event.waitList = event.waitList.slice(1)
+                if (!userInWaitList) {
+                    const firstUserInWaitList = event.waitList.sort((a, b) => b.id - a.id)?.[0];
+                    if (firstUserInWaitList) {
+                        await db.getRepository(Participant).update({id: firstUserInWaitList.id}, {waitList: false})
+                    }
                 }
             }
-
         }
 
         await bot.editMessageText(createEventMessage(event), {
@@ -209,9 +257,9 @@ const dataSource = new DataSource({
     }))
 
 
-    app.get("/events", (req, res) => {
-        res.send(events)
-    })
+    // app.get("/events", (req, res) => {
+    //     res.send(events)
+    // })
 
     const expressAppPort = process.env.EXPRESS_APP_PORT!
     app.listen(expressAppPort, () => {

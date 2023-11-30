@@ -1,28 +1,32 @@
-import {IEventFull} from "./types";
+import {Event} from "./database/entities/Event";
 import {emoji} from "./emoji";
 import {t, tKeys} from "./tKeys";
-import dayjs from "dayjs";
 import "dayjs/locale/ru"
 
-const getDate = (date: string) => {
-    return dayjs(date).locale("ru").format("D MMM(dddd), HH:mm")
+const getDate = (date: Date) => {
+    return new Date(date).toDateString()
 }
 
-const createEventMessage = ({dateTime, location, price, participants, participantsLimit, waitList}: IEventFull) => {
-    const baseString = `
+const createEventMessage = ({dateTime, location, price, participants, participantsLimit}: Event) => {
+    try {
+        const baseString = `
 ${emoji.time} ${getDate(dateTime)}
 ${emoji.location} ${location.title}, ${location.address} 
 <a rel="noopener noreferrer" href="${location.url}">${t(tKeys.eventMessageMap)}</a> 
 ${emoji.price} ${price}
 
-${emoji.participants} ${t(tKeys.eventMessageParticipants)} (${participants.length}/${participantsLimit}):
-${participants.map((it) => `@${it.user.username}`).join("\n")}
+${emoji.participants} ${t(tKeys.eventMessageParticipants)} (${participants.filter((pt) => !pt.waitList).length}/${participantsLimit}):
+${participants.filter((pt) => !pt.waitList).map((it) => `@${it.user.username}`).join("\n")}
 `
     const waitListString = `
-${emoji.waitList} ${t(tKeys.eventMessageWaitList)} (${waitList.length}):
-${waitList.map((it) => `@${it.username}`).join("\n")}
+${emoji.waitList} ${t(tKeys.eventMessageWaitList)} (${participants.filter((pt) => pt.waitList).length}):
+${participants.filter((pt) => pt.waitList).map((it) => `@${it.user.username}`).join("\n")}
 `
-    return waitList.length !== 0 ? baseString + waitListString : baseString
+        return participants.filter((pt) => pt.waitList).length !== 0 ? baseString + waitListString : baseString
+    } catch (err) {
+        console.error(err);
+        throw err
+    }
 
 }
 

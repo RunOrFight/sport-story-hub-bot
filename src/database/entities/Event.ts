@@ -1,5 +1,5 @@
 import {Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn} from 'typeorm';
-import {EEventStatus} from "../enums/EventStatus";
+import {EEventStatus} from "../../enums/EventStatus";
 import {File} from "./File";
 import {Location} from "./Location";
 import {User} from "./User";
@@ -10,11 +10,11 @@ export class Event {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({type: 'timestamp', nullable: true})
-    date!: Date;
+    @Column({type: 'timestamp', nullable: true, name: 'date_time'})
+    dateTime!: Date;
 
     @Column({})
-    price!: number;
+    price!: string;
 
     @Column({nullable: true, default: EEventStatus.WAITING})
     status!: EEventStatus;
@@ -30,6 +30,9 @@ export class Event {
     location!: Location;
 
     @OneToMany(() => Participant, participant => participant.event)
-    participants?: Participant[];
+    participants!: Participant[];
+
+    @OneToMany(() => Participant, participant => participant.event)
+    waitList!: Participant[];
 
 }
