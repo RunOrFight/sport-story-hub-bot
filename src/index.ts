@@ -248,7 +248,22 @@ app.use(cors());
             }
         }
 
-        await bot.editMessageText(createEventMessage(event), {
+        const qweEvent = await db.getRepository(Event).createQueryBuilder('events')
+            .where("events.id = :id", {id: eventId})
+            .leftJoinAndSelect('events.location', 'location')
+            .leftJoinAndSelect('location.preview', 'preview')
+            .leftJoinAndSelect('events.participants', 'participants')
+            .leftJoinAndSelect('participants.user', 'user')
+            .leftJoinAndSelect('events.waitList', 'waitList')
+            .leftJoinAndSelect('waitList.user', 'waitListUser')
+            .leftJoinAndSelect('user.photo', 'photo')
+            .getOne();
+
+        if (!qweEvent) {
+            throw new Error('qweqwe');
+        }
+
+        await bot.editMessageText(createEventMessage(qweEvent), {
             parse_mode: "HTML",
             disable_web_page_preview: true,
             inline_message_id: msg.inline_message_id,
