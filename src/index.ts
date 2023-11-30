@@ -104,6 +104,7 @@ const dataSource = new DataSource({
 
         await bot.sendMessage(msg.chat.id, createEventMessage(fullEvent), {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             reply_markup: {
                 inline_keyboard: [
                     //todo eventId
@@ -138,6 +139,7 @@ const dataSource = new DataSource({
             type: "article",
             input_message_content: {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 message_text: createEventMessage(event)
             },
             reply_markup: createQueryReplyMarkup(event.id.toString())
@@ -178,6 +180,7 @@ const dataSource = new DataSource({
 
         await bot.editMessageText(createEventMessage(event), {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             inline_message_id: msg.inline_message_id,
             reply_markup: createQueryReplyMarkup(eventId),
         })

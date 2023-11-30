@@ -9,7 +9,7 @@ const checkAsObject = <T>(candidate: unknown, propertiesList: string[]) => {
 
     propertiesList.forEach((property) => {
         if (!(property in candidate)) {
-            throw `checkAsObject -> property: ${property} isn't in candidate: ${JSON.stringify(candidate)}`
+            throw `checkAsObject -> candidate has no property: <${property}>`
         }
     })
 

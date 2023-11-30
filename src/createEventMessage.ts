@@ -1,4 +1,5 @@
 import {IEventFull} from "./types";
+import {emoji} from "./emoji";
 
 const getDate = (date: string) => {
     return new Date(date).toDateString()
@@ -6,12 +7,13 @@ const getDate = (date: string) => {
 
 const createEventMessage = ({dateTime, location, price, participants, participantsLimit}: IEventFull) => {
     return `
-Date: <b>${getDate(dateTime)}</b>
-Place: <b>${location.title}</b>
-Price: <b>${price}</b>
+${emoji.time} ${getDate(dateTime)}
+${emoji.location} ${location.title}, ${location.address} - <a rel="noopener noreferrer" href="${location.url}">map</a> 
+${emoji.price} ${price}
 
 Participants (${participants.length}/${participantsLimit}):
-${participants.map((it) => `@${it}`).join("\n")}`
+${participants.map((it) => `@${it}`).join("\n")}
+`
 }
 
 export {createEventMessage}
