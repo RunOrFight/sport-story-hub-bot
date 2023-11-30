@@ -1,17 +1,46 @@
+import {EEventStatus} from "./enums/EventStatus";
+
 type TUnknownObject = Record<string, unknown>
 
 type TAnyPromiseFunction = (...args: any[]) => Promise<any>
 
-interface IEvent {
-    id: string;
-    date: Date;
-    price: number | string;
-    place: string;
-    participantsCount: number | string
+interface IFile {
+    id: number,
+    url: string
 }
 
-interface IEventWithParticipants extends IEvent {
-    participants: string[]
+interface IEventLocation {
+    id: number;
+    title: string;
+    url: string;
+    address: string;
+    preview: IFile
 }
 
-export type {IEvent, IEventWithParticipants, TUnknownObject, TAnyPromiseFunction}
+interface IUser {
+    username: string;
+    photo: IFile
+}
+
+interface IEventParticipant {
+    id: number,
+    user: IUser
+}
+
+interface IEventRaw {
+    locationId: number,
+    dateTime: string,
+    description: string,
+    price: string,
+    participantsLimit: number
+}
+
+interface IEventFull extends Omit<IEventRaw, "locationId"> {
+    location: IEventLocation
+    participants: IEventParticipant[]
+    id: number
+    status: EEventStatus
+}
+
+
+export type {IEventRaw, IEventFull, IEventLocation, TUnknownObject, TAnyPromiseFunction}

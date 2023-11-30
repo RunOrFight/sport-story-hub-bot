@@ -1,11 +1,23 @@
-import {IEvent, TUnknownObject} from "./types";
+import {IEventRaw, TUnknownObject} from "./types";
 
 const isObject = (candidate: unknown): candidate is TUnknownObject => candidate !== null && typeof candidate === "object"
 
-const isEvent = (maybeEvent: unknown): maybeEvent is IEvent => {
-    return isObject(maybeEvent) && "id" in maybeEvent &&
-        "date" in maybeEvent && "price" in maybeEvent &&
-        "place" in maybeEvent && "participantsCount" in maybeEvent
+const checkAsObject = <T>(candidate: unknown, propertiesList: string[]) => {
+    if (!isObject(candidate)) {
+        throw `checkAsObject -> ${JSON.stringify(candidate)} is not object`
+    }
+
+    propertiesList.forEach((property) => {
+        if (!(property in candidate)) {
+            throw `checkAsObject -> property: ${property} isn't in candidate: ${JSON.stringify(candidate)}`
+        }
+    })
+
+    return candidate as T
 }
 
-export {isEvent}
+const assertIsRawEvent = (maybeEvent: unknown) => {
+    return checkAsObject<IEventRaw>(maybeEvent, ["locationId", "dateTime", "description", "price", "participantsLimit"])
+}
+
+export {assertIsRawEvent}

@@ -1,16 +1,16 @@
-import {IEventWithParticipants} from "./types";
+import {IEventFull} from "./types";
 
-const getDateFromMsString = (date: Date) => {
-    return date.toDateString()
+const getDate = (date: string) => {
+    return new Date(date).toDateString()
 }
 
-const createEventMessage = ({date, place, price, participants, participantsCount}: IEventWithParticipants) => {
+const createEventMessage = ({dateTime, location, price, participants, participantsLimit}: IEventFull) => {
     return `
-Date: <b>${getDateFromMsString(date)}</b>
-Place: <b>${place}</b>
+Date: <b>${getDate(dateTime)}</b>
+Place: <b>${location.title}</b>
 Price: <b>${price}</b>
 
-Participants (${participants.length}/${participantsCount}):
+Participants (${participants.length}/${participantsLimit}):
 ${participants.map((it) => `@${it}`).join("\n")}`
 }
 

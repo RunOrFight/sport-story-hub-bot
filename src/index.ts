@@ -1,22 +1,21 @@
 import dotenv from "dotenv"
 import TelegramBot from "node-telegram-bot-api";
-import {IEventWithParticipants} from "./types";
 import {registerBotEventHandler} from "./logger";
 import {tKeys} from "./tKeys";
-import {isEvent} from "./typeGuards";
 import {createEventMessage} from "./createEventMessage";
 import express from "express"
 import cors from "cors"
 import chalk from "chalk";
-import {connectToDb} from "./db-connect";
 import {DataSource} from "typeorm";
 import {Event} from './entities/Event'
-import {User} from "./entities/User";
-
+import {IEventFull} from "./types";
+import {assertIsRawEvent} from "./typeGuards";
+import {createFullEvent} from "./createFullEvent";
 
 dotenv.config()
 
 const app = express()
+
 
 app.use(express.json())
 app.use(cors());
@@ -33,7 +32,7 @@ const dataSource = new DataSource({
 });
 
 (async function () {
-    await connectToDb(dataSource);
+    // await connectToDb(dataSource);
 
     // const users = await dataSource.getRepository(User).createQueryBuilder('users').leftJoinAndSelect('users.photo', 'photo').getMany();
     // const qwe = await dataSource.getRepository(Event).createQueryBuilder('events')
@@ -43,7 +42,7 @@ const dataSource = new DataSource({
     //     .getOne();
     // console.log(JSON.stringify(qwe, null, 3))
     //todo remove and use db
-    const events: Record<string, IEventWithParticipants> = {}
+    const events: Record<string, IEventFull> = {}
     app.get('/api', (_req, res) => {
         const path = `/api/events`;
         res.setHeader('Content-Type', 'text/html');
@@ -59,7 +58,7 @@ const dataSource = new DataSource({
 
 
     const bot = new TelegramBot(process.env.TELEGRAM_BOT_ACCESS_TOKEN!, {polling: true});
-    console.log("Telegram Bot Created")
+    console.log(chalk.bgCyan("TELEGRAM BOT CREATED"))
 
 
 //todo remove and use db
@@ -87,32 +86,31 @@ const dataSource = new DataSource({
             throw "dataString is not received"
         }
 
-        const parsedData: any = JSON.parse(dataString)
-        // if (!isEvent(parsedData)) {
-        //     throw `parsedData from ${dataString} doesn't match to IEvent interface`
-        // }
+        const parsedData = assertIsRawEvent(JSON.parse(dataString))
+        const fullEvent = createFullEvent(parsedData)
 
-        console.log(parsedData);
+        // const event = new Event();
 
-        const event = new Event();
-
-        event.date = parsedData.date;
-        event.price = parsedData.price;
+        // event.date = parsedData.date;
+        // event.price = parsedData.price;
         // event.place = parsedData.place;
         // event.currency = parsedData.currency;
         // event.participantsCount = parsedData.participantsCount;
+        // await dataSource.getRepository(Event).save(event)
+
 
         //todo write to db
-        // await dataSource.getRepository(Event).save(event)
-        // @ts-ignore
-        // await bot.sendMessage(msg.chat.id, createEventMessage({...parsedData, participants: []}), {
-        //     parse_mode: "HTML",
-        //     reply_markup: {
-        //         inline_keyboard: [
-        //             [{switch_inline_query: parsedData.id, text: tKeys.botMessageShare}]
-        //         ]
-        //     }
-        // })
+        events[fullEvent.id] = fullEvent
+
+        await bot.sendMessage(msg.chat.id, createEventMessage(fullEvent), {
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [
+                    //todo eventId
+                    [{switch_inline_query: fullEvent.id.toString(), text: tKeys.botMessageShare}]
+                ]
+            }
+        })
     }))
 
     const createQueryReplyMarkup = (eventId: string) => ({
@@ -136,13 +134,13 @@ const dataSource = new DataSource({
         }
 
         await bot.answerInlineQuery(msg.id, [{
-            title: "Event", id: event.id,
+            title: "Event", id: event.id.toString(),
             type: "article",
             input_message_content: {
                 parse_mode: "HTML",
                 message_text: createEventMessage(event)
             },
-            reply_markup: createQueryReplyMarkup(event.id)
+            reply_markup: createQueryReplyMarkup(event.id.toString())
 
         }])
     }))
@@ -162,17 +160,20 @@ const dataSource = new DataSource({
         }
 
         if (msg.data?.startsWith("join")) {
+            // @ts-ignore
             if (event.participants.includes(msg.from.username)) {
                 throw `username: ${msg.from.username} already in participants`
             }
+            // @ts-ignore
             event.participants.push(msg.from.username)
 
         } else if (msg.data?.startsWith("leave")) {
+            // @ts-ignore
             if (!(event.participants.includes(msg.from.username))) {
                 throw `username: ${msg.from.username} not in participants`
             }
+            // @ts-ignore
             event.participants = event.participants.filter((it: string) => it !== msg.from.username)
-
         }
 
         await bot.editMessageText(createEventMessage(event), {
@@ -193,7 +194,3 @@ const dataSource = new DataSource({
     })
 
 })();
-
-
-
-

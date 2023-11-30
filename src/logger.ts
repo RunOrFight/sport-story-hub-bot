@@ -14,7 +14,7 @@ const Logger = {
 
 const withLogger = (clb: TAnyPromiseFunction, name: string) => (...args: any[]) => {
     clb(...args).catch((err) => {
-        Logger.error(EErrorTypes.tgBotEventHandler, `bot.on("${name}")`, err)
+        Logger.error(EErrorTypes.tgBotEventHandler, `bot.on("${name}")`, JSON.stringify(err))
         return
     })
 }
