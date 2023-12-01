@@ -29,8 +29,7 @@ const translates: Record<string, Record<string, string>> = {
         eventMessageParticipants: "Будут на игре",
         eventMessageWaitList: "Ожидают свободное место",
         eventMessageMap: "Посмотреть на карте",
-        eventMessageWarning1: "Это тестовая версия бота. По всем вопросом писать @privetenn",
-        eventMessageWarning2: "Нельзя записаться на событие в формате \"+1\" "
+        eventMessageWarning1: "Это первая версия бота, возможны ошибки.\nПо всем вопросом писать @privetenn",
     }
 }
 const t = (key: keyof typeof tKeys) => {

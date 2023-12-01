@@ -12,6 +12,7 @@ import {Location} from "./database/entities/Location";
 import db from './database'
 import "reflect-metadata";
 import {Participant} from "./database/entities/Participant";
+import {assertIsRawEvent} from "./typeGuards";
 
 
 dotenv.config()
@@ -46,6 +47,9 @@ app.use(cors());
     bot.on(...registerBotEventHandler('message', async (msg) => {
         const chatId = msg.chat.id;
 
+        if (msg.web_app_data?.data) {
+            return
+        }
 
         await bot.sendMessage(chatId, t(tKeys.useButtonsHint), {
             reply_markup: {
@@ -63,19 +67,19 @@ app.use(cors());
             throw "dataString is not received"
         }
 
-        const parsedData = JSON.parse(dataString);
+        const parsedData = assertIsRawEvent(JSON.parse(dataString));
         const locationRepository = db.getRepository(Location);
         // TODO: edit 1 to parsedData.locationId
         const location = await locationRepository.findOne({where: {id: 1}});
 
         if (!location) {
-            throw new Error('erere');
+            throw "No location";
         }
 
         const newEvent = new Event();
 
         newEvent.location = location;
-        newEvent.dateTime = parsedData.dateTime;
+        newEvent.dateTime = new Date(parsedData.dateTime);
         newEvent.price = parsedData.price;
         newEvent.participantsLimit = parsedData.participantsLimit;
         newEvent.description = parsedData.description;
@@ -123,7 +127,7 @@ app.use(cors());
             disable_web_page_preview: true,
             reply_markup: {
                 inline_keyboard: [
-                    [{switch_inline_query: event.id.toString(), text: tKeys.botMessageShare}]
+                    [{switch_inline_query: event.id.toString(), text: t(tKeys.botMessageShare)}]
                 ]
             }
         })
@@ -153,13 +157,9 @@ app.use(cors());
             .leftJoinAndSelect('waitList.user', 'waitListUser')
             .getOne();
 
-        console.log('HEREHQWEQ')
-
-
         if (!event) {
             throw new Error(`cannot find event with id: ${eventId}`)
         }
-
 
         await bot.answerInlineQuery(msg.id, [{
             title: "Event", id: event.id.toString(),
@@ -178,8 +178,6 @@ app.use(cors());
         if (!msg.from.username) {
             throw "message without username received"
         }
-
-        console.log(msg.data);
 
         let user = await db.getRepository(User).findOne({where: {username: msg.from.username}})
 

@@ -12,12 +12,12 @@ const checkAsObject = <T>(candidate: unknown, propertiesList: string[]) => {
             throw `checkAsObject -> candidate has no property: <${property}>`
         }
     })
-
     return candidate as T
 }
 
 const assertIsRawEvent = (maybeEvent: unknown) => {
     return checkAsObject<IEventRaw>(maybeEvent, ["locationId", "dateTime", "description", "price", "participantsLimit"])
+
 }
 
 export {assertIsRawEvent}
