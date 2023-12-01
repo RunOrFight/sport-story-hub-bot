@@ -7,4 +7,18 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5555:5555"
-    command: sh -c "npm start"
+    depends_on:
+      - postgres
+    environment:
+      NODE_ENV: production
+    command: sh -c "npm run typeorm:migrate && npm start"
+
+  postgres:
+    container_name: sport_hub_postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: sport_hub
+    ports:
+      - "5432:5432"
