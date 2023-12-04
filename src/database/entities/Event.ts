@@ -31,8 +31,4 @@ export class Event {
 
     @OneToMany(() => Participant, participant => participant.event)
     participants!: Participant[];
-
-    @OneToMany(() => Participant, participant => participant.event)
-    waitList!: Participant[];
-
 }

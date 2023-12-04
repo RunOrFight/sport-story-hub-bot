@@ -3,7 +3,7 @@ import {User} from "./User";
 import {Event} from "./Event";
 
 @Entity('participants')
-@Index(['user', 'event'], { unique: true })
+@Index(['user', 'event'], { unique: true, where: "(user_id <> 5)" })
 export class Participant {
     @PrimaryGeneratedColumn()
     id!: number;
@@ -18,4 +18,8 @@ export class Participant {
     @ManyToOne(() => Event, {nullable: false})
     @JoinColumn({name: 'event_id'})
     event!: Event;
+
+    @ManyToOne(() => Participant, {nullable: true})
+    @JoinColumn({name: 'parent_participant_id'})
+    parentParticipant?: Participant;
 }

@@ -26,7 +26,6 @@ app.use(cors());
 (async function () {
     await db.initialize();
 
-
     app.get('/api', (_req, res) => {
         const path = `/api/events`;
         res.setHeader('Content-Type', 'text/html');
@@ -92,8 +91,6 @@ app.use(cors());
             .leftJoinAndSelect('location.preview', 'preview')
             .leftJoinAndSelect('events.participants', 'participants')
             .leftJoinAndSelect('participants.user', 'user')
-            .leftJoinAndSelect('events.waitList', 'waitList')
-            .leftJoinAndSelect('waitList.user', 'waitListUser')
             .leftJoinAndSelect('user.photo', 'photo')
             .getOne();
 
@@ -101,26 +98,6 @@ app.use(cors());
         if (!event) {
             throw new Error('eroeroe');
         }
-
-
-        // console.log(JSON.stringify(event, null, 4));
-        // id: 2,
-        //     location: {
-        //     id: 234,
-        //         title: 'Box365',
-        //         url: 'https://maps.app.goo.gl/ZeLrHS4BzczpcHAD7',
-        //         address: 'ул. Октябрьская 16/3, Минск',
-        //         preview: {
-        //         id: 1,
-        //             url: 'https://images.prismic.io/box365/ada297cd-86e6-45a1-b9be-cc20376c8f51_D75_5384+copy-min.jpg?auto=compress,format&rect=445,0,4016,4016&w=1200&h=1200'
-        //     }
-        // },
-        // price: '5 BYN',
-        //     participantsLimit: 10,
-        //     dateTime: '2023-11-30T17:30:38.735Z',
-        //     description: 'Regular Match',
-        //     status: 'waiting',
-        //     participants: []
 
         await bot.sendMessage(msg.chat.id, createEventMessage(event), {
             parse_mode: "HTML",
@@ -153,8 +130,6 @@ app.use(cors());
             .leftJoinAndSelect('events.participants', 'participants')
             .leftJoinAndSelect('participants.user', 'user')
             .leftJoinAndSelect('user.photo', 'photo')
-            .leftJoinAndSelect('events.waitList', 'waitList')
-            .leftJoinAndSelect('waitList.user', 'waitListUser')
             .getOne();
 
         if (!event) {
@@ -175,98 +150,117 @@ app.use(cors());
     }))
 
     bot.on(...registerBotEventHandler("callback_query", async (msg) => {
-        if (!msg.from.username) {
-            throw "message without username received"
-        }
-
-        let user = await db.getRepository(User).findOne({where: {username: msg.from.username}})
-
-        if (!user) {
-            user = new User()
-            user.username = msg.from.username;
-            await db.getRepository(User).save(user);
-            user = await db.getRepository(User).findOne({where: {username: msg.from.username}})
-        }
-
-        if (!user) {
-            throw new Error('user error')
-        }
-
-        // @ts-ignore
-        const eventId = msg.data?.split("_")[1] ?? ""
-
-        const event = await db.getRepository(Event).createQueryBuilder('events')
-            .where("events.id = :id", {id: eventId})
-            .leftJoinAndSelect('events.location', 'location')
-            .leftJoinAndSelect('location.preview', 'preview')
-            .leftJoinAndSelect('events.participants', 'participants')
-            .leftJoinAndSelect('participants.user', 'user')
-            .leftJoinAndSelect('events.waitList', 'waitList')
-            .leftJoinAndSelect('waitList.user', 'waitListUser')
-            .leftJoinAndSelect('user.photo', 'photo')
-            .getOne();
-        if (!event) {
-            throw new Error(`cannot find event with id: ${eventId}`)
-        }
-
-        const userInParticipants = event.participants.find((participant: Participant) => participant.user.username === user!.username && !participant.waitList);
-        const userInWaitList = event.participants.find((participant: Participant) => participant.user.username === user!.username && participant.waitList);
-
-        if (msg.data?.startsWith("join")) {
-
-            if (userInParticipants || userInWaitList) {
-                throw `username: ${msg.from.username} already in participants`
+        try {
+            if (!msg.from.username) {
+                throw "message without username received"
             }
 
-            const participant = new Participant()
+            let user = await db.getRepository(User).findOne({where: {username: msg.from.username}})
 
-            participant.event = event;
-            participant.user = user;
-
-            if (event.participantsLimit && event.participants.length >= event.participantsLimit) {
-                participant.waitList = true;
+            if (!user) {
+                user = new User()
+                user.username = msg.from.username;
+                await db.getRepository(User).save(user);
+                user = await db.getRepository(User).findOne({where: {username: msg.from.username}})
             }
 
-            await db.getRepository(Participant).save(participant);
+            if (!user) {
+                throw new Error('user error')
+            }
 
-        } else if (msg.data?.startsWith("leave")) {
+            // @ts-ignore
+            const eventId = msg.data?.split("_")[1] ?? ""
 
-            if (!userInParticipants && !userInWaitList) {
-                throw new Error('user not participant');
-            } else {
-                const participantId = userInParticipants?.id ?? userInWaitList?.id;
-                await db.getRepository(Participant).delete({id: participantId})
+            const event = await db.getRepository(Event).createQueryBuilder('events')
+                .where("events.id = :id", {id: eventId})
+                .leftJoinAndSelect('events.location', 'location')
+                .leftJoinAndSelect('location.preview', 'preview')
+                .leftJoinAndSelect('events.participants', 'participants')
+                .leftJoinAndSelect('participants.user', 'user')
+                .leftJoinAndSelect('user.photo', 'photo')
+                .leftJoinAndSelect('participants.parentParticipant', 'parentParticipant')
+                .leftJoinAndSelect('parentParticipant.user', 'parentParticipantUser')
+                .getOne();
+            if (!event) {
+                throw new Error(`cannot find event with id: ${eventId}`)
+            }
 
-                if (!userInWaitList) {
-                    const firstUserInWaitList = event.waitList.sort((a, b) => b.id - a.id)?.[0];
-                    if (firstUserInWaitList) {
-                        await db.getRepository(Participant).update({id: firstUserInWaitList.id}, {waitList: false})
+            const userInParticipants = event.participants.find((participant: Participant) => participant.user.username === user!.username && !participant.waitList);
+            const userInWaitList = event.participants.find((participant: Participant) => participant.user.username === user!.username && participant.waitList);
+
+            if (msg.data?.startsWith("join")) {
+
+                const participant = new Participant()
+                participant.event = event;
+
+
+                if (userInParticipants || userInWaitList) {
+                    const unknownPlayer = await db.getRepository(User).findOne({where: {username: 'player'}});
+                    participant.user = unknownPlayer!;
+                    participant.parentParticipant = userInParticipants ?? userInWaitList;
+                } else {
+                    participant.user = user;
+                }
+
+
+                if (event.participantsLimit && event.participants.length >= event.participantsLimit) {
+                    participant.waitList = true;
+                }
+
+
+                await db.getRepository(Participant).save(participant);
+
+            } else if (msg.data?.startsWith("leave")) {
+
+                if (!userInParticipants && !userInWaitList) {
+                    throw new Error('user not participant');
+                } else {
+                    console.log(userInParticipants);
+                    const childParticipant = await db.getRepository(Participant).findOne({where: {parentParticipant: userInParticipants ?? userInWaitList}})
+                    console.log(childParticipant);
+                    const participantId = childParticipant?.id ?? userInParticipants?.id ?? userInWaitList?.id;
+                    await db.getRepository(Participant).delete({id: participantId});
+                    const participantsInWaitList = await db.getRepository(Participant).find({
+                        where: {waitList: true},
+                        order: {id: 'ASC'}
+                    })
+
+                    if (!userInWaitList) {
+                        const firstUserInWaitList = participantsInWaitList[0];
+                        if (firstUserInWaitList) {
+                            await db.getRepository(Participant).update({id: firstUserInWaitList.id}, {waitList: false})
+                        }
                     }
                 }
             }
+
+            const qweEvent = await db.getRepository(Event).createQueryBuilder('events')
+                .where("events.id = :id", {id: eventId})
+                .leftJoinAndSelect('events.location', 'location')
+                .leftJoinAndSelect('location.preview', 'preview')
+                .leftJoinAndSelect('events.participants', 'participants')
+                .leftJoinAndSelect('participants.user', 'user')
+                .leftJoinAndSelect('user.photo', 'photo')
+                .leftJoinAndSelect('participants.parentParticipant', 'parentParticipant')
+                .leftJoinAndSelect('parentParticipant.user', 'parentParticipantUser')
+                .getOne();
+
+
+            if (!qweEvent) {
+                throw new Error('qweqwe');
+            }
+
+            await bot.editMessageText(createEventMessage(qweEvent), {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                inline_message_id: msg.inline_message_id,
+                reply_markup: createQueryReplyMarkup(eventId),
+            })
+        } catch (err) {
+            console.error(err);
+            throw err;
         }
 
-        const qweEvent = await db.getRepository(Event).createQueryBuilder('events')
-            .where("events.id = :id", {id: eventId})
-            .leftJoinAndSelect('events.location', 'location')
-            .leftJoinAndSelect('location.preview', 'preview')
-            .leftJoinAndSelect('events.participants', 'participants')
-            .leftJoinAndSelect('participants.user', 'user')
-            .leftJoinAndSelect('events.waitList', 'waitList')
-            .leftJoinAndSelect('waitList.user', 'waitListUser')
-            .leftJoinAndSelect('user.photo', 'photo')
-            .getOne();
-
-        if (!qweEvent) {
-            throw new Error('qweqwe');
-        }
-
-        await bot.editMessageText(createEventMessage(qweEvent), {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            inline_message_id: msg.inline_message_id,
-            reply_markup: createQueryReplyMarkup(eventId),
-        })
     }))
 
 
