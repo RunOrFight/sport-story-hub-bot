@@ -17,8 +17,8 @@ const translates: Record<string, Record<string, string>> = {
         useButtonsHint: "Use Buttons To Create Event",
         webAppButton: "Create Event",
         botMessageShare: "Share",
-        eventMessageJoin: "Join",
-        eventMessageLeave: "Leave",
+        eventMessageJoin: "+",
+        eventMessageLeave: "-",
     },
     ru: {
         useButtonsHint: "Используйте кнопки чтобы создать событие",
