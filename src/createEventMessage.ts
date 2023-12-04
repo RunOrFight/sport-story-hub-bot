@@ -8,7 +8,8 @@ const getDate = (date: Date) => {
     return dayjs(date).locale("ru").format("D MMM(dddd), HH:mm")
 }
 
-const createEventMessage = ({dateTime, location, price, participants, participantsLimit}: Event) => {
+const createEventMessage = ({dateTime, location, price, participants, participantsLimit,}: Event) => {
+
     try {
         const baseString = `
 ${emoji.time} ${getDate(dateTime)}
@@ -19,7 +20,7 @@ ${emoji.price} ${price}
 ${emoji.warning} ${t(tKeys.eventMessageWarning1)}
 
 ${emoji.participants} ${t(tKeys.eventMessageParticipants)} (${participants.filter((pt) => !pt.waitList).length}/${participantsLimit}):
-${participants.filter((pt) => !pt.waitList).map((it) => it.parentParticipant ? `${it.user.username} invited by ${it.parentParticipant.user.username}` : `@${it.user.username}`).join("\n")}
+${participants.filter((pt) => !pt.waitList).map((it) => it.parentParticipant ? `${t(tKeys.eventMessageInvited)} @${it.parentParticipant.user.username}` : `@${it.user.username}`).join("\n")}
 `
         const waitListString = `
 ${emoji.waitList} ${t(tKeys.eventMessageWaitList)} (${participants.filter((pt) => pt.waitList).length}):

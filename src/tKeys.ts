@@ -8,7 +8,8 @@ const tKeys = {
     eventMessageWaitList: "eventMessageWaitList",
     eventMessageMap: "eventMessageMap",
     eventMessageWarning1: "eventMessageWarning1",
-    eventMessageWarning2: "eventMessageWarning1"
+    eventMessageWarning2: "eventMessageWarning1",
+    eventMessageInvited: "eventMessageInvited"
 
 } as const
 
@@ -24,12 +25,13 @@ const translates: Record<string, Record<string, string>> = {
         useButtonsHint: "Используйте кнопки чтобы создать событие",
         webAppButton: "Создать событие",
         botMessageShare: "Поделиться",
-        eventMessageJoin: "Я буду!",
-        eventMessageLeave: "Планы поменялись",
+        eventMessageJoin: "➕",
+        eventMessageLeave: "➖",
         eventMessageParticipants: "Будут на игре",
         eventMessageWaitList: "Ожидают свободное место",
         eventMessageMap: "Посмотреть на карте",
         eventMessageWarning1: "Это первая версия бота, возможны ошибки.\nПо всем вопросом писать @privetenn",
+        eventMessageInvited: "+1 от"
     }
 }
 const t = (key: keyof typeof tKeys) => {
