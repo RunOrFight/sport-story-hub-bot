@@ -33,10 +33,17 @@ app.use(cors());
         res.end(`Hello! Go to events: <a href="${path}">${path}</a>`);
     });
 
-    app.get("/api/events", (_req, res) => {
+    app.get("/api/events",  (_req, res) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json({name: 'John Doe'});
+    })
+
+    app.get("/api/locations", async (_req, res) => {
+        const locations = await db.getRepository(Location).find();
+
+        res.statusCode = 200;
+        res.send(locations);
     })
 
 
