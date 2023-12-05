@@ -24,7 +24,7 @@ ${participants.filter((pt) => !pt.waitList).map((it) => it.parentParticipant ? `
 `
         const waitListString = `
 ${emoji.waitList} ${t(tKeys.eventMessageWaitList)} (${participants.filter((pt) => pt.waitList).length}):
-${participants.filter((pt) => pt.waitList).map((it) => it.parentParticipant ? `${it.user.username} invited by ${it.parentParticipant.user.username}` : `@${it.user.username}`).join("\n")}
+${participants.filter((pt) => pt.waitList).map((it) => it.parentParticipant ? `${t(tKeys.eventMessageInvited)} @${it.parentParticipant.user.username}` : `@${it.user.username}`).join("\n")}
 `
         return participants.filter((pt) => pt.waitList).length !== 0 ? baseString + waitListString : baseString
     } catch (err: any) {
