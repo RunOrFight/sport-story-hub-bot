@@ -13,6 +13,7 @@ import db from './database'
 import "reflect-metadata";
 import {Participant} from "./database/entities/Participant";
 import {assertIsRawEvent} from "./typeGuards";
+import path from "path";
 
 
 dotenv.config()
@@ -40,11 +41,27 @@ app.use(cors());
     })
 
     app.get("/api/locations", async (_req, res) => {
-        const locations = await db.getRepository(Location).find();
+        const locations = await db.getRepository(Location).createQueryBuilder('locations')
+            .leftJoinAndSelect('locations.preview', 'locationPreview')
+            .getMany();
 
         res.statusCode = 200;
         res.send(locations);
     })
+
+    app.get('/api/images/:imageName', (req, res) => {
+        const imagesFolder = path.join(__dirname, 'images');
+        const imageName = req.params.imageName;
+        const imagePath = path.join(imagesFolder, imageName);
+
+        // Отправляем изображение в ответе
+        res.sendFile(imagePath, {}, (err) => {
+            if (err) {
+                console.error(err);
+                res.status(404).send('Not Found');
+            }
+        });
+    });
 
 
     const bot = new TelegramBot(process.env.TELEGRAM_BOT_ACCESS_TOKEN!, {polling: true});

@@ -3,7 +3,7 @@ import {User} from "./User";
 import {Event} from "./Event";
 
 @Entity('participants')
-@Index(['user', 'event'], { unique: true, where: "(user_id <> 5)" })
+@Index(['user', 'event'], {unique: true}) //  where: "(user_id <> user_id with username == player)"
 export class Participant {
     @PrimaryGeneratedColumn()
     id!: number;
