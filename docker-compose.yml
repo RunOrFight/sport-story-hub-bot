@@ -9,8 +9,8 @@ services:
       - "5555:5555"
     depends_on:
       - postgres
-    environment:
-      NODE_ENV: production
+    env_file:
+      - .env
     command: sh -c "npm run typeorm:migrate && npm start"
 
   postgres:
@@ -22,4 +22,4 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_DB: sport_hub
     ports:
-      - "5432:5432"
+      - "6544:5432"
