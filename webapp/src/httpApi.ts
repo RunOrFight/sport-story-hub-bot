@@ -36,8 +36,9 @@ const withDelay = <T>(value: T): Promise<T> => {
     })
 }
 
-const BASE_URL = import.meta.env.VITE_EVENT_SERVICE_ENDPOINT
+const BASE_URL = import.meta.env.VITE_API_URL
 
+console.log(BASE_URL)
 const httpApi = {
     getEvents: async () => {
         return withDelay(events)

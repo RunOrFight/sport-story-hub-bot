@@ -2,8 +2,8 @@ import {Button, DatePicker, Form, Input, InputNumber, message, Select, Skeleton}
 import dayjs from "dayjs"
 import {IEventLocation, IEventRaw} from "./types.ts";
 import {useEffect, useState} from "react";
-import {httpApi} from "./httpApi.ts";
 import "dayjs/locale/ru.js"
+import {httpApi} from "./httpApi.ts";
 
 interface ICreateEventFormValues extends Omit<IEventRaw, "dateTime"> {
     dateTime: ReturnType<typeof dayjs>

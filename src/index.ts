@@ -34,7 +34,7 @@ app.use(cors());
         res.end(`Hello! Go to events: <a href="${path}">${path}</a>`);
     });
 
-    app.get("/api/events",  (_req, res) => {
+    app.get("/api/events", (_req, res) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json({name: 'John Doe'});
