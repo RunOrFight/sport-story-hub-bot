@@ -10,7 +10,8 @@
     "typeorm:migrate": "npx typeorm-ts-node-esm migration:run -d ./src/database/data-source-local.ts",
     "typeorm:revert": "npx typeorm-ts-node-esm migration:revert -d ./src/database/data-source-local.ts",
     "typeorm:drop": "npx typeorm-ts-node-esm schema:drop -d ./src/database/data-source-local.ts",
-    "run:ui": "vite --config webapp/vite.config.ts"
+    "webapp:run": "vite --config webapp/vite.config.ts",
+    "webapp:build": "tsc && vite build --config webapp/vite.config.ts"
   },
   "keywords": [],
   "author": "",
