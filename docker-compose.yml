@@ -1,7 +1,15 @@
 version: '3.9'
 services:
-  sport-story-server-app:
-    container_name: sport-story-server-app
+  postgres:
+    container_name: sport_hub_postgres
+    image: postgres
+    env_file:
+      - .env
+    ports:
+      - "7654:5432"
+
+  server_app:
+    container_name: sport_hub_server
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,15 +19,37 @@ services:
       - postgres
     env_file:
       - .env
-    command: sh -c "npm run typeorm:migrate && npm start"
+    restart: on-failure
+    command: sh -c "npm run typeorm:migrate && npm run production"
 
-  postgres:
-    container_name: sport_hub_postgres
-    image: postgres
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_DB: sport_hub
+  web_app:
+    container_name: sport_hub_web
+    build:
+      context: .
+      dockerfile: ./webapp/Dockerfile
+    volumes:
+      - ./webapp/dist:/app/dist
+    command: sh -c "npm run build"
+
+  nginx:
+    container_name: sport_hub_nginx
+    image: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./webapp/dist:/app/dist
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
     ports:
-      - "6544:5432"
+      - "82:80"
+      - "445:443"
+    depends_on:
+      - server_app
+      - web_app
+
+  certbot:
+    container_name: sport_hub_certbot
+    image: certbot/certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
