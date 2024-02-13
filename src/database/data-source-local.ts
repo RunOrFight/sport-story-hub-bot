@@ -1,27 +1,29 @@
 import {DataSource} from "typeorm";
 import {DataSourceOptions} from "typeorm/data-source/DataSourceOptions";
 
+const dbDir = process.env.NODE_ENV == 'production' ? 'build/database/' : 'src/database/';
+
 let connectionOptions: DataSourceOptions = process.env.NODE_ENV === "production" ? {
         type: "postgres",
         host: "postgres",
         port: 5432,
-        username: "admin", // postgre username
-        database: "sport_hub", // postgre database, needs to be created before
-        synchronize: false, // if true, you don't really need migrations
+        username: "admin",
+        database: "sport_hub",
+        synchronize: false,
         logging: true,
-        entities: ["src/database/entities/**/*.ts"], // where our entities reside
-        migrations: ["src/database/migrations/*.ts"], // where our migrations reside
+        entities: [dbDir + "entities/**/*.{ts,js}"],
+        migrations: [dbDir + "migrations/**/*.{ts,js}"],
     } :
     {
         type: "postgres",
         host: "localhost",
         port: 5432,
-        username: "admin", // postgre username
-        database: "sport_hub", // postgre database, needs to be created before
-        synchronize: false, // if true, you don't really need migrations
+        username: "admin",
+        database: "sport_hub",
+        synchronize: false,
         logging: true,
-        entities: ["src/database/entities/**/*.ts"], // where our entities reside
-        migrations: ["src/database/migrations/*.ts"], // where our migrations reside
+        entities: [dbDir + "entities/**/*.{ts,js}"],
+        migrations: [dbDir + "migrations/**/*.{ts,js}"],
     };
 
 export default new DataSource({
