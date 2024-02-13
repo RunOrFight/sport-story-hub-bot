@@ -29,7 +29,7 @@ services:
       dockerfile: ./webapp/Dockerfile
     volumes:
       - ./webapp/dist:/app/dist
-    command: sh -c "npm run build"
+    command: sh -c "npm run webapp:build"
 
   nginx:
     container_name: sport_hub_nginx
