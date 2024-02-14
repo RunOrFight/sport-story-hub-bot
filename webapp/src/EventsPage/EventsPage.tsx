@@ -1,11 +1,11 @@
-import {Card, Descriptions, Flex, Skeleton} from "antd";
+import {Card, Descriptions, Skeleton} from "antd";
 import {useEffect, useState} from "react";
-import {IEventFull} from "./types.ts";
-import {httpApi} from "./httpApi.ts";
+import {IEventFull} from "../types.ts";
+import {httpApi} from "../httpApi.ts";
 import {generatePath, Link} from "react-router-dom";
-import {routeMap} from "./routeMap.ts";
+import {routeMap} from "../routeMap.ts";
 import Title from "antd/lib/typography/Title";
-
+import classes from "./EventsPage.module.css"
 
 const EventsPage = () => {
     const [events, setEvents] = useState<IEventFull[]>([])
@@ -20,7 +20,7 @@ const EventsPage = () => {
         return <Skeleton active/>
     }
 
-    return <Flex vertical gap={"small"}>
+    return <div className={classes.eventsPage}>
         {events.map((event) => <Link key={event.id} to={generatePath(routeMap.singleEventRoute, {id: event.id})}>
             <Title level={4}>{event.dateTime}</Title>
             <Card hoverable title={`${event.location.title}, ${event.location.address}`}
@@ -34,7 +34,7 @@ const EventsPage = () => {
                 </Descriptions>
             </Card>
         </Link>)}
-    </Flex>;
+    </div>;
 }
 
 export {EventsPage}

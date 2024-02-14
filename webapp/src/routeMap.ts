@@ -2,12 +2,16 @@ const emptyRoute = "/";
 const eventsRoute = "/events";
 const singleEventRoute = `${eventsRoute}/:id`
 const createEventRoute = `${eventsRoute}/create`
+const statisticsRoute = "/statistics"
+const profileRoute = "/profile"
 
 const routeMap = {
     emptyRoute,
     eventsRoute,
     singleEventRoute,
-    createEventRoute
+    createEventRoute,
+    statisticsRoute,
+    profileRoute
 }
 
 export {routeMap}

@@ -25,6 +25,18 @@ const events: IEventFull[] = [
         }],
         participantsLimit: 10,
         price: "5 BYN"
+    },
+    {
+        id: 555,
+        location: eventsLocations[0],
+        status: EEventStatus.STARTED,
+        dateTime: new Date(Date.now()).toDateString(),
+        description: "We hold games in formats from 4x4 to 9x9 with varying durations from 60 to 120 minutes.",
+        participants: [{
+            id: 22, user: {username: "privetenn", photo: {url: "ageeag", id: 444}}
+        }],
+        participantsLimit: 10,
+        price: "5 BYN"
     }
 ]
 
