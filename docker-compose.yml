@@ -28,7 +28,7 @@ services:
       context: .
       dockerfile: ./webapp/Dockerfile
     volumes:
-      - ./webapp/dist:/app/dist
+      - ./webapp/dist:/app/webapp/dist
     command: sh -c "npm run webapp:build"
 
   nginx:
