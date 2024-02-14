@@ -14,9 +14,5 @@ export default defineConfig({
             host: 'sport-story-hub-bot.local',
             port: 4434,
         },
-        https: {
-            key: fs.readFileSync('.cert/localhost-key.pem').toString(),
-            cert: fs.readFileSync('.cert/localhost.pem').toString(),
-        },
     },
 })

@@ -56,5 +56,10 @@
     "telegram-webapps-types-new": "^1.0.5",
     "typescript": "^5.2.2",
     "vite": "^5.0.0"
+  },
+  "overrides": {
+    "vite": {
+      "rollup": "npm:@rollup/wasm-node"
+    }
   }
 }

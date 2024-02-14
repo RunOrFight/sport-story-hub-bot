@@ -1,0 +1,53 @@
+version: '3.9'
+services:
+  postgres:
+    container_name: sport_hub_postgres
+    image: postgres
+    env_file:
+      - .env
+    ports:
+      - "7654:5432"
+
+  server_app:
+    container_name: sport_hub_server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555"
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    restart: on-failure
+    command: sh -c "npm run typeorm:migrate && npm start"
+
+  web_app:
+    container_name: sport_hub_web
+    build:
+      context: .
+      dockerfile: ./webapp/Dockerfile
+    ports:
+      - "4434:4434"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    restart: on-failure
+    command: npm run webapp:run
+
+  ngrok:
+    container_name: sport_hub_ngrok
+    image: ngrok/ngrok:latest
+    restart: unless-stopped
+    command:
+      - "start"
+      - "--all"
+      - "--config"
+      - "/etc/ngrok.yml"
+    volumes:
+      - ./ngrok/ngrok.yml:/etc/ngrok.yml
+    ports:
+      - "4040:4040"

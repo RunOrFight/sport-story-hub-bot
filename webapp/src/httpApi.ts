@@ -48,9 +48,13 @@ const withDelay = <T>(value: T): Promise<T> => {
     })
 }
 
-const BASE_URL = import.meta.env.VITE_API_URL
+const BASE_URL = 'http://localhost:5555/api'
 
-console.log(BASE_URL)
+fetch(BASE_URL + '/locations').then((res) => {
+    console.log(res)
+})
+
+console.log(BASE_URL, 'asd')
 const httpApi = {
     getEvents: async () => {
         return withDelay(events)
