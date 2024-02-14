@@ -13,8 +13,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: move to folder
-      run: cd /home/sport-story-hub-bot
+    - name: Display the path
+      run: echo $PATH
+      shell: bash
 
     - name: Pull latest changes
       run: git pull origin main
