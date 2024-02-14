@@ -13,15 +13,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Display the path
-      run: pwd
-      shell: bash
-
-    - name: Pull latest changes
-      run: git pull origin main
-
-    - name: Stop Docker Compose services
-      run: docker-compose down
-
-    - name: Build and start Docker Compose services
-      run: docker-compose up --build -d
+    - name: SSH into server and restart Docker container
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          pwd
