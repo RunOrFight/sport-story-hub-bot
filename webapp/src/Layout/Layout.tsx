@@ -1,5 +1,5 @@
 import classes from "./Layout.module.css"
-import {NavLink, Outlet} from "react-router-dom";
+import {generatePath, NavLink, Outlet} from "react-router-dom";
 import {routeMap} from "../routeMap.ts";
 import {FC} from "react";
 
@@ -22,12 +22,12 @@ const LINKS: ILink[] = [
     },
     {
         title: "Profile",
-        to: routeMap.profileRoute,
+        to: generatePath(routeMap.profileRoute, {username: Telegram.WebApp.initDataUnsafe.user?.username ?? "@@admin@@"}),
         icon: "Icon"
     }
 ]
 
-const LinkComponent: FC<ILink> = ({title, to, icon}) => {
+const LinkComponent: FC<ILink> = ({title, to}) => {
     return <NavLink to={to} className={classes.link}>
         {title}
     </NavLink>

@@ -1,6 +1,7 @@
 import {EEventStatus, IEventFull, IEventLocation, ILeaderboardRow} from "./types.ts";
-import {generateName} from "./Utils/GenerateName.ts";
+import {generateUserInfo} from "./Utils/GenerateUserInfo.ts";
 import {getRandomInt} from "./Utils/GetRandomInt.ts";
+import {getNotNil} from "./Utils/GetNotNil.ts";
 
 const eventsLocations: IEventLocation[] = [
     {
@@ -56,6 +57,24 @@ const BASE_URL = 'http://localhost:5555/api'
 //     console.log(res)
 // })
 
+const rows = new Array(99).fill(null).map((_, i) => (
+    {
+        place: i + 1,
+        winRate: getRandomInt(0, 100),
+        score: getRandomInt(50, 200),
+        ...generateUserInfo(),
+    }
+))
+
+const ADMIN_USER = {
+    username: "@@admin@@",
+    firstName: "Admin",
+    lastName: "Profile",
+    winRate: 100,
+    score: 50,
+    place: 1
+}
+
 const httpApi = {
     getEvents: async () => {
         return withDelay(events)
@@ -69,16 +88,14 @@ const httpApi = {
         return await response.json()
     },
     getLeaderboardRows: async (): Promise<ILeaderboardRow[]> => {
-        const rows = new Array(99).fill(null).map((_, i) => (
-            {
-                place: i + 1,
-                name: generateName(),
-                winRate: getRandomInt(0, 100),
-                score: getRandomInt(50, 200)
-            }
-        ))
 
         return withDelay(rows)
+    },
+    getUserFromRowsByUsername: async (username: string): Promise<ILeaderboardRow> => {
+
+        const user = username === ADMIN_USER.username ? ADMIN_USER : getNotNil(rows.find((it) => it.username === username), "getUserFromRowsByUsername")
+
+        return withDelay(user)
     }
 }
 

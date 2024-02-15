@@ -43,8 +43,10 @@ interface IEventFull extends Omit<IEventRaw, "locationId"> {
 }
 
 interface ILeaderboardRow {
+    username: string
+    firstName: string
+    lastName: string
     place: number
-    name: string
     score: number
     winRate: number
 }

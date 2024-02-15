@@ -6,6 +6,8 @@ import {clsx} from "clsx";
 import {Skeleton} from "antd";
 import {ESortDirection} from "../Models/ESortDirection.ts";
 import {sortByKey} from "../Utils/SortByKey.ts";
+import {generatePath, Link} from "react-router-dom";
+import {routeMap} from "../routeMap.ts";
 
 interface IHeadTitle {
     title: string
@@ -14,18 +16,18 @@ interface IHeadTitle {
 
 const HEAD_TITLES: IHeadTitle[] = [
     {title: "#"},
-    {title: "Name", sortKey: "name"},
+    {title: "Name", sortKey: "firstName"},
     {title: "G", sortKey: "score"},
     {title: "W/R", sortKey: "winRate"}
 ]
 
-const Row: FC<ILeaderboardRow> = ({place, name, score, winRate}) => {
-    return <div className={classes.row}>
+const Row: FC<ILeaderboardRow> = ({place, lastName, firstName, username, score, winRate}) => {
+    return <Link to={generatePath(routeMap.profileRoute, {username})} className={classes.row}>
         <span>{place}</span>
-        <span>{name}</span>
+        <span>{`${firstName} ${lastName}`}</span>
         <span>{score}</span>
         <span>{`${winRate}%`}</span>
-    </div>
+    </Link>
 }
 
 const Leaderboard = () => {
@@ -51,7 +53,8 @@ const Leaderboard = () => {
         </div>
 
         <div className={classes.body}>
-            {rows.length === 0 ? <Skeleton style={{padding: 20}}/> : rows.map((row) => <Row {...row} key={row.name}/>)}
+            {rows.length === 0 ? <Skeleton style={{padding: 20}}/> : rows.map((row) => <Row {...row}
+                                                                                            key={row.username}/>)}
         </div>
     </div>
 }

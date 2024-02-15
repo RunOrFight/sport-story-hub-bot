@@ -22,8 +22,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/telegram-webapps-types-new"
+      "../node_modules/@types",
+      "../node_modules/telegram-webapps-types-new"
     ]
   },
   "include": [
