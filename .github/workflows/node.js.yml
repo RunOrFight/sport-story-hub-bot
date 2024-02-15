@@ -16,7 +16,7 @@ jobs:
     - name: SSH into server and restart Docker container
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ inputs.hostname }}
+        host: 159.223.15.127
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SSH_PORT }}
