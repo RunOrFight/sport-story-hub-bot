@@ -21,6 +21,7 @@ jobs:
         script: |
           cd /home/sport-story-hub-bot
           git pull origin main
+          cat package.json
           npm run docker:stop
           npm run docker:clean
           npm run docker:prod
