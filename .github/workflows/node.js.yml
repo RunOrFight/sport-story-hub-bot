@@ -22,4 +22,5 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          echo GOOD JOB
+          cd /home/sport-story-hub-bot
+          git pull origin main
