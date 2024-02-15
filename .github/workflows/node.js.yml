@@ -11,9 +11,6 @@ jobs:
     environment: production
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
     - name: SSH Remote Commands
       uses: appleboy/ssh-action@v1.0.3
             
@@ -24,6 +21,6 @@ jobs:
         script: |
           cd /home/sport-story-hub-bot
           git pull origin main
-          docker-compose down
-          docker system prune -a
-          docker-compose up --build -d
+          npm run docker:stop
+          npm run docker:clean
+          npm run docker:prod
