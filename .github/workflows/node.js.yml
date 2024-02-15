@@ -24,3 +24,6 @@ jobs:
         script: |
           cd /home/sport-story-hub-bot
           git pull origin main
+          docker-compose down
+          docker system prune -a
+          docker-compose up --build -d
