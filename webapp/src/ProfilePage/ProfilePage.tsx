@@ -1,18 +1,21 @@
 import classes from "./ProfilePage.module.css"
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {httpApi} from "../httpApi.ts";
 import {ILeaderboardRow} from "../types.ts";
 import {getNotNil} from "../Utils/GetNotNil.ts";
 import {Skeleton} from "antd";
+import {routeMap} from "../routeMap.ts";
 
 const ProfilePage = () => {
     const [user, setUser] = useState<ILeaderboardRow | null>(null)
+    const navigate = useNavigate()
 
     const {username} = useParams()
 
     useEffect(() => {
-        httpApi.getUserFromRowsByUsername(getNotNil(username, "ProfilePage")).then(setUser)
+        httpApi.getUserFromRowsByUsername(getNotNil(username, "ProfilePage")).then(setUser, () => navigate(routeMap.eventsRoute))
+
     }, [username]);
 
     if (!user) {
