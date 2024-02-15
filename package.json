@@ -12,7 +12,11 @@
     "typeorm:revert": "npx typeorm-ts-node-esm migration:revert -d ./src/database/data-source-local.ts",
     "typeorm:drop": "npx typeorm-ts-node-esm schema:drop -d ./src/database/data-source-local.ts",
     "webapp:run": "vite --config webapp/vite.config.ts",
-    "webapp:build": "tsc && vite build --config webapp/vite.config.ts"
+    "webapp:build": "tsc && vite build --config webapp/vite.config.ts",
+    "docker:prod": "sh bin/docker-prod.sh",
+    "docker:dev": "sh bin/docker-dev.sh",
+    "docker:stop": "sh bin/docker-stop.sh",
+    "docker:clean": "sh bin/clean-docker-resources.sh"
   },
   "keywords": [],
   "author": "",
