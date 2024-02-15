@@ -1,4 +1,6 @@
-import {EEventStatus, IEventFull, IEventLocation} from "./types.ts";
+import {EEventStatus, IEventFull, IEventLocation, ILeaderboardRow} from "./types.ts";
+import {generateName} from "./Utils/GenerateName.ts";
+import {getRandomInt} from "./Utils/GetRandomInt.ts";
 
 const eventsLocations: IEventLocation[] = [
     {
@@ -50,11 +52,10 @@ const withDelay = <T>(value: T): Promise<T> => {
 
 const BASE_URL = 'http://localhost:5555/api'
 
-fetch(BASE_URL + '/locations').then((res) => {
-    console.log(res)
-})
+// fetch(BASE_URL + '/locations').then((res) => {
+//     console.log(res)
+// })
 
-console.log(BASE_URL, 'asd')
 const httpApi = {
     getEvents: async () => {
         return withDelay(events)
@@ -67,7 +68,18 @@ const httpApi = {
 
         return await response.json()
     },
+    getLeaderboardRows: async (): Promise<ILeaderboardRow[]> => {
+        const rows = new Array(99).fill(null).map((_, i) => (
+            {
+                place: i + 1,
+                name: generateName(),
+                winRate: getRandomInt(0, 100),
+                score: getRandomInt(50, 200)
+            }
+        ))
 
+        return withDelay(rows)
+    }
 }
 
 export {httpApi}

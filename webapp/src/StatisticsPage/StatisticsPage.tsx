@@ -1,5 +1,7 @@
+import {Leaderboard} from "../Leaderboard/Leaderboard.tsx";
+
 const StatisticsPage = () => {
-    return <div>{"Statistics"}</div>
+    return <Leaderboard/>
 }
 
 export {StatisticsPage}
