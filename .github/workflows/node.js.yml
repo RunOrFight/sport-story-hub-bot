@@ -13,8 +13,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: SSH into server and restart Docker container
-      uses: appleboy/ssh-action@master
+    - name: SSH Remote Commands
+      uses: appleboy/ssh-action@v1.0.3
+            
       with:
         host: 159.223.15.127
         username: ${{ secrets.SSH_USERNAME }}
