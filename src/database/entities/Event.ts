@@ -1,8 +1,6 @@
 import {Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn} from 'typeorm';
 import {EEventStatus} from "../../enums/EventStatus";
-import {File} from "./File";
 import {Location} from "./Location";
-import {User} from "./User";
 import {Participant} from "./Participant";
 
 @Entity('events')
