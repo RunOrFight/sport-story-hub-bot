@@ -1,0 +1,224 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"File": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"url": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"url"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"User": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"username": {
+						"type": "string"
+					},
+					"photo": {
+						"$ref": "#/components/schemas/File"
+					},
+					"wins": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"losses": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"draws": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"winRate": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"total": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"goals": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"assists": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"Elo": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"username",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"EStatisticProperty": {
+				"enum": [
+					"goals",
+					"assists",
+					"wins",
+					"losses",
+					"draws"
+				],
+				"type": "string"
+			},
+			"TUserStatisticUpdatePayload": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"type": {
+						"$ref": "#/components/schemas/EStatisticProperty"
+					}
+				},
+				"required": [
+					"id",
+					"type"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "sportstoryhubbl",
+		"version": "1.0.0",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/api/user/all": {
+			"get": {
+				"operationId": "GetAllUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/User"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/user/update": {
+			"put": {
+				"operationId": "UpdateUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TUserStatisticUpdatePayload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/participant/all": {
+			"get": {
+				"operationId": "GetAllParticipants",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/User"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Participant"
+				],
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

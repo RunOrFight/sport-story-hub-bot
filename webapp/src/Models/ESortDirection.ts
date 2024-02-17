@@ -1,6 +1,6 @@
 enum ESortDirection {
-    asc = "ASC",
-    desc = "DESC"
+  asc = "ASC",
+  desc = "DESC",
 }
 
-export {ESortDirection}
+export { ESortDirection };

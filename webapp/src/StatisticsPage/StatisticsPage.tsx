@@ -1,7 +1,7 @@
-import {Leaderboard} from "../Leaderboard/Leaderboard.tsx";
+import { Leaderboard } from "../Leaderboard/Leaderboard.tsx";
 
 const StatisticsPage = () => {
-    return <Leaderboard/>
-}
+  return <Leaderboard />;
+};
 
-export {StatisticsPage}
+export { StatisticsPage };
