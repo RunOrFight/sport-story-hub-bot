@@ -7,7 +7,7 @@ import { Get, Route, Tags } from "tsoa";
 @Tags("Participant")
 export class ParticipantController {
   @Get("/all")
-  async getAllParticipants(): Promise<User[]> {
+  async getAllParticipants(): Promise<Omit<User, "createdAt" | "updatedAt">[]>{
     return await userService.getAllUsers();
   }
 }

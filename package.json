@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ",
+    "dev": "nodemon",
     "dev:swagger": "concurrently \"nodemon\" \"nodemon -x tsoa spec\"",
     "predev": "npm run swagger",
     "swagger": "tsoa spec",
     "build": "rimraf ./build && tsc",
+    "production": "node build/index.js",
     "typeorm:generate": "sh bin/migration-generate.sh",
     "typeorm:create": "sh bin/migration-create.sh",
     "typeorm:migrate": "npx typeorm-ts-node-commonjs migration:run -d ./src/database/data-source-local.ts",

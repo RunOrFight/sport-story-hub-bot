@@ -3,14 +3,24 @@ import { Request, Response } from "express";
 import { User } from "../database/entities/User";
 import { IUserStatisticUpdate } from "../interfaces/user.interface";
 import { TUserStatisticUpdatePayload } from "../types/user.types";
-import { Body, Get, Post, Put, Route, Tags } from "tsoa";
+import { Body, Get, Path, Post, Put, Route, Tags } from "tsoa";
 
 @Route("/api/user")
 @Tags("User")
 export class UserController {
   @Get("/all")
-  async getAllUsers(): Promise<User[]> {
-    return await userService.getAllUsers();
+  async getAllUsers() {
+    return userService.getAllUsers();
+  }
+
+  @Get("getById/{id}")
+  async getUserById(@Path() id: number) {
+    return userService.getUserById(id);
+  }
+
+  @Get("getByUserName/{username}")
+  async getUserByUsername(@Path() username: string) {
+    return userService.getUserByUsername(username);
   }
 
   @Put("/update")
