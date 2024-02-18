@@ -33,6 +33,12 @@
 					"username": {
 						"type": "string"
 					},
+					"name": {
+						"type": "string"
+					},
+					"surname": {
+						"type": "string"
+					},
 					"photo": {
 						"$ref": "#/components/schemas/File"
 					},

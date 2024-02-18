@@ -22,7 +22,7 @@ services:
     env_file:
       - .env
     restart: on-failure
-    command: sh -c "npm run typeorm:migrate && npm run dev"
+    command: sh -c "npm run typeorm:migrate && npm run typeorm:seed:all && npm run dev"
 
   web_app:
     container_name: sport_hub_web

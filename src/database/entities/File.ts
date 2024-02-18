@@ -1,10 +1,10 @@
-import {Entity, PrimaryGeneratedColumn, Column} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
-@Entity('files')
+@Entity("files")
 export class File {
-    @PrimaryGeneratedColumn()
-    id!: number;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-    @Column()
-    url!: string;
+  @Column({nullable: false})
+  url!: string;
 }

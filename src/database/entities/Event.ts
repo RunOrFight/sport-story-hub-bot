@@ -1,32 +1,44 @@
-import {Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn} from 'typeorm';
-import {EEventStatus} from "../../enums/EventStatus";
-import {Location} from "./Location";
-import {Participant} from "./Participant";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { EEventStatus } from "../../enums/event-status.enum";
+import { Location } from "./Location";
+import { Participant } from "./Participant";
 
-@Entity('events')
+@Entity("events")
 export class Event {
-    @PrimaryGeneratedColumn()
-    id!: number;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-    @Column({type: 'timestamp', nullable: true, name: 'date_time'})
-    dateTime!: Date;
+  @Column({ type: "timestamp", nullable: true, name: "date_time" })
+  dateTime?: Date;
 
-    @Column({})
-    price!: string;
+  @Column({nullable: true})
+  price?: string;
 
-    @Column({nullable: true, default: EEventStatus.WAITING})
-    status!: EEventStatus;
+  @Column({
+    nullable: true,
+    default: EEventStatus.WAITING,
+    type: "enum",
+    enum: EEventStatus,
+  })
+  status?: EEventStatus;
 
-    @Column({nullable: true})
-    participantsLimit?: number;
+  @Column({ nullable: true })
+  participantsLimit?: number;
 
-    @Column({nullable: true})
-    description?: string;
+  @Column({ nullable: true })
+  description?: string;
 
-    @OneToOne(() => Location)
-    @JoinColumn({name: 'location_id'})
-    location!: Location;
+  @OneToOne(() => Location)
+  @JoinColumn({ name: "location_id" })
+  location?: Location;
 
-    @OneToMany(() => Participant, participant => participant.event)
-    participants!: Participant[];
+  @OneToMany(() => Participant, (participant) => participant.event)
+  participants!: Participant[];
 }

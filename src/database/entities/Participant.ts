@@ -1,25 +1,39 @@
-import {Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, ManyToOne, Index} from 'typeorm';
-import {User} from "./User";
-import {Event} from "./Event";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  JoinColumn,
+  OneToOne,
+  ManyToOne,
+  Index,
+} from "typeorm";
+import { User } from "./User";
+import { Event } from "./Event";
 
-@Entity('participants')
-@Index(['user', 'event'], {unique: true}) //  where: "(user_id <> user_id with username == player)"
+@Entity("participants")
+@Index(["user", "event"], { unique: true }) //  where: "(user_id <> user_id with username == player)"
 export class Participant {
-    @PrimaryGeneratedColumn()
-    id!: number;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-    @Column({default: false})
-    waitList!: boolean;
+  @Column({ default: false })
+  waitList!: boolean;
 
-    @ManyToOne(() => User, {nullable: false})
-    @JoinColumn({name: 'user_id'})
-    user!: User;
+  @ManyToOne(() => User, { nullable: false })
+  @JoinColumn({ name: "user_id" })
+  user!: User;
 
-    @ManyToOne(() => Event, {nullable: false})
-    @JoinColumn({name: 'event_id'})
-    event!: Event;
+  @ManyToOne(() => Event, { nullable: false })
+  @JoinColumn({ name: "event_id" })
+  event!: Event;
 
-    @ManyToOne(() => Participant, {nullable: true})
-    @JoinColumn({name: 'parent_participant_id'})
-    parentParticipant?: Participant;
+  @ManyToOne(() => Participant, { nullable: true })
+  @JoinColumn({ name: "parent_participant_id" })
+  parentParticipant?: Participant;
+
+  @Column({ nullable: true, default: 0 })
+  goals: number = 0;
+
+  @Column({ nullable: true, default: 0 })
+  assists: number = 0;
 }

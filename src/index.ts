@@ -1,300 +1,367 @@
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 import TelegramBot from "node-telegram-bot-api";
-import {registerBotEventHandler} from "./logger";
-import {t, tKeys} from "./tKeys";
-import {createEventMessage} from "./createEventMessage";
-import express from "express"
-import cors from "cors"
+import { registerBotEventHandler } from "./logger";
+import { t, tKeys } from "./tKeys";
+import { createEventMessage } from "./createEventMessage";
+import express from "express";
+import cors from "cors";
 import chalk from "chalk";
-import {Event} from './database/entities/Event'
-import {User} from './database/entities/User'
-import {Location} from "./database/entities/Location";
-import db from './database'
+import { Event } from "./database/entities/Event";
+import { User } from "./database/entities/User";
+import { Location } from "./database/entities/Location";
+import db from "./database";
 import "reflect-metadata";
-import {Participant} from "./database/entities/Participant";
-import {assertIsRawEvent} from "./typeGuards";
+import { Participant } from "./database/entities/Participant";
+import { assertIsRawEvent } from "./typeGuards";
 import path from "path";
+import { MainRouter } from "./routers";
+import { FindOneOptions } from "typeorm";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "../public/swagger.json";
 
+dotenv.config();
 
-dotenv.config()
+const app = express();
 
-const app = express()
-
-
-app.use(express.json())
+app.use(express.json());
 app.use(cors());
 
-(async function () {
-    await db.initialize();
+if (process.env.NODE_ENV === "dev") {
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
 
-    app.get('/api', (_req, res) => {
-        const path = `/api/events`;
-        res.setHeader('Content-Type', 'text/html');
-        res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
-        res.end(`Hello! Go to events: <a href="${path}">${path}</a>`);
+app.use("/api", MainRouter);
+
+(async function() {
+  await db.initialize();
+
+  app.get("/api", (_req, res) => {
+    const path = `/api/events`;
+    res.setHeader("Content-Type", "text/html");
+    res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
+    res.end(`Hello! Go to events: <a href="${path}">${path}</a>`);
+  });
+
+  app.get("/api/events", (_req, res) => {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    res.json({ name: "John Doe" });
+  });
+
+  app.get("/api/locations", async (_req, res) => {
+    const locations = await db
+      .getRepository(Location)
+      .createQueryBuilder("locations")
+      .leftJoinAndSelect("locations.preview", "locationPreview")
+      .getMany();
+
+    res.statusCode = 200;
+    res.send(locations);
+  });
+
+  app.get("/api/images/:imageName", (req, res) => {
+    const imagesFolder = path.join(__dirname, "images");
+    const imageName = req.params.imageName;
+    const imagePath = path.join(imagesFolder, imageName);
+
+    // Отправляем изображение в ответе
+    res.sendFile(imagePath, {}, (err) => {
+      if (err) {
+        console.error(err);
+        res.status(404).send("Not Found");
+      }
     });
+  });
 
-    app.get("/api/events", (_req, res) => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json({name: 'John Doe'});
-    })
+  const bot = new TelegramBot(process.env.TELEGRAM_BOT_ACCESS_TOKEN!, {
+    polling: true,
+  });
+  console.log(chalk.bgCyan("TELEGRAM BOT CREATED"));
 
-    app.get("/api/locations", async (_req, res) => {
-        const locations = await db.getRepository(Location).createQueryBuilder('locations')
-            .leftJoinAndSelect('locations.preview', 'locationPreview')
-            .getMany();
+  bot.on(
+    ...registerBotEventHandler("message", async (msg) => {
+      const chatId = msg.chat.id;
 
-        res.statusCode = 200;
-        res.send(locations);
-    })
+      if (msg.web_app_data?.data) {
+        return;
+      }
 
-    app.get('/api/images/:imageName', (req, res) => {
-        const imagesFolder = path.join(__dirname, 'images');
-        const imageName = req.params.imageName;
-        const imagePath = path.join(imagesFolder, imageName);
+      await bot.sendMessage(chatId, t(tKeys.useButtonsHint), {
+        reply_markup: {
+          keyboard: [
+            [
+              {
+                text: t(tKeys.webAppButton),
+                web_app: { url: process.env.WEB_APP_URL! },
+              },
+            ],
+          ],
+        },
+      });
+    }),
+  );
 
-        // Отправляем изображение в ответе
-        res.sendFile(imagePath, {}, (err) => {
-            if (err) {
-                console.error(err);
-                res.status(404).send('Not Found');
-            }
-        });
-    });
+  bot.on(
+    ...registerBotEventHandler("web_app_data", async (msg) => {
+      const dataString = msg.web_app_data?.data;
 
+      if (!dataString) {
+        throw "dataString is not received";
+      }
 
-    const bot = new TelegramBot(process.env.TELEGRAM_BOT_ACCESS_TOKEN!, {polling: true});
-    console.log(chalk.bgCyan("TELEGRAM BOT CREATED"))
+      const parsedData = assertIsRawEvent(JSON.parse(dataString));
+      const locationRepository = db.getRepository(Location);
+      // TODO: edit 1 to parsedData.locationId
+      const location = await locationRepository.findOne({ where: { id: 1 } });
 
-    bot.on(...registerBotEventHandler('message', async (msg) => {
-        const chatId = msg.chat.id;
+      if (!location) {
+        throw "No location";
+      }
 
-        if (msg.web_app_data?.data) {
-            return
-        }
+      const newEvent = new Event();
 
-        await bot.sendMessage(chatId, t(tKeys.useButtonsHint), {
-            reply_markup: {
-                keyboard: [
-                    [{text: t(tKeys.webAppButton), web_app: {url: process.env.WEB_APP_URL!}}]
-                ],
-            }
-        })
-    }));
+      newEvent.location = location;
+      newEvent.dateTime = new Date(parsedData.dateTime);
+      newEvent.price = parsedData.price;
+      newEvent.participantsLimit = parsedData.participantsLimit;
+      newEvent.description = parsedData.description;
+      await db.getRepository(Event).save(newEvent);
 
-    bot.on(...registerBotEventHandler("web_app_data", async (msg) => {
-        const dataString = msg.web_app_data?.data
+      const event = await db
+        .getRepository(Event)
+        .createQueryBuilder("events")
+        .where("events.id = :id", { id: newEvent.id })
+        .leftJoinAndSelect("events.location", "location")
+        .leftJoinAndSelect("location.preview", "preview")
+        .leftJoinAndSelect("events.participants", "participants")
+        .leftJoinAndSelect("participants.user", "user")
+        .leftJoinAndSelect("user.photo", "photo")
+        .getOne();
 
-        if (!dataString) {
-            throw "dataString is not received"
-        }
+      if (!event) {
+        throw new Error("eroeroe");
+      }
 
-        const parsedData = assertIsRawEvent(JSON.parse(dataString));
-        const locationRepository = db.getRepository(Location);
-        // TODO: edit 1 to parsedData.locationId
-        const location = await locationRepository.findOne({where: {id: 1}});
+      await bot.sendMessage(msg.chat.id, createEventMessage(event), {
+        parse_mode: "HTML",
+        disable_web_page_preview: true,
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                switch_inline_query: event.id.toString(),
+                text: t(tKeys.botMessageShare),
+              },
+            ],
+          ],
+        },
+      });
+    }),
+  );
 
-        if (!location) {
-            throw "No location";
-        }
+  const createQueryReplyMarkup = (eventId: string) => ({
+    inline_keyboard: [
+      [
+        { text: t(tKeys.eventMessageJoin), callback_data: `join_${eventId}` },
+        {
+          text: t(tKeys.eventMessageLeave),
+          callback_data: `leave_${eventId}`,
+        },
+      ],
+    ],
+  });
 
-        const newEvent = new Event();
+  bot.on(
+    ...registerBotEventHandler("inline_query", async (msg) => {
+      const eventId = msg.query;
 
-        newEvent.location = location;
-        newEvent.dateTime = new Date(parsedData.dateTime);
-        newEvent.price = parsedData.price;
-        newEvent.participantsLimit = parsedData.participantsLimit;
-        newEvent.description = parsedData.description;
-        await db.getRepository(Event).save(newEvent)
+      const event = await db
+        .getRepository(Event)
+        .createQueryBuilder("events")
+        .where("events.id = :id", { id: eventId })
+        .leftJoinAndSelect("events.location", "location")
+        .leftJoinAndSelect("location.preview", "preview")
+        .leftJoinAndSelect("events.participants", "participants")
+        .leftJoinAndSelect("participants.user", "user")
+        .leftJoinAndSelect("user.photo", "photo")
+        .getOne();
 
+      if (!event) {
+        throw new Error(`cannot find event with id: ${eventId}`);
+      }
 
-        const event = await db.getRepository(Event).createQueryBuilder('events')
-            .where("events.id = :id", {id: newEvent.id})
-            .leftJoinAndSelect('events.location', 'location')
-            .leftJoinAndSelect('location.preview', 'preview')
-            .leftJoinAndSelect('events.participants', 'participants')
-            .leftJoinAndSelect('participants.user', 'user')
-            .leftJoinAndSelect('user.photo', 'photo')
-            .getOne();
-
-
-        if (!event) {
-            throw new Error('eroeroe');
-        }
-
-        await bot.sendMessage(msg.chat.id, createEventMessage(event), {
+      await bot.answerInlineQuery(msg.id, [
+        {
+          title: "Event",
+          id: event.id.toString(),
+          type: "article",
+          input_message_content: {
             parse_mode: "HTML",
             disable_web_page_preview: true,
-            reply_markup: {
-                inline_keyboard: [
-                    [{switch_inline_query: event.id.toString(), text: t(tKeys.botMessageShare)}]
-                ]
-            }
-        })
-    }))
+            message_text: createEventMessage(event),
+          },
+          reply_markup: createQueryReplyMarkup(event.id.toString()),
+        },
+      ]);
+    }),
+  );
 
-    const createQueryReplyMarkup = (eventId: string) => ({
-        inline_keyboard: [
-            [
-                {text: t(tKeys.eventMessageJoin), callback_data: `join_${eventId}`},
-                {
-                    text: t(tKeys.eventMessageLeave), callback_data: `leave_${eventId}`
-                }]
-        ]
-    })
+  bot.on(
+    ...registerBotEventHandler("callback_query", async (msg) => {
+      try {
+        if (!msg.from.username) {
+          throw "message without username received";
+        }
 
-    bot.on(...registerBotEventHandler("inline_query", async (msg) => {
-        const eventId = msg.query
+        let user = await db
+          .getRepository(User)
+          .findOne({ where: { username: msg.from.username } });
 
-        const event = await db.getRepository(Event).createQueryBuilder('events')
-            .where("events.id = :id", {id: eventId})
-            .leftJoinAndSelect('events.location', 'location')
-            .leftJoinAndSelect('location.preview', 'preview')
-            .leftJoinAndSelect('events.participants', 'participants')
-            .leftJoinAndSelect('participants.user', 'user')
-            .leftJoinAndSelect('user.photo', 'photo')
-            .getOne();
+        if (!user) {
+          user = new User();
+          user.username = msg.from.username;
+          await db.getRepository(User).save(user);
+          user = await db
+            .getRepository(User)
+            .findOne({ where: { username: msg.from.username } });
+        }
 
+        if (!user) {
+          throw new Error("user error");
+        }
+
+        // @ts-ignore
+        const eventId = msg.data?.split("_")[1] ?? "";
+
+        const event = await db
+          .getRepository(Event)
+          .createQueryBuilder("events")
+          .where("events.id = :id", { id: eventId })
+          .leftJoinAndSelect("events.location", "location")
+          .leftJoinAndSelect("location.preview", "preview")
+          .leftJoinAndSelect("events.participants", "participants")
+          .leftJoinAndSelect("participants.user", "user")
+          .leftJoinAndSelect("user.photo", "photo")
+          .leftJoinAndSelect(
+            "participants.parentParticipant",
+            "parentParticipant",
+          )
+          .leftJoinAndSelect("parentParticipant.user", "parentParticipantUser")
+          .getOne();
         if (!event) {
-            throw new Error(`cannot find event with id: ${eventId}`)
+          throw new Error(`cannot find event with id: ${eventId}`);
         }
 
-        await bot.answerInlineQuery(msg.id, [{
-            title: "Event", id: event.id.toString(),
-            type: "article",
-            input_message_content: {
-                parse_mode: "HTML",
-                disable_web_page_preview: true,
-                message_text: createEventMessage(event)
-            },
-            reply_markup: createQueryReplyMarkup(event.id.toString())
+        const userInParticipants = event.participants.find(
+          (participant: Participant) =>
+            participant.user.username === user!.username &&
+            !participant.waitList,
+        );
+        const userInWaitList = event.participants.find(
+          (participant: Participant) =>
+            participant.user.username === user!.username &&
+            participant.waitList,
+        );
 
-        }])
-    }))
+        if (msg.data?.startsWith("join")) {
+          const participant = new Participant();
+          participant.event = event;
 
-    bot.on(...registerBotEventHandler("callback_query", async (msg) => {
-        try {
-            if (!msg.from.username) {
-                throw "message without username received"
+          if (userInParticipants || userInWaitList) {
+            const unknownPlayer = await db
+              .getRepository(User)
+              .findOne({ where: { username: "player" } });
+            participant.user = unknownPlayer!;
+            participant.parentParticipant =
+              userInParticipants ?? userInWaitList;
+          } else {
+            participant.user = user;
+          }
+
+          if (
+            event.participantsLimit &&
+            event.participants.length >= event.participantsLimit
+          ) {
+            participant.waitList = true;
+          }
+
+          await db.getRepository(Participant).save(participant);
+        } else if (msg.data?.startsWith("leave")) {
+          if (!userInParticipants && !userInWaitList) {
+            throw new Error("user not participant");
+          } else {
+            console.log(userInParticipants);
+            const childParticipant = await db
+              .getRepository(Participant)
+              .findOne({
+                where: { parentParticipant: userInParticipants },
+              } as FindOneOptions<Participant>);
+            console.log(childParticipant);
+            const participantId =
+              childParticipant?.id ??
+              userInParticipants?.id ??
+              userInWaitList?.id;
+            await db.getRepository(Participant).delete({ id: participantId });
+            const participantsInWaitList = await db
+              .getRepository(Participant)
+              .find({
+                where: { waitList: true },
+                order: { id: "ASC" },
+              });
+
+            if (!userInWaitList) {
+              const firstUserInWaitList = participantsInWaitList[0];
+              if (firstUserInWaitList) {
+                await db
+                  .getRepository(Participant)
+                  .update({ id: firstUserInWaitList.id }, { waitList: false });
+              }
             }
-
-            let user = await db.getRepository(User).findOne({where: {username: msg.from.username}})
-
-            if (!user) {
-                user = new User()
-                user.username = msg.from.username;
-                await db.getRepository(User).save(user);
-                user = await db.getRepository(User).findOne({where: {username: msg.from.username}})
-            }
-
-            if (!user) {
-                throw new Error('user error')
-            }
-
-            // @ts-ignore
-            const eventId = msg.data?.split("_")[1] ?? ""
-
-            const event = await db.getRepository(Event).createQueryBuilder('events')
-                .where("events.id = :id", {id: eventId})
-                .leftJoinAndSelect('events.location', 'location')
-                .leftJoinAndSelect('location.preview', 'preview')
-                .leftJoinAndSelect('events.participants', 'participants')
-                .leftJoinAndSelect('participants.user', 'user')
-                .leftJoinAndSelect('user.photo', 'photo')
-                .leftJoinAndSelect('participants.parentParticipant', 'parentParticipant')
-                .leftJoinAndSelect('parentParticipant.user', 'parentParticipantUser')
-                .getOne();
-            if (!event) {
-                throw new Error(`cannot find event with id: ${eventId}`)
-            }
-
-            const userInParticipants = event.participants.find((participant: Participant) => participant.user.username === user!.username && !participant.waitList);
-            const userInWaitList = event.participants.find((participant: Participant) => participant.user.username === user!.username && participant.waitList);
-
-            if (msg.data?.startsWith("join")) {
-
-                const participant = new Participant()
-                participant.event = event;
-
-
-                if (userInParticipants || userInWaitList) {
-                    const unknownPlayer = await db.getRepository(User).findOne({where: {username: 'player'}});
-                    participant.user = unknownPlayer!;
-                    participant.parentParticipant = userInParticipants ?? userInWaitList;
-                } else {
-                    participant.user = user;
-                }
-
-
-                if (event.participantsLimit && event.participants.length >= event.participantsLimit) {
-                    participant.waitList = true;
-                }
-
-
-                await db.getRepository(Participant).save(participant);
-
-            } else if (msg.data?.startsWith("leave")) {
-
-                if (!userInParticipants && !userInWaitList) {
-                    throw new Error('user not participant');
-                } else {
-                    console.log(userInParticipants);
-                    const childParticipant = await db.getRepository(Participant).findOne({where: {parentParticipant: userInParticipants ?? userInWaitList}})
-                    console.log(childParticipant);
-                    const participantId = childParticipant?.id ?? userInParticipants?.id ?? userInWaitList?.id;
-                    await db.getRepository(Participant).delete({id: participantId});
-                    const participantsInWaitList = await db.getRepository(Participant).find({
-                        where: {waitList: true},
-                        order: {id: 'ASC'}
-                    })
-
-                    if (!userInWaitList) {
-                        const firstUserInWaitList = participantsInWaitList[0];
-                        if (firstUserInWaitList) {
-                            await db.getRepository(Participant).update({id: firstUserInWaitList.id}, {waitList: false})
-                        }
-                    }
-                }
-            }
-
-            const qweEvent = await db.getRepository(Event).createQueryBuilder('events')
-                .where("events.id = :id", {id: eventId})
-                .leftJoinAndSelect('events.location', 'location')
-                .leftJoinAndSelect('location.preview', 'preview')
-                .leftJoinAndSelect('events.participants', 'participants')
-                .leftJoinAndSelect('participants.user', 'user')
-                .leftJoinAndSelect('user.photo', 'photo')
-                .leftJoinAndSelect('participants.parentParticipant', 'parentParticipant')
-                .leftJoinAndSelect('parentParticipant.user', 'parentParticipantUser')
-                .getOne();
-
-
-            if (!qweEvent) {
-                throw new Error('qweqwe');
-            }
-
-            await bot.editMessageText(createEventMessage(qweEvent), {
-                parse_mode: "HTML",
-                disable_web_page_preview: true,
-                inline_message_id: msg.inline_message_id,
-                reply_markup: createQueryReplyMarkup(eventId),
-            })
-        } catch (err) {
-            console.error(err);
-            throw err;
+          }
         }
 
-    }))
+        const qweEvent = await db
+          .getRepository(Event)
+          .createQueryBuilder("events")
+          .where("events.id = :id", { id: eventId })
+          .leftJoinAndSelect("events.location", "location")
+          .leftJoinAndSelect("location.preview", "preview")
+          .leftJoinAndSelect("events.participants", "participants")
+          .leftJoinAndSelect("participants.user", "user")
+          .leftJoinAndSelect("user.photo", "photo")
+          .leftJoinAndSelect(
+            "participants.parentParticipant",
+            "parentParticipant",
+          )
+          .leftJoinAndSelect("parentParticipant.user", "parentParticipantUser")
+          .getOne();
 
+        if (!qweEvent) {
+          throw new Error("qweqwe");
+        }
 
-    // app.get("/events", (req, res) => {
-    //     res.send(events)
-    // })
+        await bot.editMessageText(createEventMessage(qweEvent), {
+          parse_mode: "HTML",
+          disable_web_page_preview: true,
+          inline_message_id: msg.inline_message_id,
+          reply_markup: createQueryReplyMarkup(eventId),
+        });
+      } catch (err) {
+        console.error(err);
+        throw err;
+      }
+    }),
+  );
 
-    const expressAppPort = process.env.EXPRESS_APP_PORT!
-    app.listen(expressAppPort, () => {
-        console.log(chalk.bgBlue("EXPRESS STARTED"), chalk.blue(`port -> "${expressAppPort}"`))
-    })
+  // app.get("/events", (req, res) => {
+  //     res.send(events)
+  // })
 
+  const expressAppPort = process.env.EXPRESS_APP_PORT!;
+  app.listen(expressAppPort, () => {
+    console.log(
+      chalk.bgBlue("EXPRESS STARTED"),
+      chalk.blue(`port -> "${expressAppPort}"`),
+    );
+  });
 })();
