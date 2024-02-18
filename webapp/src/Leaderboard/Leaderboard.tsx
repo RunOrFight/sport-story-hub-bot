@@ -1,33 +1,85 @@
 import classes from "./Leaderboard.module.css";
-import { FC, useEffect, useState } from "react";
-import { httpApi } from "../httpApi.ts";
-import { ILeaderboardRow } from "../types.ts";
+import { FC, useState } from "react";
 import { clsx } from "clsx";
 import { Skeleton } from "antd";
 import { ESortDirection } from "../Models/ESortDirection.ts";
 import { sortByKey } from "../Utils/SortByKey.ts";
 import { generatePath, Link } from "react-router-dom";
 import { routeMap } from "../routeMap.ts";
+import { useHttpRequestOnMount } from "../Hooks/UseHttpRequestOnMount.ts";
+import { EmptyLeaderboard } from "../Empty/Empty.tsx";
+import { isEmpty } from "../Utils/OneLineUtils.ts";
+import { TUser } from "../Models/TUser.ts";
+import { numberFormatter } from "../Utils/NumberFormatter.ts";
+
+interface ILeaderboardUser extends TUser {
+  place: number;
+}
 
 interface IHeadTitle {
   title: string;
-  sortKey?: keyof ILeaderboardRow;
+  sortKey?: keyof ILeaderboardUser;
 }
 
 const HEAD_TITLES: IHeadTitle[] = [
-  { title: "#" },
-  { title: "Name", sortKey: "firstName" },
-  { title: "G", sortKey: "score" },
+  { title: "#", sortKey: "place" },
+  { title: "Name", sortKey: "name" },
+  { title: "Elo", sortKey: "Elo" },
+  { title: "G", sortKey: "goals" },
   { title: "W/R", sortKey: "winRate" },
 ];
 
-const Row: FC<ILeaderboardRow> = ({
+const normalizeUsers = ({ users }: { users: TUser[] }) => {
+  const distributedUsers: ILeaderboardUser[] = [];
+
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+
+    if (i === 0) {
+      distributedUsers.push({ ...user, place: 1 });
+      continue;
+    }
+
+    let distributedUserPlace: number | undefined;
+
+    const distributedUsersCount = distributedUsers.length;
+
+    for (let k = 0; k < distributedUsersCount; k++) {
+      const distributedUser = distributedUsers[k];
+      if (distributedUser.Elo < user.Elo) {
+        distributedUserPlace = distributedUser.place;
+      }
+    }
+
+    if (distributedUserPlace === undefined) {
+      distributedUsers.push({
+        ...user,
+        place: distributedUsersCount + 1,
+      });
+      continue;
+    }
+
+    for (let k = 0; k < distributedUsersCount; k++) {
+      if (distributedUsers[k].place < distributedUserPlace) {
+        continue;
+      }
+      distributedUsers[k].place = distributedUsers[k].place + 1;
+    }
+
+    distributedUsers.push({ ...user, place: distributedUserPlace });
+  }
+
+  return sortByKey(distributedUsers, "place");
+};
+
+const Row: FC<ILeaderboardUser> = ({
   place,
-  lastName,
-  firstName,
+  name,
+  surname,
   username,
-  score,
+  goals,
   winRate,
+  Elo,
 }) => {
   return (
     <Link
@@ -35,27 +87,32 @@ const Row: FC<ILeaderboardRow> = ({
       className={classes.row}
     >
       <span>{place}</span>
-      <span>{`${firstName} ${lastName}`}</span>
-      <span>{score}</span>
-      <span>{`${winRate}%`}</span>
+      <span>{`${name ?? "No"} ${surname ?? "Name"}`}</span>
+      <span>{Elo}</span>
+      <span>{goals}</span>
+      <span>{`${numberFormatter.format(winRate)}%`}</span>
     </Link>
   );
 };
 
 const Leaderboard = () => {
-  const [rows, setRows] = useState<ILeaderboardRow[]>([]);
   const [sortDirection, setSortDirection] = useState(ESortDirection.asc);
 
-  useEffect(() => {
-    httpApi.getLeaderboardRows().then(setRows);
-  }, []);
+  const { data: allUsers, setData: setAllUsers } = useHttpRequestOnMount(
+    "getAllUsers",
+    normalizeUsers,
+  );
 
-  const onHeadClickHandler = (sortKey: keyof ILeaderboardRow) => {
+  if (allUsers === null || isEmpty(allUsers)) {
+    return <EmptyLeaderboard />;
+  }
+
+  const onHeadClickHandler = (sortKey: keyof ILeaderboardUser) => {
     return () => {
       setSortDirection((it) =>
         it === ESortDirection.asc ? ESortDirection.desc : ESortDirection.asc,
       );
-      setRows(sortByKey(rows, sortKey, sortDirection));
+      setAllUsers(sortByKey(allUsers, sortKey, sortDirection));
     };
   };
 
@@ -73,10 +130,10 @@ const Leaderboard = () => {
       </div>
 
       <div className={classes.body}>
-        {rows.length === 0 ? (
+        {allUsers.length === 0 ? (
           <Skeleton style={{ padding: 20 }} />
         ) : (
-          rows.map((row) => <Row {...row} key={row.username} />)
+          allUsers.map((row) => <Row {...row} key={row.username} />)
         )}
       </div>
     </div>

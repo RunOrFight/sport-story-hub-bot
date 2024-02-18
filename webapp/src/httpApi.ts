@@ -1,12 +1,8 @@
-import {
-  EEventStatus,
-  IEventFull,
-  IEventLocation,
-  ILeaderboardRow,
-} from "./types.ts";
+import { EEventStatus, IEventFull, IEventLocation } from "./types.ts";
 import { generateUserInfo } from "./Utils/GenerateUserInfo.ts";
 import { getRandomInt } from "./Utils/GetRandomInt.ts";
 import { getNotNil } from "./Utils/GetNotNil.ts";
+import { TUser } from "./Models/TUser.ts";
 
 const eventsLocations: IEventLocation[] = [
   {
@@ -98,12 +94,16 @@ const httpApi = {
 
     return await response.json();
   },
-  getLeaderboardRows: async (): Promise<ILeaderboardRow[]> => {
-    return withDelay(rows);
+  getAllUsers: async (): Promise<{ users: TUser[] }> => {
+    const response = await fetch(`${BASE_URL}/user/all`);
+    if (!response.ok) {
+      console.error(response.statusText);
+
+      return { users: [] };
+    }
+    return await response.json();
   },
-  getUserFromRowsByUsername: async (
-    username: string,
-  ): Promise<ILeaderboardRow> => {
+  getUserFromRowsByUsername: async (username: string): Promise<any> => {
     const user =
       username === ADMIN_USER.username
         ? ADMIN_USER
@@ -116,4 +116,6 @@ const httpApi = {
   },
 };
 
-export { httpApi };
+type THttpApi = typeof httpApi;
+
+export { httpApi, type THttpApi };

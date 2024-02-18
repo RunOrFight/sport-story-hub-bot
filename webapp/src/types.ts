@@ -42,14 +42,5 @@ interface IEventFull extends Omit<IEventRaw, "locationId"> {
   status: EEventStatus;
 }
 
-interface ILeaderboardRow {
-  username: string;
-  firstName: string;
-  lastName: string;
-  place: number;
-  score: number;
-  winRate: number;
-}
-
-export type { IEventRaw, IEventFull, IEventLocation, IUser, ILeaderboardRow };
+export type { IEventRaw, IEventFull, IEventLocation, IUser };
 export { EEventStatus };

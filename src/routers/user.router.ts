@@ -6,6 +6,8 @@ export const UserRouter = Router();
 
 const userController = new UserController();
 
+type TUserController = typeof userController;
+
 UserRouter.get("/all", async (req, res) => {
   const data = await userController.getAllUsers();
   res.status(200).json({ users: data });
@@ -34,3 +36,5 @@ UserRouter.put(
     res.status(200).json(updatedUser);
   },
 );
+
+export type { TUserController };
