@@ -7,17 +7,42 @@ export default class UserSeeder extends Seeder {
   private name = "add_basic_users";
 
   async run(dataSource: DataSource) {
-    const seedWasUsed = await dataSource.createEntityManager().getRepository('seeders').findOne({ where: { name: this.name } });
+    const seedWasUsed = await dataSource
+      .createEntityManager()
+      .getRepository("seeders")
+      .findOne({ where: { name: this.name } });
     if (!seedWasUsed) {
-      const fakeNames = ["Vas9", "Pet9", "Andrew", "Max", "Bobby"];
-      const fakeSurnames = ["Rijiy", "Jirniy", "Valenok", "Mad", "Dilan"];
+      const fakeNames = [
+        "Vas9",
+        "Pet9",
+        "Andrew",
+        "Max",
+        "Bobby",
+        "John",
+        "Roman",
+        "Yanka",
+        "Yakub",
+        "Vasil",
+      ];
+      const fakeSurnames = [
+        "Rijiy",
+        "Jirniy",
+        "Valenok",
+        "Mad",
+        "Dilan",
+        "Gold",
+        "Raduw",
+        "Kupala",
+        "Kolas",
+        "Bikov",
+      ];
       const users = [];
 
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 15; i++) {
         const newUser = new User();
         newUser.username = `user_${i + 1}`;
-        newUser.name = i < 5 ? fakeNames[i] : undefined;
-        newUser.surname = i < 5 ? fakeSurnames[i] : undefined;
+        newUser.name = i < 10 ? fakeNames[i] : undefined;
+        newUser.surname = i < 10 ? fakeSurnames[i] : undefined;
         newUser.wins = Math.min(Math.floor(Math.random() * 100), 100);
         newUser.losses = Math.min(Math.floor(Math.random() * 100), 100);
         newUser.draws = Math.min(Math.floor(Math.random() * 100), 100);
@@ -28,7 +53,9 @@ export default class UserSeeder extends Seeder {
         users.push(newUser);
       }
       await dataSource.createEntityManager().save<User>(users);
-      await dataSource.createEntityManager().save<SeederModel>(new SeederModel(this.name));
+      await dataSource
+        .createEntityManager()
+        .save<SeederModel>(new SeederModel(this.name));
     }
   }
 }

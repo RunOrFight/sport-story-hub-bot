@@ -1,23 +1,23 @@
-import dotenv from "dotenv";
-import TelegramBot from "node-telegram-bot-api";
-import { registerBotEventHandler } from "./logger";
-import { t, tKeys } from "./tKeys";
+import "express-async-errors";
+import express, { NextFunction, Request, Response } from "express";
+import { Participant } from "./database/entities/Participant";
 import { createEventMessage } from "./createEventMessage";
-import express from "express";
-import cors from "cors";
-import chalk from "chalk";
+import { Location } from "./database/entities/Location";
+import swaggerDocument from "../public/swagger.json";
+import { registerBotEventHandler } from "./logger";
 import { Event } from "./database/entities/Event";
 import { User } from "./database/entities/User";
-import { Location } from "./database/entities/Location";
-import db from "./database";
-import "reflect-metadata";
-import { Participant } from "./database/entities/Participant";
+import TelegramBot from "node-telegram-bot-api";
 import { assertIsRawEvent } from "./typeGuards";
-import path from "path";
-import { MainRouter } from "./routers";
-import { FindOneOptions } from "typeorm";
 import swaggerUi from "swagger-ui-express";
-import swaggerDocument from "../public/swagger.json";
+import { FindOneOptions } from "typeorm";
+import { MainRouter } from "./routers";
+import { t, tKeys } from "./tKeys";
+import db from "./database";
+import dotenv from "dotenv";
+import chalk from "chalk";
+import cors from "cors";
+import path from "path";
 
 dotenv.config();
 
@@ -26,13 +26,25 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const errorHandler = (
+  err: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  console.error(err);
+  res.status(500).send({ errors: [{ message: "Something went wrong" }] });
+  next(err);
+};
+
 if (process.env.NODE_ENV === "dev") {
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
 
 app.use("/api", MainRouter);
+app.use(errorHandler);
 
-(async function() {
+(async function () {
   await db.initialize();
 
   app.get("/api", (_req, res) => {

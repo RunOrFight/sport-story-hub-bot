@@ -4,7 +4,7 @@ import { DataSourceOptions } from "typeorm/data-source/DataSourceOptions";
 const dbDir =
   process.env.NODE_ENV == "production" ? "build/database/" : "src/database/";
 
-let connectionOptions: DataSourceOptions = {
+const connectionOptions: DataSourceOptions = {
   type: "postgres",
   host: "postgres",
   port: 5432,

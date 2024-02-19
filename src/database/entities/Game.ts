@@ -2,18 +2,20 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { TeamParticipant } from "./TeamParticipant";
 import { Event } from "./Event";
+import { GameStat } from "./GameStat";
 import { GameTeam } from "./GameTeam";
 
-@Entity("teams")
-export class Team {
+@Entity("games")
+@Index(["name", "event"], { unique: true })
+export class Game {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -24,11 +26,11 @@ export class Team {
   @JoinColumn({ name: "event_id" })
   event!: Event;
 
-  @OneToMany(() => GameTeam, (gt) => gt.team)
+  @OneToMany(() => GameTeam, (gt) => gt.game)
   gameTeams!: GameTeam[];
 
-  @OneToMany(() => TeamParticipant, (tp) => tp.team)
-  teamsParticipants!: TeamParticipant[];
+  @OneToMany(() => GameStat, (gs) => gs.game)
+  gameStats!: GameStat[];
 
   @CreateDateColumn({ name: "created_at" })
   createdAt!: Date;

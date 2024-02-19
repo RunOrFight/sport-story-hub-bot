@@ -6,12 +6,19 @@ import {
   OneToOne,
   ManyToOne,
   Index,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { User } from "./User";
 import { Event } from "./Event";
+import { TeamParticipant } from "./TeamParticipant";
+import { Team } from "./Team";
 
 @Entity("participants")
-@Index(["user", "event"], { unique: true }) //  where: "(user_id <> user_id with username == player)"
+@Index(["user", "event"], { unique: true })
 export class Participant {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -31,9 +38,12 @@ export class Participant {
   @JoinColumn({ name: "parent_participant_id" })
   parentParticipant?: Participant;
 
-  @Column({ nullable: true, default: 0 })
-  goals: number = 0;
+  @OneToMany(() => TeamParticipant, (tp) => tp.participant)
+  teamsParticipants!: TeamParticipant[];
 
-  @Column({ nullable: true, default: 0 })
-  assists: number = 0;
+  @CreateDateColumn({ name: "created_at" })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ name: "updated_at" })
+  updatedAt!: Date;
 }

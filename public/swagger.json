@@ -42,6 +42,442 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"EEventStatus": {
+				"enum": [
+					"waiting",
+					"started",
+					"finished"
+				],
+				"type": "string"
+			},
+			"File": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"url": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"url"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Location": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"preview": {
+						"$ref": "#/components/schemas/File"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"User": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"username": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"surname": {
+						"type": "string"
+					},
+					"photo": {
+						"$ref": "#/components/schemas/File"
+					},
+					"wins": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"losses": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"draws": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"winRate": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"total": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"goals": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"assists": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"Elo": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"username",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Event": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"dateTime": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"price": {
+						"type": "string"
+					},
+					"status": {
+						"$ref": "#/components/schemas/EEventStatus"
+					},
+					"participantsLimit": {
+						"type": "number",
+						"format": "double"
+					},
+					"description": {
+						"type": "string"
+					},
+					"location": {
+						"$ref": "#/components/schemas/Location"
+					},
+					"participants": {
+						"items": {
+							"$ref": "#/components/schemas/Participant"
+						},
+						"type": "array"
+					},
+					"games": {
+						"items": {
+							"$ref": "#/components/schemas/Game"
+						},
+						"type": "array"
+					},
+					"teams": {
+						"items": {
+							"$ref": "#/components/schemas/Team"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"participants",
+					"games",
+					"teams",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Participant": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"waitList": {
+						"type": "boolean"
+					},
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"event": {
+						"$ref": "#/components/schemas/Event"
+					},
+					"parentParticipant": {
+						"$ref": "#/components/schemas/Participant"
+					},
+					"teamsParticipants": {
+						"items": {
+							"$ref": "#/components/schemas/TeamParticipant"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"waitList",
+					"user",
+					"event",
+					"teamsParticipants",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GameTeam": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"game": {
+						"$ref": "#/components/schemas/Game"
+					},
+					"team": {
+						"$ref": "#/components/schemas/Team"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"game",
+					"team",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"EGameEvent": {
+				"enum": [
+					"goal",
+					"assist"
+				],
+				"type": "string"
+			},
+			"Game": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"event": {
+						"$ref": "#/components/schemas/Event"
+					},
+					"gameTeams": {
+						"items": {
+							"$ref": "#/components/schemas/GameTeam"
+						},
+						"type": "array"
+					},
+					"gameStats": {
+						"items": {
+							"$ref": "#/components/schemas/GameStat"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"event",
+					"gameTeams",
+					"gameStats",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TeamParticipant": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"team": {
+						"$ref": "#/components/schemas/Team"
+					},
+					"participant": {
+						"$ref": "#/components/schemas/Participant"
+					},
+					"gameStats": {
+						"items": {
+							"$ref": "#/components/schemas/GameStat"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"team",
+					"participant",
+					"gameStats"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GameStat": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"event": {
+						"$ref": "#/components/schemas/EGameEvent"
+					},
+					"game": {
+						"$ref": "#/components/schemas/Game"
+					},
+					"teamParticipant": {
+						"$ref": "#/components/schemas/TeamParticipant"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"event",
+					"game",
+					"teamParticipant",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Team": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"event": {
+						"$ref": "#/components/schemas/Event"
+					},
+					"gameTeams": {
+						"items": {
+							"$ref": "#/components/schemas/GameTeam"
+						},
+						"type": "array"
+					},
+					"teamsParticipants": {
+						"items": {
+							"$ref": "#/components/schemas/TeamParticipant"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"event",
+					"gameTeams",
+					"teamsParticipants",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -198,6 +634,63 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/api/event/all": {
+			"get": {
+				"operationId": "GetAllEvents",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Event"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/event/getById/{id}": {
+			"get": {
+				"operationId": "GetEventById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Event"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		}
 	},

@@ -1,10 +1,11 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddedFieldsForUsersAndSeedersTable1708211970881 implements MigrationInterface {
+export class AddedFieldsForUsersAndSeedersTable1708211970881
+  implements MigrationInterface
+{
   name = "AddedFieldsForUsersAndSeedersTable1708211970881";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX "public"."IDX_9cadc932043b988738e4cdebd2"`);
     await queryRunner.query(`CREATE TABLE "seeders"
                              (
                                  "id"   SERIAL            NOT NULL,
@@ -44,26 +45,38 @@ export class AddedFieldsForUsersAndSeedersTable1708211970881 implements Migratio
     await queryRunner.query(`ALTER TABLE "events"
         ALTER COLUMN "price" DROP NOT NULL`);
     await queryRunner.query(`ALTER TABLE "events" DROP COLUMN "status"`);
-    await queryRunner.query(`CREATE TYPE "public"."events_status_enum" AS ENUM('waiting', 'started', 'finished')`);
+    await queryRunner.query(
+      `CREATE TYPE "public"."events_status_enum" AS ENUM('waiting', 'started', 'finished')`,
+    );
     await queryRunner.query(`ALTER TABLE "events"
         ADD "status" "public"."events_status_enum" DEFAULT 'waiting'`);
-    await queryRunner.query(`CREATE UNIQUE INDEX "IDX_09c660ac18574bec8c56013ddb" ON "participants" ("user_id", "event_id") `);;
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`ALTER TABLE "events" DROP CONSTRAINT "FK_fccf31c64ec14a66276e9999730"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP CONSTRAINT "FK_a367444399d0404c15d7dffdb02"`);
-    await queryRunner.query(`ALTER TABLE "locations" DROP CONSTRAINT "FK_700e411e1f6f1395d5283b64b46"`);
-    await queryRunner.query(`DROP INDEX "public"."IDX_09c660ac18574bec8c56013ddb"`);
-    await queryRunner.query(`ALTER TABLE "events" DROP CONSTRAINT "UQ_fccf31c64ec14a66276e9999730"`);
+    await queryRunner.query(
+      `ALTER TABLE "events" DROP CONSTRAINT "FK_fccf31c64ec14a66276e9999730"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "users" DROP CONSTRAINT "FK_a367444399d0404c15d7dffdb02"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "locations" DROP CONSTRAINT "FK_700e411e1f6f1395d5283b64b46"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "events" DROP CONSTRAINT "UQ_fccf31c64ec14a66276e9999730"`,
+    );
     await queryRunner.query(`ALTER TABLE "events" DROP COLUMN "status"`);
     await queryRunner.query(`DROP TYPE "public"."events_status_enum"`);
     await queryRunner.query(`ALTER TABLE "events"
         ADD "status" character varying DEFAULT 'waiting'`);
     await queryRunner.query(`ALTER TABLE "events"
         ALTER COLUMN "price" SET NOT NULL`);
-    await queryRunner.query(`ALTER TABLE "users" DROP CONSTRAINT "UQ_a367444399d0404c15d7dffdb02"`);
-    await queryRunner.query(`ALTER TABLE "locations" DROP CONSTRAINT "UQ_700e411e1f6f1395d5283b64b46"`);
+    await queryRunner.query(
+      `ALTER TABLE "users" DROP CONSTRAINT "UQ_a367444399d0404c15d7dffdb02"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "locations" DROP CONSTRAINT "UQ_700e411e1f6f1395d5283b64b46"`,
+    );
     await queryRunner.query(`ALTER TABLE "locations"
         ALTER COLUMN "address" SET NOT NULL`);
     await queryRunner.query(`ALTER TABLE "participants" DROP COLUMN "assists"`);
@@ -81,6 +94,5 @@ export class AddedFieldsForUsersAndSeedersTable1708211970881 implements Migratio
     await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "surname"`);
     await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "name"`);
     await queryRunner.query(`DROP TABLE "seeders"`);
-    await queryRunner.query(`CREATE UNIQUE INDEX "IDX_9cadc932043b988738e4cdebd2" ON "participants" ("user_id", "event_id") WHERE (user_id <> 1)`);
   }
 }
