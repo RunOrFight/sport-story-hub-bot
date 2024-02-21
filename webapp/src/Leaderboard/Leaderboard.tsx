@@ -100,6 +100,7 @@ const Leaderboard = () => {
 
   const { data: allUsers, setData: setAllUsers } = useHttpRequestOnMount(
     "getAllUsers",
+    [],
     normalizeUsers,
   );
 

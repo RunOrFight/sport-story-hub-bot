@@ -1,23 +1,20 @@
 import classes from "./ProfilePage.module.css";
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { httpApi } from "../httpApi.ts";
-import { ILeaderboardRow } from "../types.ts";
+import { useParams } from "react-router-dom";
 import { getNotNil } from "../Utils/GetNotNil.ts";
 import { Skeleton } from "antd";
-import { routeMap } from "../routeMap.ts";
+import { TUser } from "../Models/TUser.ts";
+import { useHttpRequestOnMount } from "../Hooks/UseHttpRequestOnMount.ts";
+
+const normalizeUser = (data: { user: TUser } | null) => data?.user;
 
 const ProfilePage = () => {
-  const [user, setUser] = useState<ILeaderboardRow | null>(null);
-  const navigate = useNavigate();
-
   const { username } = useParams();
 
-  useEffect(() => {
-    httpApi
-      .getUserFromRowsByUsername(getNotNil(username, "ProfilePage"))
-      .then(setUser, () => navigate(routeMap.eventsRoute));
-  }, [username]);
+  const { data: user } = useHttpRequestOnMount(
+    "getUserByUsername",
+    [getNotNil(username, "ProfilePage")],
+    normalizeUser,
+  );
 
   if (!user) {
     return <Skeleton style={{ padding: 16 }} />;
@@ -29,11 +26,13 @@ const ProfilePage = () => {
       <div className={classes.card}>
         <div className={classes.picture} />
         <div className={classes.info}>
-          <div
-            className={classes.name}
-          >{`${user.firstName} ${user.lastName}`}</div>
+          <div className={classes.name}>{`${user.name} ${user.surname}`}</div>
           <div className={classes.username}>{user.username}</div>
         </div>
+      </div>
+
+      <div>
+        <pre>{JSON.stringify(user, null, 2)}</pre>
       </div>
     </div>
   );

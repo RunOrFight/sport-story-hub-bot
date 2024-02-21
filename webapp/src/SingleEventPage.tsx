@@ -1,35 +1,18 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { httpApi } from "./httpApi.ts";
-import { IEventFull, IUser } from "./types.ts";
-import { Flex, Image, Skeleton, Table } from "antd";
-import { CalendarOutlined } from "@ant-design/icons";
-import Title from "antd/lib/typography/Title";
-import Paragraph from "antd/lib/typography/Paragraph";
+import { useParams } from "react-router-dom";
+import { Flex, Skeleton } from "antd";
+import { useHttpRequestOnMount } from "./Hooks/UseHttpRequestOnMount.ts";
+import { getNotNil } from "./Utils/GetNotNil.ts";
+import { TEvent } from "./Models/TEvent.ts";
 
-const columns = [
-  {
-    title: "ID",
-    dataIndex: "id",
-    key: "id",
-  },
-  {
-    title: "Username",
-    dataIndex: "user",
-    key: "user",
-    render: (user: IUser) => user.username,
-  },
-];
-
+const normalizeEvent = (data: { event: TEvent } | null) => data?.event;
 const SingleEventPage = () => {
-  const params = useParams();
-  const [event, setEvent] = useState<IEventFull>();
+  const { eventId } = useParams();
 
-  useEffect(() => {
-    httpApi.getEventById(Number(params.id)).then((event) => {
-      setEvent(event);
-    });
-  }, [params]);
+  const { data: event } = useHttpRequestOnMount(
+    "getEventById",
+    [getNotNil(eventId, "SingleEventPage")],
+    normalizeEvent,
+  );
 
   if (!event) {
     return <Skeleton active />;
@@ -37,32 +20,7 @@ const SingleEventPage = () => {
 
   return (
     <Flex vertical gap={"small"}>
-      <Link to={".."}>{"Back"}</Link>
-      <Image
-        height={200}
-        width={"100%"}
-        style={{ objectFit: "cover" }}
-        src={event.location.preview.url}
-        alt={"preview"}
-      />
-      <Flex align={"center"} gap={"middle"}>
-        <CalendarOutlined style={{ fontSize: 30 }} />
-        <Title level={3}>{event.dateTime}</Title>
-      </Flex>
-
-      <Paragraph>{event.description}</Paragraph>
-
-      {event.participants.length !== 0 ? (
-        <Title level={3}>
-          {`Participants(${event.participants.length}/${event.participantsLimit})`}
-        </Title>
-      ) : null}
-
-      <Table
-        columns={columns}
-        pagination={false}
-        dataSource={event.participants}
-      />
+      <pre>{JSON.stringify(event, null, 2)}</pre>
     </Flex>
   );
 };

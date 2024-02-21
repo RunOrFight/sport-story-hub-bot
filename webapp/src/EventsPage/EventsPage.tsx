@@ -1,22 +1,21 @@
-import { Card, Descriptions, Skeleton } from "antd";
-import { useEffect, useState } from "react";
-import { IEventFull } from "../types.ts";
-import { httpApi } from "../httpApi.ts";
+import { Card, Skeleton } from "antd";
 import { generatePath, Link } from "react-router-dom";
 import { routeMap } from "../routeMap.ts";
-import Title from "antd/lib/typography/Title";
 import classes from "./EventsPage.module.css";
+import { useHttpRequestOnMount } from "../Hooks/UseHttpRequestOnMount.ts";
+import { isEmpty } from "../Utils/OneLineUtils.ts";
+import { TEvent } from "../Models/TEvent.ts";
+
+const normalizeEvents = ({ events }: { events: TEvent[] }) => events;
 
 const EventsPage = () => {
-  const [events, setEvents] = useState<IEventFull[]>([]);
+  const { data: events } = useHttpRequestOnMount(
+    "getAllEvents",
+    [],
+    normalizeEvents,
+  );
 
-  useEffect(() => {
-    httpApi.getEvents().then((events) => {
-      setEvents(events);
-    });
-  }, []);
-
-  if (events.length === 0) {
+  if (!events || isEmpty(events)) {
     return <Skeleton active />;
   }
 
@@ -25,12 +24,11 @@ const EventsPage = () => {
       {events.map((event) => (
         <Link
           key={event.id}
-          to={generatePath(routeMap.singleEventRoute, { id: event.id })}
+          to={generatePath(routeMap.singleEventRoute, { eventId: event.id })}
         >
-          <Title level={4}>{event.dateTime}</Title>
           <Card
             hoverable
-            title={`${event.location.title}, ${event.location.address}`}
+            title={`${event.location?.title}, ${event.location?.address}`}
             size={"small"}
             style={{ width: "100%" }}
             cover={
@@ -38,14 +36,11 @@ const EventsPage = () => {
                 height={200}
                 style={{ objectFit: "cover" }}
                 alt={"cover"}
-                src={event.location.preview.url}
+                src={event.location?.preview?.url}
               />
             }
           >
-            <Descriptions layout={"vertical"}>
-              <Descriptions.Item label="Price">{event.price}</Descriptions.Item>
-              <Descriptions.Item label="Participants">{`${event.participants.length}/${event.participantsLimit}`}</Descriptions.Item>
-            </Descriptions>
+            <pre>{JSON.stringify(event, null, 2)}</pre>
           </Card>
         </Link>
       ))}
