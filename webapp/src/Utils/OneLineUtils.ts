@@ -1,3 +1,5 @@
 const isEmpty = (candidate: unknown[]) => candidate.length === 0;
 
-export { isEmpty };
+const isDev = import.meta.env.DEV;
+
+export { isEmpty, isDev };

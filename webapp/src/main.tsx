@@ -12,6 +12,7 @@ import { Layout } from "./Layout/Layout.tsx";
 import "./main.css";
 import { StatisticsPage } from "./StatisticsPage/StatisticsPage.tsx";
 import { ProfilePage } from "./ProfilePage/ProfilePage.tsx";
+import { isDev } from "./Utils/OneLineUtils.ts";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,8 @@ const router = createBrowserRouter([
     element: <CreateEventForm />,
   },
 ]);
+
+document.body.setAttribute("data-dev", String(isDev));
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <RouterProvider router={router} />,
