@@ -7,7 +7,7 @@ import {
 import { EventsPage } from "./EventsPage/EventsPage.tsx";
 import { CreateEventForm } from "./CreateEventForm.tsx";
 import { routeMap } from "./routeMap.ts";
-import { SingleEventPage } from "./SingleEventPage.tsx";
+import { SingleEventPage } from "./SingleEventPage/SingleEventPage.tsx";
 import { Layout } from "./Layout/Layout.tsx";
 import "./main.css";
 import { StatisticsPage } from "./StatisticsPage/StatisticsPage.tsx";

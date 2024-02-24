@@ -8,11 +8,11 @@ export default defineConfig({
   root: "webapp",
   envDir: "../",
   server: {
-    port: 4434,
+    port: 4435,
     host: "0.0.0.0",
     hmr: {
       host: "sport-story-hub-bot.local",
-      port: 4434,
+      port: 4435,
     },
     https: {
       key: fs.readFileSync(".cert/localhost-key.pem").toString(),

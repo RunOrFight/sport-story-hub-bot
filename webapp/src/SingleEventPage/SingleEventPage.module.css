@@ -1,0 +1,29 @@
+.singleEvent {
+    padding: 16px;
+}
+
+.head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.back {
+    color: var(--tg-theme-subtitle-text-color);
+    background: var(--tg-theme-secondary-bg-color);
+    padding: 0 7px;
+    border-radius: 4px;
+    height: 25px;
+    line-height: 25px;
+}
+
+.status {
+    color: var(--tg-theme-destructive-text-color);
+    line-height: 25px;
+}
+
+.body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
