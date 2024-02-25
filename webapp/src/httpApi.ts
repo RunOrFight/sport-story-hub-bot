@@ -1,5 +1,6 @@
 import { TUser } from "./Models/TUser.ts";
 import { TEvent } from "./Models/TEvent.ts";
+import { IError } from "./Models/IError.ts";
 
 const BASE_URL = "http://localhost:5555/api";
 
@@ -38,11 +39,11 @@ const httpApi = {
   },
   getUserByUsername: async (
     username: string,
-  ): Promise<{ user: TUser } | null> => {
+  ): Promise<{ user: TUser } | IError> => {
     const response = await fetch(`${BASE_URL}/user/getByUserName/${username}`);
     if (!response.ok) {
       console.error(response.statusText);
-      return null;
+      return { error: `User with username "${username}" doesn't exist` };
     }
     return await response.json();
   },

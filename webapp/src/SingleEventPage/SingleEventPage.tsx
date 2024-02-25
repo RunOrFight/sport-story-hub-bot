@@ -2,10 +2,47 @@ import { Link, useParams } from "react-router-dom";
 import { Skeleton } from "antd";
 import { useHttpRequestOnMount } from "../Hooks/UseHttpRequestOnMount.ts";
 import { getNotNil } from "../Utils/GetNotNil.ts";
-import { TEvent } from "../Models/TEvent.ts";
+import type { TEvent, TEventGame, TEventGameTeam } from "../Models/TEvent.ts";
 import classes from "./SingleEventPage.module.css";
 import { routeMap } from "../routeMap.ts";
-import { getReadableEventDate } from "../Utils/GetReadableEventDate.ts";
+import {
+  getReadableEventDate,
+  getReadableEventTime,
+} from "../Utils/GetReadableEventDate.ts";
+import { type FC } from "react";
+
+const Team: FC<TEventGameTeam> = ({ name, teamsParticipants }) => {
+  return (
+    <div className={classes.team}>
+      <h5>{name}</h5>
+
+      <div>
+        {teamsParticipants.map(
+          ({
+            participant: {
+              user: { name, surname },
+            },
+            id,
+          }) => (
+            <div key={id}>{`${name} ${surname}`}</div>
+          ),
+        )}
+      </div>
+    </div>
+  );
+};
+
+const Game: FC<TEventGame> = ({ name, gameTeams }) => (
+  <div className={classes.game}>
+    <h3>{name}</h3>
+
+    <div>
+      {gameTeams.map(({ id, team }) => (
+        <Team {...team} key={id} />
+      ))}
+    </div>
+  </div>
+);
 
 const normalizeEvent = (data: { event: TEvent } | null) => data?.event;
 const SingleEventPage = () => {
@@ -21,7 +58,7 @@ const SingleEventPage = () => {
     return <Skeleton active />;
   }
 
-  const { status, dateTime, description, price } = event;
+  const { status, dateTime, description, price, games } = event;
 
   return (
     <div className={classes.singleEvent}>
@@ -33,12 +70,21 @@ const SingleEventPage = () => {
       </div>
 
       <div className={classes.body}>
-        {dateTime ? <h2>{getReadableEventDate(dateTime)}</h2> : null}
-
-        <span>{price}</span>
+        {dateTime ? (
+          <h2>{`${getReadableEventDate(dateTime)} - ${getReadableEventTime(dateTime)}`}</h2>
+        ) : null}
 
         <p>{description}</p>
-        <pre>{JSON.stringify(event, null, 2)}</pre>
+
+        <div className={classes.section}>
+          <h4>{"Games:"}</h4>
+
+          {games.map((game) => (
+            <Game {...game} key={game.id} />
+          ))}
+        </div>
+
+        <button className={classes.join}>{`Join ${price}`}</button>
       </div>
     </div>
   );

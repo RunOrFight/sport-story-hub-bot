@@ -25,7 +25,7 @@ function useHttpRequestOnMount<
 
 function useHttpRequestOnMount(
   httpKey: THttpRequestKey,
-  args: any,
+  args: any[],
   normalizer?: (data: Awaited<ReturnType<THttpApi[THttpRequestKey]>>) => any,
 ) {
   const [data, setData] = useState<any>(null);
@@ -35,7 +35,7 @@ function useHttpRequestOnMount(
     request(args as never).then((data) =>
       setData(normalizer ? normalizer(data) : data),
     );
-  }, []);
+  }, args);
 
   return { data, setData };
 }

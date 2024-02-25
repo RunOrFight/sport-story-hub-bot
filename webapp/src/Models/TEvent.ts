@@ -7,4 +7,8 @@ type TEvent = Omit<
   dateTime: null | string;
 };
 
-export type { TEvent };
+type TEventGame = TEvent["games"][number];
+
+type TEventGameTeam = TEventGame["gameTeams"][0]["team"];
+
+export type { TEvent, TEventGame, TEventGameTeam };
