@@ -2,30 +2,27 @@ import classes from "./Layout.module.css";
 import { generatePath, NavLink, Outlet } from "react-router-dom";
 import { routeMap } from "../routeMap.ts";
 import { FC } from "react";
+import { emoji } from "../../../src/emoji.ts";
 
 interface ILink {
   to: string;
   title: string;
-  icon: string;
 }
 
 const LINKS: ILink[] = [
   {
-    title: "Events",
+    title: emoji.calendar,
     to: routeMap.eventsRoute,
-    icon: "Icon",
   },
   {
-    title: "Statistics",
+    title: emoji.barChart,
     to: routeMap.statisticsRoute,
-    icon: "Icon",
   },
   {
-    title: "Profile",
+    title: emoji.clipboard,
     to: generatePath(routeMap.profileRoute, {
       username: Telegram.WebApp.initDataUnsafe.user?.username ?? "@@admin@@",
     }),
-    icon: "Icon",
   },
 ];
 

@@ -5,6 +5,9 @@ const emoji = {
   participants: "\u{26BD}",
   waitList: "\u{2615}",
   warning: "\u{26A0}",
+  calendar: "\u{1F4C5}",
+  barChart: "\u{1F4CA}",
+  clipboard: "\u{1F4CB}",
 };
 
 export { emoji };
