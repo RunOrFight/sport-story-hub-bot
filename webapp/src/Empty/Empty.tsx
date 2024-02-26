@@ -21,4 +21,9 @@ const EmptyLeaderboard = withProps(Empty)({
   subtitle: "Participate events and be the first",
 });
 
-export { EmptyLeaderboard };
+const EmptyEventsPage = withProps(Empty)({
+  title: "No events",
+  subtitle: "If you admin - create one",
+});
+
+export { EmptyLeaderboard, EmptyEventsPage };

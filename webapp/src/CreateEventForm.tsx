@@ -37,7 +37,7 @@ const errorMessage = {
 
 const CreateEventForm = () => {
   const [messageApi, contextHolder] = message.useMessage();
-  const [locations, setLocations] = useState<IEventLocation[]>([]);
+  const [locations, setLocations] = useState<IEventLocation[] | null>(null);
   const [form] = Form.useForm();
 
   const onFinish = async (values: ICreateEventFormValues) => {
@@ -65,7 +65,7 @@ const CreateEventForm = () => {
     });
   }, [form]);
 
-  if (locations.length === 0) {
+  if (!locations) {
     return <Skeleton active />;
   }
 

@@ -11,6 +11,7 @@ import {
   getReadableEventTime,
 } from "../Utils/GetReadableEventDate.ts";
 import { emoji } from "../../../src/emoji.ts";
+import { EmptyEventsPage } from "../Empty/Empty.tsx";
 
 const getEventInfo = (
   participants: any[],
@@ -77,8 +78,12 @@ const EventsPage = () => {
     normalizeEvents,
   );
 
-  if (!events || isEmpty(events)) {
+  if (!events) {
     return <Skeleton active />;
+  }
+
+  if (isEmpty(events)) {
+    return <EmptyEventsPage />;
   }
 
   return (
