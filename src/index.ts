@@ -33,7 +33,10 @@ const errorHandler = (
   next: NextFunction,
 ) => {
   console.error(err);
-  res.status(500).send({ errors: [{ message: "Something went wrong" }] });
+  if (err.message) {
+    res.status(400).send({ error: err.message });
+  }
+  res.status(500).send({ error: "something went wrong" });
   next(err);
 };
 

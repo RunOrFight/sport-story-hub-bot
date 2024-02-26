@@ -692,6 +692,96 @@
 					}
 				]
 			}
+		},
+		"/api/event/join-event": {
+			"post": {
+				"operationId": "JoinEvent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"username": {
+										"type": "string"
+									},
+									"eventId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"username",
+									"eventId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/event/leave-event": {
+			"delete": {
+				"operationId": "LeaveEvent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"username": {
+										"type": "string"
+									},
+									"eventId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"username",
+									"eventId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"servers": [
