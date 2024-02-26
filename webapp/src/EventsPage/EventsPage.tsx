@@ -10,17 +10,16 @@ import {
   getReadableEventDate,
   getReadableEventTime,
 } from "../Utils/GetReadableEventDate.ts";
-import { getNotNil } from "../Utils/GetNotNil.ts";
 import { emoji } from "../../../src/emoji.ts";
 
 const getEventInfo = (
   participants: any[],
   participantsLimit: number,
   price: string,
-  notNilDateTime: string,
+  dateTime: string | null,
 ) => {
   return `
-  ${emoji.time}${getReadableEventTime(notNilDateTime)}
+  ${emoji.time}${dateTime ? getReadableEventTime(dateTime) : "**-**"}
   ${emoji.participants}${participants.length}/${participantsLimit}
    ${emoji.price}${price}
     `;
@@ -36,14 +35,15 @@ const Event: FC<TEvent> = ({
   status,
 }) => {
   const to = generatePath(routeMap.singleEventRoute, { eventId: id });
-  const notNilDateTime = getNotNil(dateTime, "Event -> dateTime");
 
   return (
     <div className={classes.event}>
       <div className={classes.eventHead}>
-        <h3 className={classes.eventDataTime}>
-          {getReadableEventDate(notNilDateTime)}
-        </h3>
+        {dateTime ? (
+          <h3 className={classes.eventDataTime}>
+            {getReadableEventDate(dateTime)}
+          </h3>
+        ) : null}
         <span className={classes.eventStatus}>{status}</span>
       </div>
 
@@ -56,7 +56,7 @@ const Event: FC<TEvent> = ({
             participants,
             participantsLimit ?? 0,
             price ?? "",
-            notNilDateTime,
+            dateTime,
           )}
         </p>
 
@@ -68,8 +68,7 @@ const Event: FC<TEvent> = ({
   );
 };
 
-const normalizeEvents = ({ events }: { events: TEvent[] }) =>
-  events.filter(({ dateTime }) => dateTime !== null);
+const normalizeEvents = ({ events }: { events: TEvent[] }) => events;
 
 const EventsPage = () => {
   const { data: events } = useHttpRequestOnMount(
