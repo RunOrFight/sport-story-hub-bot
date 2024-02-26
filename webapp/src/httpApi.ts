@@ -1,8 +1,11 @@
 import { TUser } from "./Models/TUser.ts";
 import { TEvent } from "./Models/TEvent.ts";
 import { IError } from "./Models/IError.ts";
+import { isDev } from "./Utils/OneLineUtils.ts";
 
-const BASE_URL = "http://localhost:5555/api";
+const BASE_URL = isDev
+  ? "http://localhost:5555/api"
+  : "https://cybercats.live:445/api";
 
 const httpApi = {
   getAllEvents: async (): Promise<{ events: TEvent[] }> => {
