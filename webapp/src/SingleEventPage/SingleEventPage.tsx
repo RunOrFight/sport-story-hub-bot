@@ -10,6 +10,7 @@ import {
   getReadableEventTime,
 } from "../Utils/GetReadableEventDate.ts";
 import { type FC } from "react";
+import { httpApi } from "../httpApi.ts";
 
 const Team: FC<TEventGameTeam> = ({ name, teamsParticipants }) => {
   return (
@@ -58,7 +59,23 @@ const SingleEventPage = () => {
     return <Skeleton active />;
   }
 
-  const { status, dateTime, description, price, games } = event;
+  const { status, dateTime, description, price, games, id, participants } =
+    event;
+
+  const username = Telegram.WebApp.initDataUnsafe.user?.username;
+
+  const onClick = username
+    ? () => {
+        const isUserInParticipants = !!participants.find(
+          (it) => it.user.username === username,
+        );
+
+        httpApi[isUserInParticipants ? "leaveEvent" : "joinEvent"]({
+          eventId: id,
+          username,
+        });
+      }
+    : undefined;
 
   return (
     <div className={classes.singleEvent}>
@@ -84,7 +101,10 @@ const SingleEventPage = () => {
           ))}
         </div>
 
-        <button className={classes.join}>{`Join ${price}`}</button>
+        <button
+          className={classes.join}
+          onClick={onClick}
+        >{`Join ${price}`}</button>
       </div>
     </div>
   );

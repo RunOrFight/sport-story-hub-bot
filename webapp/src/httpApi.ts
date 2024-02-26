@@ -47,6 +47,26 @@ const httpApi = {
     }
     return await response.json();
   },
+  joinEvent: async (payload: { username: string; eventId: number }) => {
+    const response = await fetch(`${BASE_URL}/event/join-event`, {
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+    console.log(response);
+  },
+  leaveEvent: async (payload: { username: string; eventId: number }) => {
+    const response = await fetch(`${BASE_URL}/event/leave-event`, {
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "DELETE",
+    });
+    console.log(response);
+  },
 };
 
 type THttpApi = typeof httpApi;
