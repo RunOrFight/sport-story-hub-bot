@@ -1,9 +1,6 @@
 import { Request, Router } from "express";
 import { UserController } from "../controllers/user.controller";
-import {
-  TUserStatisticUpdatePayload,
-  TUserUpdatePayload,
-} from "../types/user.types";
+import { IUserUpdatePayload } from "../types/user.types";
 
 export const UserRouter = Router();
 
@@ -48,7 +45,7 @@ UserRouter.put(
     req: Request<
       Record<string, unknown>,
       Record<string, unknown>,
-      TUserUpdatePayload
+      IUserUpdatePayload
     >,
     res,
   ) => {

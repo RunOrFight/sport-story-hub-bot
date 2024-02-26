@@ -1,7 +1,6 @@
 import db from "../database";
 import { User } from "../database/entities/User";
-import { EStatisticProperty } from "../enums/statistic-propery-enum";
-import { TUserUpdatePayload } from "../types/user.types";
+import { IUserInitResponse, IUserUpdatePayload } from "../types/user.types";
 
 class UserService {
   async getAllUsers(): Promise<Omit<User, "createdAt" | "updatedAt">[]> {
@@ -63,7 +62,7 @@ class UserService {
 
   async getUserByUsername(payload: {
     username: string;
-  }): Promise<{ user: User; isNewUser: boolean }> {
+  }): Promise<IUserInitResponse> {
     const { username } = payload;
     const user = await db.getRepository(User).findOne({
       where: { username },
@@ -81,10 +80,10 @@ class UserService {
       return { user: newUser, isNewUser: true };
     }
 
-    return { user, isNewUser: false };
+    return { user: user, isNewUser: false };
   }
 
-  async updateUser(payload: TUserUpdatePayload): Promise<boolean> {
+  async updateUser(payload: IUserUpdatePayload): Promise<boolean> {
     const { username, name, surname } = payload;
 
     const user = await db.getRepository(User).findOneBy({ username });

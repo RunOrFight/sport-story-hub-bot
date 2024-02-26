@@ -2,19 +2,19 @@ import classes from "./ProfilePage.module.css";
 import { useParams } from "react-router-dom";
 import { getNotNil } from "../Utils/GetNotNil.ts";
 import { Skeleton } from "antd";
-import { TUser } from "../Models/TUser.ts";
 import { useHttpRequestOnMount } from "../Hooks/UseHttpRequestOnMount.ts";
 import { numberFormatter } from "../Utils/NumberFormatter.ts";
 import type { IError } from "../Models/IError.ts";
+import { IUserInitResponse } from "../../../src/types/user.types.ts";
 
-const normalizeUser = (data: { user: TUser } | IError) =>
-  "error" in data ? data : data.user;
+const normalizeUser = (response: { data: IUserInitResponse } | IError) =>
+  "error" in response ? response : response.data.user;
 
 const ProfilePage = () => {
   const { username } = useParams();
 
   const { data: user } = useHttpRequestOnMount(
-    "getUserByUsername",
+    "getOrCreateUserByUsername",
     [getNotNil(username, "ProfilePage")],
     normalizeUser,
   );

@@ -2,6 +2,7 @@ import { TUser } from "./Models/TUser.ts";
 import { TEvent } from "./Models/TEvent.ts";
 import { IError } from "./Models/IError.ts";
 import { isDev } from "./Utils/OneLineUtils.ts";
+import { IUserInitResponse } from "../../src/types/user.types.ts";
 
 const BASE_URL = isDev
   ? "http://localhost:5555/api"
@@ -40,10 +41,17 @@ const httpApi = {
     }
     return await response.json();
   },
-  getUserByUsername: async (
+  getOrCreateUserByUsername: async (
     username: string,
-  ): Promise<{ user: TUser } | IError> => {
-    const response = await fetch(`${BASE_URL}/user/getByUserName/${username}`);
+  ): Promise<{ data: IUserInitResponse } | IError> => {
+    const response = await fetch(`${BASE_URL}/user/init`, {
+      body: JSON.stringify({ username }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+
     if (!response.ok) {
       console.error(response.statusText);
       return { error: `User with username "${username}" doesn't exist` };

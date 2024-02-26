@@ -1,11 +1,6 @@
 import { userService } from "../services/user.service";
-import { Request, Response } from "express";
 import { User } from "../database/entities/User";
-import { IUserStatisticUpdate } from "../interfaces/user.interface";
-import {
-  TUserStatisticUpdatePayload,
-  TUserUpdatePayload,
-} from "../types/user.types";
+import { IUserUpdatePayload } from "../types/user.types";
 import { Body, Get, Path, Post, Put, Route, Tags } from "tsoa";
 
 @Route("/api/user")
@@ -27,7 +22,7 @@ export class UserController {
   }
 
   @Put("/update")
-  async updateUser(@Body() payload: TUserUpdatePayload) {
+  async updateUser(@Body() payload: IUserUpdatePayload) {
     return userService.updateUser(payload);
   }
 }
