@@ -24,9 +24,7 @@ export class UserController {
   }
 
   @Put("/update")
-  async updateUser(
-    @Body() payload: TUserStatisticUpdatePayload,
-  ): Promise<boolean> {
+  async updateUser(@Body() payload: TUserStatisticUpdatePayload): Promise<any> {
     const { id, type } = payload;
     const qwe = await userService.updateUserStatistic(id, type);
     return qwe;
