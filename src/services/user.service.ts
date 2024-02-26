@@ -1,6 +1,7 @@
 import db from "../database";
 import { User } from "../database/entities/User";
 import { EStatisticProperty } from "../enums/statistic-propery-enum";
+import { TUserUpdatePayload } from "../types/user.types";
 
 class UserService {
   async getAllUsers(): Promise<Omit<User, "createdAt" | "updatedAt">[]> {
@@ -27,7 +28,9 @@ class UserService {
       .getMany();
   }
 
-  async getUserById(id: number): Promise<Omit<User, "createdAt" | "updatedAt">> {
+  async getUserById(
+    id: number,
+  ): Promise<Omit<User, "createdAt" | "updatedAt">> {
     const user = await db
       .getRepository(User)
       .createQueryBuilder("user")
@@ -58,59 +61,46 @@ class UserService {
     return user;
   }
 
-  async getUserByUsername(username: string): Promise<Omit<User, "createdAt" | "updatedAt">> {
-    const user = await db
-      .getRepository(User)
-      .createQueryBuilder("user")
-      .leftJoinAndSelect("user.photo", "photo")
-      .select([
-        "user.id",
-        "user.username",
-        "user.name",
-        "user.surname",
-        "user.wins",
-        "user.losses",
-        "user.draws",
-        "user.winRate",
-        "user.total",
-        "user.goals",
-        "user.assists",
-        "user.Elo",
-        "photo.id",
-        "photo.url",
-      ])
-      .where("user.username = :username", { username })
-      .getOne();
+  async getUserByUsername(payload: {
+    username: string;
+  }): Promise<{ user: User; isNewUser: boolean }> {
+    const { username } = payload;
+    const user = await db.getRepository(User).findOne({
+      where: { username },
+      relations: {
+        photo: true,
+      },
+    });
 
     if (!user) {
-      throw new Error(`User with username: ${username} not found`);
+      const newUser = new User();
+      newUser.username = username;
+
+      await db.getRepository(User).save(newUser);
+
+      return { user: newUser, isNewUser: true };
     }
 
-    return user;
+    return { user, isNewUser: false };
   }
 
+  async updateUser(payload: TUserUpdatePayload): Promise<boolean> {
+    const { username, name, surname } = payload;
 
-
-  async updateUserStatistic(
-    id: number,
-    statisticProperty: EStatisticProperty,
-  ): Promise<boolean> {
-    const user = await db.getRepository(User).findOneBy({ id });
+    const user = await db.getRepository(User).findOneBy({ username });
     if (!user) {
       throw new Error("user not found");
     }
 
-    switch (statisticProperty) {
-      case EStatisticProperty.WINS:
-        user.wins++;
-        break;
-      case EStatisticProperty.LOSSES:
-        user.losses++;
-        break;
+    if (name || name === null) {
+      user.name = name;
     }
 
-    // const updatedUser = await db.getRepository(User).update({id}, updatedFields)
-    // console.log(updatedUser, 'UPDATED');
+    if (surname || surname === null) {
+      user.surname = surname;
+    }
+
+    await db.getRepository(User).save(user);
     return true;
   }
 }

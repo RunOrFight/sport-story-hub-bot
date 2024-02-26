@@ -20,11 +20,11 @@ export class User {
   @Column()
   username!: string;
 
-  @Column({nullable: true})
-  name?: string;
+  @Column({ nullable: true, type: "varchar" })
+  public name?: string | null;
 
-  @Column({nullable: true})
-  surname?: string;
+  @Column({ nullable: true, type: "varchar" })
+  public surname?: string | null;
 
   @OneToOne(() => File, { nullable: true })
   @JoinColumn({ name: "file_id" })

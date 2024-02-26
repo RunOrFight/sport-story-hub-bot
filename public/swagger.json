@@ -16,41 +16,6 @@
 				"$ref": "#/components/schemas/Pick_User.Exclude_keyofUser.createdAt-or-updatedAt__",
 				"description": "Construct a type with the properties of T except for those in type K."
 			},
-			"EStatisticProperty": {
-				"enum": [
-					"goals",
-					"assists",
-					"wins",
-					"losses",
-					"draws"
-				],
-				"type": "string"
-			},
-			"TUserStatisticUpdatePayload": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"type": {
-						"$ref": "#/components/schemas/EStatisticProperty"
-					}
-				},
-				"required": [
-					"id",
-					"type"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"EEventStatus": {
-				"enum": [
-					"waiting",
-					"started",
-					"finished"
-				],
-				"type": "string"
-			},
 			"File": {
 				"properties": {
 					"id": {
@@ -68,41 +33,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Location": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"title": {
-						"type": "string"
-					},
-					"url": {
-						"type": "string"
-					},
-					"address": {
-						"type": "string"
-					},
-					"preview": {
-						"$ref": "#/components/schemas/File"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"User": {
 				"properties": {
 					"id": {
@@ -113,10 +43,12 @@
 						"type": "string"
 					},
 					"name": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"surname": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"photo": {
 						"$ref": "#/components/schemas/File"
@@ -173,6 +105,68 @@
 				"required": [
 					"id",
 					"username",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TUserUpdatePayload": {
+				"properties": {
+					"surname": {
+						"type": "string",
+						"nullable": true
+					},
+					"name": {
+						"type": "string",
+						"nullable": true
+					},
+					"username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username"
+				],
+				"type": "object"
+			},
+			"EEventStatus": {
+				"enum": [
+					"waiting",
+					"started",
+					"finished"
+				],
+				"type": "string"
+			},
+			"Location": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"preview": {
+						"$ref": "#/components/schemas/File"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
 					"createdAt",
 					"updatedAt"
 				],
@@ -548,8 +542,8 @@
 				]
 			}
 		},
-		"/api/user/getByUserName/{username}": {
-			"get": {
+		"/api/user/init": {
+			"post": {
 				"operationId": "GetUserByUsername",
 				"responses": {
 					"200": {
@@ -557,7 +551,19 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Omit_User.createdAt-or-updatedAt_"
+									"properties": {
+										"isNewUser": {
+											"type": "boolean"
+										},
+										"user": {
+											"$ref": "#/components/schemas/User"
+										}
+									},
+									"required": [
+										"isNewUser",
+										"user"
+									],
+									"type": "object"
 								}
 							}
 						}
@@ -567,16 +573,25 @@
 					"User"
 				],
 				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "username",
-						"required": true,
-						"schema": {
-							"type": "string"
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"username": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"username"
+								],
+								"type": "object"
+							}
 						}
 					}
-				]
+				}
 			}
 		},
 		"/api/user/update": {
@@ -604,7 +619,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/TUserStatisticUpdatePayload"
+								"$ref": "#/components/schemas/TUserUpdatePayload"
 							}
 						}
 					}

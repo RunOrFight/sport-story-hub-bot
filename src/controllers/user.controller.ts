@@ -2,7 +2,10 @@ import { userService } from "../services/user.service";
 import { Request, Response } from "express";
 import { User } from "../database/entities/User";
 import { IUserStatisticUpdate } from "../interfaces/user.interface";
-import { TUserStatisticUpdatePayload } from "../types/user.types";
+import {
+  TUserStatisticUpdatePayload,
+  TUserUpdatePayload,
+} from "../types/user.types";
 import { Body, Get, Path, Post, Put, Route, Tags } from "tsoa";
 
 @Route("/api/user")
@@ -18,15 +21,13 @@ export class UserController {
     return userService.getUserById(id);
   }
 
-  @Get("getByUserName/{username}")
-  async getUserByUsername(@Path() username: string) {
-    return userService.getUserByUsername(username);
+  @Post("/init")
+  async getUserByUsername(@Body() payload: { username: string }) {
+    return userService.getUserByUsername(payload);
   }
 
   @Put("/update")
-  async updateUser(@Body() payload: TUserStatisticUpdatePayload): Promise<any> {
-    const { id, type } = payload;
-    const qwe = await userService.updateUserStatistic(id, type);
-    return qwe;
+  async updateUser(@Body() payload: TUserUpdatePayload) {
+    return userService.updateUser(payload);
   }
 }
