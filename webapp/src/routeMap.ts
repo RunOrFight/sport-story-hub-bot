@@ -4,6 +4,7 @@ const singleEventRoute = `${eventsRoute}/:eventId`;
 const createEventRoute = `${eventsRoute}/create`;
 const statisticsRoute = "/statistics";
 const profileRoute = "/profile/:username";
+const welcomeRoute = "/welcome";
 
 const routeMap = {
   emptyRoute,
@@ -12,6 +13,7 @@ const routeMap = {
   createEventRoute,
   statisticsRoute,
   profileRoute,
+  welcomeRoute,
 };
 
 export { routeMap };
