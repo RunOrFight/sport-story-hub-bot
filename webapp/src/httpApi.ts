@@ -1,7 +1,6 @@
 import { TUser } from "./Models/TUser.ts";
 import { TEvent } from "./Models/TEvent.ts";
 import { IError } from "./Models/IError.ts";
-import { isDev } from "./Utils/OneLineUtils.ts";
 import { IUserInitResponse } from "../../src/types/user.types.ts";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "No url";
