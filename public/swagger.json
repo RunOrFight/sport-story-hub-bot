@@ -111,24 +111,41 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"TUserUpdatePayload": {
+			"IUserInitResponse": {
 				"properties": {
-					"surname": {
-						"type": "string",
-						"nullable": true
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"isNewUser": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"user",
+					"isNewUser"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUserUpdatePayload": {
+				"properties": {
+					"username": {
+						"type": "string"
 					},
 					"name": {
 						"type": "string",
 						"nullable": true
 					},
-					"username": {
-						"type": "string"
+					"surname": {
+						"type": "string",
+						"nullable": true
 					}
 				},
 				"required": [
 					"username"
 				],
-				"type": "object"
+				"type": "object",
+				"additionalProperties": false
 			},
 			"EEventStatus": {
 				"enum": [
@@ -551,19 +568,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"isNewUser": {
-											"type": "boolean"
-										},
-										"user": {
-											"$ref": "#/components/schemas/User"
-										}
-									},
-									"required": [
-										"isNewUser",
-										"user"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/IUserInitResponse"
 								}
 							}
 						}
@@ -619,7 +624,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/TUserUpdatePayload"
+								"$ref": "#/components/schemas/IUserUpdatePayload"
 							}
 						}
 					}

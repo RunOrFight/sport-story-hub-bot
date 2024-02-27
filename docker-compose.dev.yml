@@ -51,3 +51,14 @@ services:
       - ./ngrok/ngrok.yml:/etc/ngrok.yml
     ports:
       - "4040:4040"
+
+  nginx:
+    container_name: sport_hub_nginx
+    image: nginx
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+    ports:
+      - "82:80"
+    depends_on:
+      - server_app
+      - web_app

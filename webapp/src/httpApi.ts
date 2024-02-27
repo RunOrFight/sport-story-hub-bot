@@ -4,9 +4,7 @@ import { IError } from "./Models/IError.ts";
 import { isDev } from "./Utils/OneLineUtils.ts";
 import { IUserInitResponse } from "../../src/types/user.types.ts";
 
-const BASE_URL = isDev
-  ? "http://localhost:5555/api"
-  : "https://cybercats.live:445/api";
+const BASE_URL = import.meta.env.VITE_API_URL ?? "No url";
 
 const httpApi = {
   getAllEvents: async (): Promise<{ events: TEvent[] }> => {
