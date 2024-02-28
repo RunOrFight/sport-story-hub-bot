@@ -12,13 +12,18 @@ interface IUserStatisticUpdatePayload {
   type: EStatisticProperty;
 }
 
-interface IUserInitResponse {
+interface IUserInitResponseData {
   user: User;
   isNewUser: boolean;
+}
+
+interface IUserInitResponse {
+  data: IUserInitResponseData;
 }
 
 export type {
   IUserUpdatePayload,
   IUserStatisticUpdatePayload,
+  IUserInitResponseData,
   IUserInitResponse,
 };

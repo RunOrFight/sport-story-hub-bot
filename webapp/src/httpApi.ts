@@ -40,7 +40,7 @@ const httpApi = {
   },
   getOrCreateUserByUsername: async (
     username: string,
-  ): Promise<{ data: IUserInitResponse } | IError> => {
+  ): Promise<IUserInitResponse | IError> => {
     const response = await fetch(`${BASE_URL}/user/init`, {
       body: JSON.stringify({ username }),
       headers: {
@@ -50,9 +50,9 @@ const httpApi = {
     });
 
     if (!response.ok) {
-      console.error(response.statusText);
-      return { error: `User with username "${username}" doesn't exist` };
+      return { error: response.statusText };
     }
+
     return await response.json();
   },
   joinEvent: async (payload: { username: string; eventId: number }) => {

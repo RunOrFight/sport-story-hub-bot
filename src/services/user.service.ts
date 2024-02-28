@@ -1,6 +1,6 @@
 import db from "../database";
 import { User } from "../database/entities/User";
-import { IUserInitResponse, IUserUpdatePayload } from "../types/user.types";
+import { IUserInitResponseData, IUserUpdatePayload } from "../types/user.types";
 
 export class UserService {
   async getAllUsers(): Promise<Omit<User, "createdAt" | "updatedAt">[]> {
@@ -60,7 +60,9 @@ export class UserService {
     return user;
   }
 
-  async userInit(payload: { username: string }): Promise<IUserInitResponse> {
+  async userInit(payload: {
+    username: string;
+  }): Promise<IUserInitResponseData> {
     const { username } = payload;
     const user = await db.getRepository(User).findOne({
       where: { username },

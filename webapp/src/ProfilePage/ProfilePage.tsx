@@ -1,32 +1,24 @@
-import classes from "./ProfilePage.module.css";
-import { useParams } from "react-router-dom";
-import { getNotNil } from "../Utils/GetNotNil.ts";
-import { Avatar, Card, Flex, Skeleton, Space, Typography } from "antd";
-import { useHttpRequestOnMount } from "../Hooks/UseHttpRequestOnMount.ts";
+import { Avatar, Card, Flex, Result, Skeleton, Space, Typography } from "antd";
 import { numberFormatter } from "../Utils/NumberFormatter.ts";
-import type { IError } from "../Models/IError.ts";
-import { IUserInitResponse } from "../../../src/types/user.types.ts";
 import { UserOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
+import {
+  userErrorNotNilSelector,
+  userInfoNotNilSelector,
+  userStatusSelector,
+} from "../Store/User/UserSelectors.ts";
+import { ESliceStatus } from "../Store/ESliceStatus.ts";
+import { ComponentType, createElement, Fragment } from "react";
+import { withProps } from "../Utils/WithProps.ts";
 
-const normalizeUser = (response: { data: IUserInitResponse } | IError) =>
-  "error" in response ? response : response.data.user;
+const Error = () => {
+  const error = useSelector(userErrorNotNilSelector);
 
-const ProfilePage = () => {
-  const { username } = useParams();
+  return <Result status={"error"} title={error} />;
+};
 
-  const { data: user } = useHttpRequestOnMount(
-    "getOrCreateUserByUsername",
-    [getNotNil(username, "ProfilePage")],
-    normalizeUser,
-  );
-
-  if (!user) {
-    return <Skeleton style={{ padding: 16 }} />;
-  }
-
-  if ("error" in user) {
-    return <h2 className={classes.error}>{user.error}</h2>;
-  }
+const ProfilePageSuccess = () => {
+  const userInfo = useSelector(userInfoNotNilSelector);
 
   const {
     goals,
@@ -39,7 +31,8 @@ const ProfilePage = () => {
     assists,
     draws,
     total,
-  } = user;
+    username,
+  } = userInfo;
 
   return (
     <Flex vertical style={{ padding: 10 }}>
@@ -70,6 +63,20 @@ const ProfilePage = () => {
       </Typography>
     </Flex>
   );
+};
+
+const SLICE_STATUS_TO_COMPONENT_TYPE_MAP: Record<ESliceStatus, ComponentType> =
+  {
+    [ESliceStatus.idle]: Fragment,
+    [ESliceStatus.loading]: withProps(Skeleton)({ style: { padding: 16 } }),
+    [ESliceStatus.error]: Error,
+    [ESliceStatus.success]: ProfilePageSuccess,
+  };
+
+const ProfilePage = () => {
+  const status = useSelector(userStatusSelector);
+
+  return createElement(SLICE_STATUS_TO_COMPONENT_TYPE_MAP[status]);
 };
 
 export { ProfilePage };

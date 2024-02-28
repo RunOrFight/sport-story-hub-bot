@@ -1,4 +1,5 @@
 const emptyRoute = "/";
+const anyRoute = "/*";
 const eventsRoute = "/events";
 const singleEventRoute = `${eventsRoute}/:eventId`;
 const createEventRoute = `${eventsRoute}/create`;
@@ -14,6 +15,7 @@ const routeMap = {
   statisticsRoute,
   profileRoute,
   welcomeRoute,
+  anyRoute,
 };
 
 export { routeMap };
