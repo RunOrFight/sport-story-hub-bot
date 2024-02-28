@@ -2,7 +2,7 @@ import classes from "./Layout.module.css";
 import { generatePath, NavLink, Outlet } from "react-router-dom";
 import { routeMap } from "../routeMap.ts";
 import { FC } from "react";
-import { emoji } from "../../../src/emoji.ts";
+import { emoji } from "../../../src/tg_bot/bot_utils/emoji.ts";
 
 interface ILink {
   to: string;

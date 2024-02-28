@@ -1,4 +1,4 @@
-import { Event } from "./database/entities/Event";
+import { Event } from "../../database/entities/Event";
 import { emoji } from "./emoji";
 import { t, tKeys } from "./tKeys";
 import "dayjs/locale/ru";

@@ -58,7 +58,9 @@ const CreateEventForm = () => {
   };
 
   useEffect(() => {
-    httpApi.getEventsLocations().then((locations) => {
+    httpApi.getEventsLocations().then((response) => {
+      console.log(response);
+      const locations = response.locations;
       setLocations(locations);
       locations.length !== 0 &&
         form.setFieldValue("locationId", locations[0].id);

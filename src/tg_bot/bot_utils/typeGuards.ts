@@ -1,5 +1,5 @@
 import { IEventRaw, TUnknownObject } from "./types";
-import { TEventCreatePayload } from "./types/event.types";
+import { TEventCreatePayload } from "../../types/event.types";
 
 const isObject = (candidate: unknown): candidate is TUnknownObject =>
   candidate !== null && typeof candidate === "object";

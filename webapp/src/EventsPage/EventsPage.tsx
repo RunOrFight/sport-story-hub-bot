@@ -10,7 +10,7 @@ import {
   getReadableEventDate,
   getReadableEventTime,
 } from "../Utils/GetReadableEventDate.ts";
-import { emoji } from "../../../src/emoji.ts";
+import { emoji } from "../../../src/tg_bot/bot_utils/emoji.ts";
 import { EmptyEventsPage } from "../Empty/Empty.tsx";
 
 const getEventInfo = (

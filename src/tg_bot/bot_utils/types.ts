@@ -1,4 +1,4 @@
-import { EEventStatus } from "./enums/event-status.enum";
+import { EEventStatus } from "../../enums/event-status.enum";
 
 type TUnknownObject = Record<string, unknown>;
 

@@ -1,5 +1,4 @@
 import { EventController } from "../controllers/event.controller";
-import { eventService } from "../services/event.service";
 import { Request, Router } from "express";
 
 export const EventRouter = Router();

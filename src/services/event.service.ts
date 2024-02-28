@@ -5,7 +5,7 @@ import { Participant } from "../database/entities/Participant";
 import { TEventCreatePayload } from "../types/event.types";
 import { Location } from "../database/entities/Location";
 
-class EventService {
+export class EventService {
   async getAllEvents(): Promise<Event[]> {
     return db.getRepository(Event).find({
       relations: { participants: { user: { photo: true } } },
@@ -28,6 +28,9 @@ class EventService {
         },
         participants: { user: { photo: true } },
       },
+      order: {
+        participants: { id: "ASC" },
+      },
     });
 
     if (!event) {
@@ -46,6 +49,9 @@ class EventService {
           user: { photo: true },
           parentParticipant: { user: true },
         },
+      },
+      order: {
+        participants: { id: "ASC" },
       },
     });
 
@@ -144,5 +150,3 @@ class EventService {
     return createdEvent;
   }
 }
-
-export const eventService = new EventService();

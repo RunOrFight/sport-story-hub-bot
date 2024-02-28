@@ -2,7 +2,7 @@ import db from "../database";
 import { User } from "../database/entities/User";
 import { IUserInitResponse, IUserUpdatePayload } from "../types/user.types";
 
-class UserService {
+export class UserService {
   async getAllUsers(): Promise<Omit<User, "createdAt" | "updatedAt">[]> {
     return db
       .getRepository(User)
@@ -101,5 +101,3 @@ class UserService {
     return true;
   }
 }
-
-export const userService = new UserService();

@@ -1,12 +1,14 @@
 import TelegramBot from "node-telegram-bot-api";
 import chalk from "chalk";
-import { registerBotEventHandler } from "../logger";
-import { t, tKeys } from "../tKeys";
-import { assertIsRawEvent } from "../typeGuards";
-import { Event } from "../database/entities/Event";
-import { createEventMessage } from "../createEventMessage";
-import { eventService } from "../services/event.service";
-import { userService } from "../services/user.service";
+import { registerBotEventHandler } from "./bot_utils/logger";
+import { t, tKeys } from "./bot_utils/tKeys";
+import { assertIsRawEvent } from "./bot_utils/typeGuards";
+import { createEventMessage } from "./bot_utils/createEventMessage";
+import { EventService } from "../services/event.service";
+import { UserService } from "../services/user.service";
+
+const userService = new UserService();
+const eventService = new EventService();
 
 export const bot = new TelegramBot(process.env.TELEGRAM_BOT_ACCESS_TOKEN!, {
   polling: true,

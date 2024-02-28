@@ -25,7 +25,7 @@ const httpApi = {
     return await response.json();
   },
   getEventsLocations: async () => {
-    const response = await fetch(`${BASE_URL}/locations`);
+    const response = await fetch(`${BASE_URL}/location/all`);
 
     return await response.json();
   },

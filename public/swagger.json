@@ -635,31 +635,6 @@
 				}
 			}
 		},
-		"/api/participant/all": {
-			"get": {
-				"operationId": "GetAllParticipants",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/Omit_User.createdAt-or-updatedAt_"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Participant"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
 		"/api/event/all": {
 			"get": {
 				"operationId": "GetAllEvents",
@@ -805,6 +780,31 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/location/all": {
+			"get": {
+				"operationId": "GetAllLocations",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Location"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Locations"
+				],
+				"security": [],
+				"parameters": []
 			}
 		}
 	},

@@ -2,9 +2,6 @@ import { Seeder } from "@jorgebodega/typeorm-seeding";
 import { DataSource } from "typeorm";
 import { Event } from "../entities/Event";
 import { Seeder as SeederModel } from "../entities/Seeder";
-import { EEventStatus } from "../../enums/event-status.enum";
-import { Location } from "../entities/Location";
-import { File } from "../entities/File";
 import { Participant } from "../entities/Participant";
 import { User } from "../entities/User";
 
@@ -19,8 +16,8 @@ export default class UserSeeder extends Seeder {
     if (!seedWasUsed) {
       const events = (await dataSource
         .createEntityManager()
-        .getRepository("events")
-        .find()) as Event[];
+        .getRepository(Event)
+        .find({ relations: { participants: true } })) as Event[];
 
       const users = (await dataSource
         .createEntityManager()
