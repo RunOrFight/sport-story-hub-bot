@@ -60,9 +60,7 @@ class UserService {
     return user;
   }
 
-  async getUserByUsername(payload: {
-    username: string;
-  }): Promise<IUserInitResponse> {
+  async userInit(payload: { username: string }): Promise<IUserInitResponse> {
     const { username } = payload;
     const user = await db.getRepository(User).findOne({
       where: { username },

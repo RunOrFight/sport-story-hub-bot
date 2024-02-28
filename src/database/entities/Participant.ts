@@ -3,22 +3,24 @@ import {
   PrimaryGeneratedColumn,
   Column,
   JoinColumn,
-  OneToOne,
   ManyToOne,
   Index,
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
-  JoinTable,
+  BeforeInsert,
+  BeforeUpdate,
+  BeforeRemove,
+  AfterRemove,
+  AfterInsert,
 } from "typeorm";
 import { User } from "./User";
 import { Event } from "./Event";
 import { TeamParticipant } from "./TeamParticipant";
-import { Team } from "./Team";
+import db from "../";
 
 @Entity("participants")
-@Index(["user", "event"], { unique: true })
+@Index(["user", "event"], { unique: true, where: "(user_id IS NOT NULL)" })
 export class Participant {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -26,9 +28,9 @@ export class Participant {
   @Column({ default: false })
   waitList!: boolean;
 
-  @ManyToOne(() => User, { nullable: false })
+  @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: "user_id" })
-  user!: User;
+  user?: User | null;
 
   @ManyToOne(() => Event, { nullable: false })
   @JoinColumn({ name: "event_id" })
@@ -46,4 +48,42 @@ export class Participant {
 
   @UpdateDateColumn({ name: "updated_at" })
   updatedAt!: Date;
+
+  @BeforeInsert()
+  async waitListWhenUserJoined() {
+    try {
+      if (this.event.participantsLimit) {
+        if (this.event.participants.length >= this.event.participantsLimit!) {
+          this.waitList = true;
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  @AfterRemove()
+  async waitListWhenUserLeft() {
+    try {
+      if (!this.waitList) {
+        const waitListParticipants = await db.getRepository(Participant).find({
+          relations: { event: true },
+          where: { event: { id: this.event.id }, waitList: true },
+          order: { id: "ASC" },
+        });
+        if (waitListParticipants.length) {
+          const participant = await db
+            .getRepository(Participant)
+            .findOne({ where: { id: waitListParticipants[0].id } });
+          console.log(participant, "WAIT LIST PART");
+          participant!.waitList = false;
+          await db.getRepository(Participant).save(participant!);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
 }

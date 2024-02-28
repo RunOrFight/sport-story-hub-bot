@@ -17,8 +17,8 @@ export class UserController {
   }
 
   @Post("/init")
-  async getUserByUsername(@Body() payload: { username: string }) {
-    return userService.getUserByUsername(payload);
+  async userInit(@Body() payload: { username: string }) {
+    return userService.userInit(payload);
   }
 
   @Put("/update")

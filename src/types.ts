@@ -28,11 +28,11 @@ interface IEventParticipant {
 }
 
 interface IEventRaw {
-  locationId: number;
-  dateTime: string;
-  description: string;
-  price: string;
-  participantsLimit: number;
+  locationId?: number;
+  dateTime?: string;
+  description?: string;
+  price?: string;
+  participantsLimit?: number;
 }
 
 interface IEventFull extends Omit<IEventRaw, "locationId"> {

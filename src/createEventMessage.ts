@@ -17,7 +17,7 @@ const createEventMessage = ({
 }: Event) => {
   try {
     const baseString = `
-${emoji.time} ${dateTime ? getDate(dateTime) : ''}
+${emoji.time} ${dateTime ? getDate(dateTime) : ""}
 ${emoji.location} ${location?.title}, ${location?.address} 
 <a rel="noopener noreferrer" href="${location?.url}">${t(tKeys.eventMessageMap)}</a> 
 ${emoji.price} ${price}
@@ -29,8 +29,8 @@ ${participants
   .filter((pt) => !pt.waitList)
   .map((it) =>
     it.parentParticipant
-      ? `${t(tKeys.eventMessageInvited)} @${it.parentParticipant.user.username}`
-      : `@${it.user.username}`,
+      ? `${t(tKeys.eventMessageInvited)} @${it.parentParticipant.user!.username}`
+      : `@${it.user!.username}`,
   )
   .join("\n")}
 `;
@@ -40,8 +40,8 @@ ${participants
   .filter((pt) => pt.waitList)
   .map((it) =>
     it.parentParticipant
-      ? `${t(tKeys.eventMessageInvited)} @${it.parentParticipant.user.username}`
-      : `@${it.user.username}`,
+      ? `${t(tKeys.eventMessageInvited)} @${it.parentParticipant.user!.username}`
+      : `@${it.user!.username}`,
   )
   .join("\n")}
 `;

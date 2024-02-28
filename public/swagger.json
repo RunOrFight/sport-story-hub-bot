@@ -264,7 +264,12 @@
 						"type": "boolean"
 					},
 					"user": {
-						"$ref": "#/components/schemas/User"
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/User"
+							}
+						],
+						"nullable": true
 					},
 					"event": {
 						"$ref": "#/components/schemas/Event"
@@ -290,7 +295,6 @@
 				"required": [
 					"id",
 					"waitList",
-					"user",
 					"event",
 					"teamsParticipants",
 					"createdAt",
@@ -561,7 +565,7 @@
 		},
 		"/api/user/init": {
 			"post": {
-				"operationId": "GetUserByUsername",
+				"operationId": "UserInit",
 				"responses": {
 					"200": {
 						"description": "Ok",

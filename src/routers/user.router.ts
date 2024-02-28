@@ -34,7 +34,7 @@ UserRouter.post(
     if (!req.body?.username) {
       throw new Error("username is not found");
     }
-    const data = await userController.getUserByUsername(req.body);
+    const data = await userController.userInit(req.body);
     res.status(200).json({ data });
   },
 );

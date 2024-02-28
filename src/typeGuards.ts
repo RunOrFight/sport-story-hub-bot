@@ -1,4 +1,5 @@
 import { IEventRaw, TUnknownObject } from "./types";
+import { TEventCreatePayload } from "./types/event.types";
 
 const isObject = (candidate: unknown): candidate is TUnknownObject =>
   candidate !== null && typeof candidate === "object";
@@ -17,7 +18,7 @@ const checkAsObject = <T>(candidate: unknown, propertiesList: string[]) => {
 };
 
 const assertIsRawEvent = (maybeEvent: unknown) => {
-  return checkAsObject<IEventRaw>(maybeEvent, [
+  return checkAsObject<TEventCreatePayload>(maybeEvent, [
     "locationId",
     "dateTime",
     "description",
