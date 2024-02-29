@@ -37,23 +37,25 @@ const LocationsPageSuccess = () => {
   const locations = useSelector(locationsSelectors.data);
 
   return (
-    <Flex vertical gap={10} style={{ padding: "16px 16px 62px" }}>
+    <Flex vertical gap={16} style={{ padding: "16px 16px 62px" }}>
       {locations.map((location) => (
         <LocationCard {...location} key={location.id} />
       ))}
 
-      <Button
-        type={"primary"}
-        style={{
-          position: "fixed",
-          bottom: "16px",
-          width: "calc(100% - 32px)",
-          left: "16px",
-        }}
-        icon={<PlusOutlined />}
-      >
-        {"Create New"}
-      </Button>
+      <Link to={webappRoutes.createLocationRoute}>
+        <Button
+          type={"primary"}
+          style={{
+            position: "fixed",
+            bottom: "16px",
+            width: "calc(100% - 32px)",
+            left: "16px",
+          }}
+          icon={<PlusOutlined />}
+        >
+          {"Create New"}
+        </Button>
+      </Link>
     </Flex>
   );
 };

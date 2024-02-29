@@ -7,8 +7,8 @@ const statisticsRoute = "/statistics";
 const profileRoute = "/profile/:username";
 const welcomeRoute = "/welcome";
 const locationsRoute = "/locations";
-const updateLocationRoute = "/locations/update/:locationId";
-
+const updateLocationRoute = `${locationsRoute}/update/:locationId`;
+const createLocationRoute = `${locationsRoute}/create`;
 const webappRoutes = {
   emptyRoute,
   eventsRoute,
@@ -20,6 +20,7 @@ const webappRoutes = {
   anyRoute,
   locationsRoute,
   updateLocationRoute,
+  createLocationRoute,
 };
 
 export { webappRoutes };

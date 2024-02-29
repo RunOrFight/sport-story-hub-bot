@@ -1,17 +1,22 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ESliceStatus } from "../ESliceStatus.ts";
 import { Location } from "../../../../src/database/entities/Location.ts";
-import { TLocationUpdatePayload } from "../../../../src/types/location.types.ts";
+import {
+  TLocationCreatePayload,
+  TLocationUpdatePayload,
+} from "../../../../src/types/location.types.ts";
 
 interface ILocationsState {
   status: ESliceStatus;
   updateStatus: ESliceStatus;
+  createStatus: ESliceStatus;
   data: Location[];
 }
 
 const initialState: ILocationsState = {
   status: ESliceStatus.idle,
   updateStatus: ESliceStatus.idle,
+  createStatus: ESliceStatus.idle,
   data: [],
 };
 
@@ -40,6 +45,18 @@ const locationsSlice = createSlice({
     },
     updateClear: (state) => {
       state.updateStatus = ESliceStatus.idle;
+    },
+    create: (state, _: PayloadAction<TLocationCreatePayload>) => {
+      state.createStatus = ESliceStatus.loading;
+    },
+    createSuccess: (state) => {
+      state.createStatus = ESliceStatus.success;
+    },
+    createError: (state) => {
+      state.createStatus = ESliceStatus.error;
+    },
+    createClear: (state) => {
+      state.createStatus = ESliceStatus.idle;
     },
   },
 });

@@ -5,7 +5,10 @@ import { TAppEpic } from "../App/Epics/TAppEpic.ts";
 import { catchError, concat, from, of, switchMap } from "rxjs";
 import { locationsSlice } from "./LocationsSlice.ts";
 import { PayloadAction } from "@reduxjs/toolkit";
-import { TLocationUpdatePayload } from "../../../../src/types/location.types.ts";
+import {
+  TLocationCreatePayload,
+  TLocationUpdatePayload,
+} from "../../../../src/types/location.types.ts";
 
 const locationsLoadEpic: TAppEpic = (_, __, { httpApi }) => {
   return concat(
@@ -39,9 +42,29 @@ const updateLocationRouterEpic = routerEpic(
   () => updateLocationEpic,
 );
 
+const createLocationEpic: TAppEpic = (action$, state$, dependencies) =>
+  action$.pipe(
+    ofType("locations/create"),
+    switchMap(({ payload }: PayloadAction<TLocationCreatePayload>) => {
+      return concat(
+        from(dependencies.httpApi.createLocation(payload)).pipe(
+          () => of(locationsSlice.actions.createSuccess()),
+          catchError(() => of(locationsSlice.actions.createError())),
+        ),
+        locationsLoadEpic(action$, state$, dependencies),
+      );
+    }),
+  );
+
+const createLocationRouterEpic = routerEpic(
+  webappRoutes.createLocationRoute,
+  () => createLocationEpic,
+);
+
 const locationsRootEpic = combineEpics(
   locationsRouterEpic,
   updateLocationRouterEpic,
+  createLocationRouterEpic,
 );
 
 export { locationsRootEpic };

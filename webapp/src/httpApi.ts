@@ -3,7 +3,10 @@ import { TEvent } from "./Models/TEvent.ts";
 import { IError } from "./Models/IError.ts";
 import { IUserInitResponse } from "../../src/types/user.types.ts";
 import { Location } from "../../src/database/entities/Location.ts";
-import { TLocationUpdatePayload } from "../../src/types/location.types.ts";
+import {
+  TLocationCreatePayload,
+  TLocationUpdatePayload,
+} from "../../src/types/location.types.ts";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "No url";
 
@@ -93,6 +96,17 @@ const httpApi = {
         "Content-Type": "application/json",
       },
       method: "PUT",
+    });
+
+    console.log(response);
+  },
+  createLocation: async (payload: TLocationCreatePayload) => {
+    const response = await fetch(`${BASE_URL}/location/create`, {
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
     });
 
     console.log(response);
