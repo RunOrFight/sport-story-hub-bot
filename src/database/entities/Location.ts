@@ -14,18 +14,18 @@ export class Location {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ nullable: true })
-  title?: string;
+  @Column({ nullable: true, type: "varchar" })
+  title?: string | null;
 
-  @Column({ nullable: true })
-  url?: string;
+  @Column({ nullable: true, type: "varchar" })
+  url?: string | null;
 
-  @Column({ nullable: true })
-  address?: string;
+  @Column({ nullable: true, type: "varchar" })
+  address?: string | null;
 
   @OneToOne(() => File, { nullable: true })
   @JoinColumn({ name: "file_id" })
-  preview?: File;
+  preview?: File | null;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt!: Date;

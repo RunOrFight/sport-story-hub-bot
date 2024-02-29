@@ -111,7 +111,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IUserInitResponse": {
+			"IUserInitResponseData": {
 				"properties": {
 					"user": {
 						"$ref": "#/components/schemas/User"
@@ -162,16 +162,24 @@
 						"format": "double"
 					},
 					"title": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"url": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"address": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"preview": {
-						"$ref": "#/components/schemas/File"
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/File"
+							}
+						],
+						"nullable": true
 					},
 					"createdAt": {
 						"type": "string",
@@ -493,6 +501,65 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"TLocationCreatePayload": {
+				"properties": {
+					"previewId": {
+						"type": "number",
+						"format": "double"
+					},
+					"address": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					}
+				},
+				"type": "object"
+			},
+			"TLocationUpdatePayload": {
+				"properties": {
+					"previewId": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"address": {
+						"type": "string",
+						"nullable": true
+					},
+					"url": {
+						"type": "string",
+						"nullable": true
+					},
+					"title": {
+						"type": "string",
+						"nullable": true
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id"
+				],
+				"type": "object"
+			},
+			"TLocationDeletePayload": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id"
+				],
+				"type": "object"
 			}
 		},
 		"securitySchemes": {}
@@ -572,7 +639,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IUserInitResponse"
+									"$ref": "#/components/schemas/IUserInitResponseData"
 								}
 							}
 						}
@@ -805,6 +872,102 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/api/location/create": {
+			"post": {
+				"operationId": "CreateLocation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Location"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Locations"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TLocationCreatePayload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/location/update": {
+			"put": {
+				"operationId": "UpdateLocation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Location"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Locations"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TLocationUpdatePayload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/location/delete": {
+			"delete": {
+				"operationId": "DeleteLocation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Locations"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TLocationDeletePayload"
+							}
+						}
+					}
+				}
 			}
 		}
 	},
