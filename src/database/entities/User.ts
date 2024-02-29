@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { File } from "./File";
-import { EPlayerRole } from "../../enums/player-role.enum";
+import { EUserRole } from "../../enums/user-role.enum";
 
 @Entity("users")
 export class User {
@@ -53,6 +53,14 @@ export class User {
 
   @Column({ nullable: false, default: 0, name: "elo", type: "float" })
   Elo: number = 0;
+
+  @Column("enum", {
+    nullable: false,
+    array: true,
+    enum: EUserRole,
+    default: [EUserRole.USER],
+  })
+  roles!: EUserRole[];
 
   @CreateDateColumn({ name: "created_at" })
   createdAt!: Date;

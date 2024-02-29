@@ -33,6 +33,13 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"EUserRole": {
+				"enum": [
+					"admin",
+					"user"
+				],
+				"type": "string"
+			},
 			"User": {
 				"properties": {
 					"id": {
@@ -93,6 +100,12 @@
 						"format": "double",
 						"default": 0
 					},
+					"roles": {
+						"items": {
+							"$ref": "#/components/schemas/EUserRole"
+						},
+						"type": "array"
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -105,6 +118,7 @@
 				"required": [
 					"id",
 					"username",
+					"roles",
 					"createdAt",
 					"updatedAt"
 				],
@@ -925,7 +939,17 @@
 					"Locations"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user-id",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
