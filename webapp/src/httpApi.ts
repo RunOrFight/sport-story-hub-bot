@@ -5,6 +5,7 @@ import { IUserInitResponse } from "../../src/types/user.types.ts";
 import { Location } from "../../src/database/entities/Location.ts";
 import {
   TLocationCreatePayload,
+  TLocationDeletePayload,
   TLocationUpdatePayload,
 } from "../../src/types/location.types.ts";
 
@@ -107,6 +108,17 @@ const httpApi = {
         "Content-Type": "application/json",
       },
       method: "POST",
+    });
+
+    console.log(response);
+  },
+  deleteLocation: async (payload: TLocationDeletePayload) => {
+    const response = await fetch(`${BASE_URL}/location/delete`, {
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "DELETE",
     });
 
     console.log(response);

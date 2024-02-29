@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { locationsSelectors } from "../Store/Locations/LocationsSelector.ts";
 import { ESliceStatus } from "../Store/ESliceStatus.ts";
 import { ComponentType, createElement, FC, Fragment } from "react";
@@ -9,8 +9,15 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import AnchorLink from "antd/es/anchor/AnchorLink";
 import { generatePath, Link } from "react-router-dom";
 import { webappRoutes } from "../../../src/constants/webappRoutes.ts";
+import { locationsSlice } from "../Store/Locations/LocationsSlice.ts";
 
 const LocationCard: FC<Location> = ({ preview, url, address, title, id }) => {
+  const dispatch = useDispatch();
+
+  const onClick = () => {
+    dispatch(locationsSlice.actions.delete({ id }));
+  };
+
   return (
     <>
       <Card
@@ -23,7 +30,7 @@ const LocationCard: FC<Location> = ({ preview, url, address, title, id }) => {
           >
             <EditOutlined key="edit" />
           </Link>,
-          <DeleteOutlined key="delete" />,
+          <DeleteOutlined key="delete" onClick={onClick} />,
         ]}
       >
         <Card.Meta title={title} description={address} />

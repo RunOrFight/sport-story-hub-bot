@@ -3,6 +3,7 @@ import { ESliceStatus } from "../ESliceStatus.ts";
 import { Location } from "../../../../src/database/entities/Location.ts";
 import {
   TLocationCreatePayload,
+  TLocationDeletePayload,
   TLocationUpdatePayload,
 } from "../../../../src/types/location.types.ts";
 
@@ -34,6 +35,9 @@ const locationsSlice = createSlice({
       state.data = payload.locations;
       state.status = ESliceStatus.success;
     },
+    error: (state) => {
+      state.status = ESliceStatus.error;
+    },
     update: (state, _: PayloadAction<TLocationUpdatePayload>) => {
       state.updateStatus = ESliceStatus.loading;
     },
@@ -57,6 +61,9 @@ const locationsSlice = createSlice({
     },
     createClear: (state) => {
       state.createStatus = ESliceStatus.idle;
+    },
+    delete: (state, _: PayloadAction<TLocationDeletePayload>) => {
+      state.status = ESliceStatus.loading;
     },
   },
 });
