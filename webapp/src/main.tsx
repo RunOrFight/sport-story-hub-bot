@@ -14,6 +14,7 @@ import { WelcomePage } from "./WelcomePage/WelcomePage.tsx";
 import { history, store } from "./Store/CreateStore.ts";
 import { ReduxRouter } from "@lagunovsky/redux-react-router";
 import { LocationsPage } from "./LocationsPage/LocationsPage.tsx";
+import { UpdateLocationPage } from "./UpdateLocationPage/UpdateLocationPage.tsx";
 
 document.body.setAttribute("data-dev", String(isDev));
 
@@ -38,6 +39,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           element={<CreateEventForm />}
         />
         <Route path={webappRoutes.locationsRoute} element={<LocationsPage />} />
+
+        <Route
+          path={webappRoutes.updateLocationRoute}
+          element={<UpdateLocationPage />}
+        />
 
         <Route path={webappRoutes.welcomeRoute} element={<WelcomePage />} />
       </Routes>

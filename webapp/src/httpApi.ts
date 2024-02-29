@@ -3,6 +3,7 @@ import { TEvent } from "./Models/TEvent.ts";
 import { IError } from "./Models/IError.ts";
 import { IUserInitResponse } from "../../src/types/user.types.ts";
 import { Location } from "../../src/database/entities/Location.ts";
+import { TLocationUpdatePayload } from "../../src/types/location.types.ts";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "No url";
 
@@ -84,6 +85,17 @@ const httpApi = {
       return { locations: [] };
     }
     return await response.json();
+  },
+  updateLocation: async (payload: TLocationUpdatePayload) => {
+    const response = await fetch(`${BASE_URL}/location/update`, {
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
+    });
+
+    console.log(response);
   },
 };
 

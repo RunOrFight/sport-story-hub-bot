@@ -82,6 +82,7 @@ const CreateEventForm = () => {
         initialValues={initialValues}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
+        style={{ padding: 16 }}
       >
         <Form.Item<IEventRaw>
           label="Place"

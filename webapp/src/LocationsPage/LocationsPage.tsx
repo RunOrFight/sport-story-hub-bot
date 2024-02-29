@@ -5,16 +5,31 @@ import { ComponentType, createElement, FC, Fragment } from "react";
 import { withProps } from "../Utils/WithProps.ts";
 import { Button, Card, Flex, Skeleton } from "antd";
 import { Location } from "../../../src/database/entities/Location.ts";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import AnchorLink from "antd/es/anchor/AnchorLink";
+import { generatePath, Link } from "react-router-dom";
+import { webappRoutes } from "../../../src/constants/webappRoutes.ts";
 
-const LocationCard: FC<Location> = ({ preview, title, address }) => {
+const LocationCard: FC<Location> = ({ preview, url, address, title, id }) => {
   return (
-    <Card
-      cover={<img alt="example" src={preview?.url} />}
-      actions={[<EditOutlined key="edit" />, <DeleteOutlined key="delete" />]}
-    >
-      <Card.Meta title={title} description={address} />
-    </Card>
+    <>
+      <Card
+        cover={<img alt="example" src={preview?.url} />}
+        actions={[
+          <Link
+            to={generatePath(webappRoutes.updateLocationRoute, {
+              locationId: id,
+            })}
+          >
+            <EditOutlined key="edit" />
+          </Link>,
+          <DeleteOutlined key="delete" />,
+        ]}
+      >
+        <Card.Meta title={title} description={address} />
+        {url ? <AnchorLink href={url} title={"Url"} /> : url}
+      </Card>
+    </>
   );
 };
 
@@ -35,6 +50,7 @@ const LocationsPageSuccess = () => {
           width: "calc(100% - 32px)",
           left: "16px",
         }}
+        icon={<PlusOutlined />}
       >
         {"Create New"}
       </Button>
