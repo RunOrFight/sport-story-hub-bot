@@ -5,7 +5,7 @@ import { Skeleton } from "antd";
 import { ESortDirection } from "../Models/ESortDirection.ts";
 import { sortByKey } from "../Utils/SortByKey.ts";
 import { generatePath, Link } from "react-router-dom";
-import { routeMap } from "../routeMap.ts";
+import { EWebappRoutes } from "../../../src/enums/webapp-routes.enum.ts";
 import { useHttpRequestOnMount } from "../Hooks/UseHttpRequestOnMount.ts";
 import { EmptyLeaderboard } from "../Empty/Empty.tsx";
 import { isEmpty } from "../Utils/OneLineUtils.ts";
@@ -83,7 +83,7 @@ const Row: FC<ILeaderboardUser> = ({
 }) => {
   return (
     <Link
-      to={generatePath(routeMap.profileRoute, { username })}
+      to={generatePath(EWebappRoutes.profileRoute, { username })}
       className={classes.row}
     >
       <span>{place}</span>

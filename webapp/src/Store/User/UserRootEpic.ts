@@ -13,7 +13,7 @@ import { userSlice } from "./UserSlice.ts";
 import { combineEpics } from "redux-observable";
 import { routerLocationPathnameSelector } from "../Router/RouterSelectors.ts";
 import { matchPath } from "react-router-dom";
-import { routeMap } from "../../routeMap.ts";
+import { EWebappRoutes } from "../../../../src/enums/webapp-routes.enum.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
 
 const userLoadEpicFactory =
@@ -46,7 +46,7 @@ const userRouterEpic: TAppEpic = (action$, state$, dependencies) =>
     map(routerLocationPathnameSelector),
     distinctUntilChanged(),
     switchMap((pathname) => {
-      const match = matchPath(routeMap.profileRoute, pathname);
+      const match = matchPath(EWebappRoutes.profileRoute, pathname);
 
       if (!match) {
         return EMPTY;

@@ -2,7 +2,7 @@ import ReactDOM from "react-dom/client";
 import { Route, Routes } from "react-router-dom";
 import { EventsPage } from "./EventsPage/EventsPage.tsx";
 import { CreateEventForm } from "./CreateEventForm.tsx";
-import { routeMap } from "./routeMap.ts";
+import { EWebappRoutes } from "../../src/enums/webapp-routes.enum.ts";
 import { SingleEventPage } from "./SingleEventPage/SingleEventPage.tsx";
 import { Layout } from "./Layout/Layout.tsx";
 import "./main.css";
@@ -20,17 +20,23 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
     <ReduxRouter history={history}>
       <Routes>
-        <Route path={routeMap.emptyRoute} element={<Layout />}>
-          <Route path={routeMap.eventsRoute} element={<EventsPage />} />
+        <Route path={EWebappRoutes.emptyRoute} element={<Layout />}>
+          <Route path={EWebappRoutes.eventsRoute} element={<EventsPage />} />
           <Route
-            path={routeMap.singleEventRoute}
+            path={EWebappRoutes.singleEventRoute}
             element={<SingleEventPage />}
           />
-          <Route path={routeMap.statisticsRoute} element={<StatisticsPage />} />
-          <Route path={routeMap.profileRoute} element={<ProfilePage />} />
+          <Route
+            path={EWebappRoutes.statisticsRoute}
+            element={<StatisticsPage />}
+          />
+          <Route path={EWebappRoutes.profileRoute} element={<ProfilePage />} />
         </Route>
-        <Route path={routeMap.createEventRoute} element={<CreateEventForm />} />
-        <Route path={routeMap.welcomeRoute} element={<WelcomePage />} />
+        <Route
+          path={EWebappRoutes.createEventRoute}
+          element={<CreateEventForm />}
+        />
+        <Route path={EWebappRoutes.welcomeRoute} element={<WelcomePage />} />
       </Routes>
     </ReduxRouter>
   </Provider>,

@@ -1,6 +1,6 @@
 import { Skeleton } from "antd";
 import { generatePath, Link } from "react-router-dom";
-import { routeMap } from "../routeMap.ts";
+import { EWebappRoutes } from "../../../src/enums/webapp-routes.enum.ts";
 import classes from "./EventsPage.module.css";
 import { useHttpRequestOnMount } from "../Hooks/UseHttpRequestOnMount.ts";
 import { isEmpty } from "../Utils/OneLineUtils.ts";
@@ -35,7 +35,7 @@ const Event: FC<TEvent> = ({
   price,
   status,
 }) => {
-  const to = generatePath(routeMap.singleEventRoute, { eventId: id });
+  const to = generatePath(EWebappRoutes.singleEventRoute, { eventId: id });
 
   return (
     <div className={classes.event}>

@@ -4,7 +4,7 @@ import { useHttpRequestOnMount } from "../Hooks/UseHttpRequestOnMount.ts";
 import { getNotNil } from "../Utils/GetNotNil.ts";
 import type { TEvent, TEventGame, TEventGameTeam } from "../Models/TEvent.ts";
 import classes from "./SingleEventPage.module.css";
-import { routeMap } from "../routeMap.ts";
+import { EWebappRoutes } from "../../../src/enums/webapp-routes.enum.ts";
 import {
   getReadableEventDate,
   getReadableEventTime,
@@ -80,7 +80,7 @@ const SingleEventPage = () => {
   return (
     <div className={classes.singleEvent}>
       <div className={classes.head}>
-        <Link to={routeMap.eventsRoute} className={classes.back}>
+        <Link to={EWebappRoutes.eventsRoute} className={classes.back}>
           {"Back"}
         </Link>
         <span className={classes.status}>{status}</span>
