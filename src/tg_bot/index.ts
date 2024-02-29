@@ -34,13 +34,19 @@ export const botEventsInit = () => {
               {
                 text: t(tKeys.webAppCreateEventButton),
                 web_app: {
-                  url: `${process.env.WEB_APP_URL!}${webappRoutes.createEventRoute.replace("/", "")}`,
+                  url: new URL(
+                    webappRoutes.createEventRoute,
+                    process.env.WEB_APP_URL!,
+                  ).toString(),
                 },
               },
               {
                 text: t(tKeys.webAppManageLocationsButton),
                 web_app: {
-                  url: `${process.env.WEB_APP_URL!}${webappRoutes.locationsRoute.replace("/", "")}`,
+                  url: new URL(
+                    webappRoutes.locationsRoute,
+                    process.env.WEB_APP_URL!,
+                  ).toString(),
                 },
               },
             ],
