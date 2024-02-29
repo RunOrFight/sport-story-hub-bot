@@ -8,7 +8,7 @@ const profileRoute = "/profile/:username";
 const welcomeRoute = "/welcome";
 const locationsRoute = "/locations";
 
-const EWebappRoutes = {
+const webappRoutes = {
   emptyRoute,
   eventsRoute,
   singleEventRoute,
@@ -20,4 +20,4 @@ const EWebappRoutes = {
   locationsRoute,
 };
 
-export { EWebappRoutes };
+export { webappRoutes };

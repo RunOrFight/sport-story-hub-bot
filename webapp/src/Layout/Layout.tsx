@@ -1,6 +1,6 @@
 import classes from "./Layout.module.css";
 import { generatePath, NavLink, Outlet } from "react-router-dom";
-import { EWebappRoutes } from "../../../src/enums/webapp-routes.enum.ts";
+import { webappRoutes } from "../../../src/constants/webappRoutes.ts";
 import { FC } from "react";
 import { emoji } from "../../../src/tg_bot/bot_utils/emoji.ts";
 
@@ -12,15 +12,15 @@ interface ILink {
 const LINKS: ILink[] = [
   {
     title: emoji.calendar,
-    to: EWebappRoutes.eventsRoute,
+    to: webappRoutes.eventsRoute,
   },
   {
     title: emoji.barChart,
-    to: EWebappRoutes.statisticsRoute,
+    to: webappRoutes.statisticsRoute,
   },
   {
     title: emoji.clipboard,
-    to: generatePath(EWebappRoutes.profileRoute, {
+    to: generatePath(webappRoutes.profileRoute, {
       username: Telegram.WebApp.initDataUnsafe.user?.username ?? "@@admin@@",
     }),
   },

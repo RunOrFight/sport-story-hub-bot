@@ -1,20 +1,10 @@
 import type { TAppEpic } from "../App/Epics/TAppEpic.ts";
-import {
-  concat,
-  distinctUntilChanged,
-  EMPTY,
-  from,
-  map,
-  of,
-  switchMap,
-  take,
-} from "rxjs";
+import { concat, EMPTY, from, of, switchMap, take } from "rxjs";
 import { userSlice } from "./UserSlice.ts";
 import { combineEpics } from "redux-observable";
-import { routerLocationPathnameSelector } from "../Router/RouterSelectors.ts";
-import { matchPath } from "react-router-dom";
-import { EWebappRoutes } from "../../../../src/enums/webapp-routes.enum.ts";
+import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
+import { routerEpic } from "../RouterEpic.ts";
 
 const userLoadEpicFactory =
   (username: string): TAppEpic =>
@@ -41,22 +31,14 @@ const usesInitLoadEpic: TAppEpic = (action$, state$, dependencies) =>
     }),
   );
 
-const userRouterEpic: TAppEpic = (action$, state$, dependencies) =>
-  state$.pipe(
-    map(routerLocationPathnameSelector),
-    distinctUntilChanged(),
-    switchMap((pathname) => {
-      const match = matchPath(EWebappRoutes.profileRoute, pathname);
+const userRouterEpic = routerEpic(
+  webappRoutes.profileRoute,
+  (match) => (action$, state$, dependencies) => {
+    const username = getNotNil(match.params.username, "userRouterEpic");
 
-      if (!match) {
-        return EMPTY;
-      }
-
-      const username = getNotNil(match.params.username, "userRouterEpic");
-
-      return userLoadEpicFactory(username)(action$, state$, dependencies);
-    }),
-  );
+    return userLoadEpicFactory(username)(action$, state$, dependencies);
+  },
+);
 
 const userRootEpic = combineEpics(usesInitLoadEpic, userRouterEpic);
 

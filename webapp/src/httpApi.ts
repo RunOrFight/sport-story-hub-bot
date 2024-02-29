@@ -2,6 +2,7 @@ import { TUser } from "./Models/TUser.ts";
 import { TEvent } from "./Models/TEvent.ts";
 import { IError } from "./Models/IError.ts";
 import { IUserInitResponse } from "../../src/types/user.types.ts";
+import { Location } from "../../src/database/entities/Location.ts";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "No url";
 
@@ -74,6 +75,15 @@ const httpApi = {
       method: "DELETE",
     });
     console.log(response);
+  },
+  getAllLocations: async (): Promise<{ locations: Location[] }> => {
+    const response = await fetch(`${BASE_URL}/location/all`);
+    if (!response.ok) {
+      console.error(response.statusText);
+
+      return { locations: [] };
+    }
+    return await response.json();
   },
 };
 

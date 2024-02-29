@@ -8,6 +8,7 @@ import {
   createRouterReducerMapObject,
 } from "@lagunovsky/redux-react-router";
 import { createBrowserHistory } from "history";
+import { locationsSlice } from "./Locations/LocationsSlice.ts";
 
 const history = createBrowserHistory();
 const routerMiddleware = createRouterMiddleware(history);
@@ -20,7 +21,8 @@ export const createStore = () => {
   const store = configureStore({
     reducer: {
       ...createRouterReducerMapObject(history),
-      [userSlice.name]: userSlice.reducer,
+      user: userSlice.reducer,
+      locations: locationsSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().prepend(routerMiddleware).concat(epicMiddleware),

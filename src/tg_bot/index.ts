@@ -6,7 +6,7 @@ import { assertIsRawEvent } from "./bot_utils/typeGuards";
 import { createEventMessage } from "./bot_utils/createEventMessage";
 import { EventService } from "../services/event.service";
 import { UserService } from "../services/user.service";
-import { EWebappRoutes } from "../enums/webapp-routes.enum";
+import { webappRoutes } from "../constants/webappRoutes";
 
 const userService = new UserService();
 const eventService = new EventService();
@@ -34,13 +34,13 @@ export const botEventsInit = () => {
               {
                 text: t(tKeys.webAppCreateEventButton),
                 web_app: {
-                  url: `${process.env.WEB_APP_URL!}${EWebappRoutes.createEventRoute}`,
+                  url: `${process.env.WEB_APP_URL!}${webappRoutes.createEventRoute.replace("/", "")}`,
                 },
               },
               {
                 text: t(tKeys.webAppManageLocationsButton),
                 web_app: {
-                  url: `${process.env.WEB_APP_URL!}${EWebappRoutes.locationsRoute}`,
+                  url: `${process.env.WEB_APP_URL!}${webappRoutes.locationsRoute.replace("/", "")}`,
                 },
               },
             ],
