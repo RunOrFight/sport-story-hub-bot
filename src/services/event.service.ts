@@ -8,7 +8,10 @@ import { Location } from "../database/entities/Location";
 export class EventService {
   async getAllEvents(): Promise<Event[]> {
     return db.getRepository(Event).find({
-      relations: { participants: { user: { photo: true } } },
+      relations: {
+        participants: { user: { photo: true } },
+        location: { preview: true },
+      },
     });
   }
 
@@ -27,6 +30,7 @@ export class EventService {
           teamsParticipants: { participant: { user: { photo: true } } },
         },
         participants: { user: { photo: true } },
+        location: { preview: true },
       },
       order: {
         participants: { id: "ASC" },
