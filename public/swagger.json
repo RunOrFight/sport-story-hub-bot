@@ -939,17 +939,7 @@
 					"Locations"
 				],
 				"security": [],
-				"parameters": [
-					{
-						"in": "header",
-						"name": "user-id",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {

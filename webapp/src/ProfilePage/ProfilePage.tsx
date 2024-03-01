@@ -1,6 +1,6 @@
 import { Avatar, Card, Flex, Result, Skeleton, Space, Typography } from "antd";
 import { numberFormatter } from "../Utils/NumberFormatter.ts";
-import { UserOutlined } from "@ant-design/icons";
+import { EditOutlined, UserOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import {
   userErrorNotNilSelector,
@@ -10,6 +10,8 @@ import {
 import { ESliceStatus } from "../Store/ESliceStatus.ts";
 import { ComponentType, createElement, Fragment } from "react";
 import { withProps } from "../Utils/WithProps.ts";
+import { generatePath, Link, useParams } from "react-router-dom";
+import { webappRoutes } from "../../../src/constants/webappRoutes.ts";
 
 const Error = () => {
   const error = useSelector(userErrorNotNilSelector);
@@ -19,6 +21,7 @@ const Error = () => {
 
 const ProfilePageSuccess = () => {
   const userInfo = useSelector(userInfoNotNilSelector);
+  const { username: usernameFromParams } = useParams();
 
   const {
     goals,
@@ -44,10 +47,17 @@ const ProfilePageSuccess = () => {
           <Typography>
             <Typography.Title
               level={3}
-              editable
             >{`${name} ${surname}`}</Typography.Title>
             <Typography.Text>{username}</Typography.Text>
           </Typography>
+
+          {usernameFromParams === username ? (
+            <Link
+              to={generatePath(webappRoutes.updateProfileRoute, { username })}
+            >
+              <EditOutlined />
+            </Link>
+          ) : null}
         </Space>
       </Card>
 

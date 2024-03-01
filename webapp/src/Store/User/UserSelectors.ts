@@ -1,14 +1,27 @@
 import { AppState } from "../CreateStore.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
+import { createPropertySelectors } from "../CreatePropertySelectors.ts";
 
-const userSelector = (state: AppState) => state.user;
+const userSelectors = createPropertySelectors((state: AppState) => state.user);
 
-const userStatusSelector = (state: AppState) => userSelector(state).status;
+const userStatusSelector = userSelectors.status;
 
 const userInfoNotNilSelector = (state: AppState) =>
-  getNotNil(userSelector(state).info, "userInfoNotNilSelector");
+  getNotNil(userSelectors.info(state), "userInfoNotNilSelector");
 
 const userErrorNotNilSelector = (state: AppState) =>
-  getNotNil(userSelector(state).error, "userErrorNotNilSelector");
+  getNotNil(userSelectors.error(state), "userErrorNotNilSelector");
 
-export { userStatusSelector, userInfoNotNilSelector, userErrorNotNilSelector };
+const userInfoUsernameNotNilSelector = (state: AppState) =>
+  getNotNil(
+    userSelectors.info(state)?.username,
+    "userInfoUsernameNotNilSelector",
+  );
+
+export {
+  userStatusSelector,
+  userInfoNotNilSelector,
+  userErrorNotNilSelector,
+  userSelectors,
+  userInfoUsernameNotNilSelector,
+};

@@ -16,6 +16,7 @@ import { ReduxRouter } from "@lagunovsky/redux-react-router";
 import { LocationsPage } from "./LocationsPage/LocationsPage.tsx";
 import { UpdateLocationPage } from "./UpdateLocationPage/UpdateLocationPage.tsx";
 import { CreateLocationPage } from "./CreateLocationPage/CreateLocationPage.tsx";
+import { UpdateProfilePage } from "./UpdateProfilePage/UpdateProfilePage.tsx";
 
 document.body.setAttribute("data-dev", String(isDev));
 
@@ -49,6 +50,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route
           path={webappRoutes.createLocationRoute}
           element={<CreateLocationPage />}
+        />
+
+        <Route
+          path={webappRoutes.updateProfileRoute}
+          element={<UpdateProfilePage />}
         />
 
         <Route path={webappRoutes.welcomeRoute} element={<WelcomePage />} />

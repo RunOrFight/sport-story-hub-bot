@@ -8,7 +8,9 @@ interface IUserState {
   status: ESliceStatus;
   info: TUser | null;
   isNewUser: boolean;
+  profilePage: TUser | null;
   error: string | null;
+  profilePageStatus: ESliceStatus;
 }
 
 const initialState: IUserState = {
@@ -16,6 +18,8 @@ const initialState: IUserState = {
   info: null,
   isNewUser: true,
   error: null,
+  profilePage: null,
+  profilePageStatus: ESliceStatus.idle,
 };
 
 const userSlice = createSlice({

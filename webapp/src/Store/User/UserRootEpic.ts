@@ -17,7 +17,7 @@ const userLoadEpicFactory =
     );
   };
 
-const usesInitLoadEpic: TAppEpic = (action$, state$, dependencies) =>
+const userInitLoadEpic: TAppEpic = (action$, state$, dependencies) =>
   state$.pipe(
     take(1),
     switchMap(() => {
@@ -40,6 +40,6 @@ const userRouterEpic = routerEpic(
   },
 );
 
-const userRootEpic = combineEpics(usesInitLoadEpic, userRouterEpic);
+const userRootEpic = combineEpics(userInitLoadEpic, userRouterEpic);
 
 export { userRootEpic };
