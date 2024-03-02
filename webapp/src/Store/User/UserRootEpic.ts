@@ -6,6 +6,7 @@ import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
 import { routerEpic } from "../RouterEpic.ts";
 import { isDev } from "../../Utils/OneLineUtils.ts";
+import { PathMatch } from "react-router-dom";
 
 const userInitLoadEpic: TAppEpic = (_, state$, { httpApi }) =>
   state$.pipe(
@@ -28,33 +29,37 @@ const userInitLoadEpic: TAppEpic = (_, state$, { httpApi }) =>
     }),
   );
 
-const userRouterEpic = routerEpic(
-  webappRoutes.profileRoute,
-  (match) =>
-    (_, __, { httpApi }) => {
-      const id = getNotNil(match.params.id, "userRouterEpic");
+const userLoadProfilePageByIdEpic =
+  (match: PathMatch): TAppEpic =>
+  (_, __, { httpApi }) => {
+    const id = getNotNil(match.params.id, "userRouterEpic");
 
-      return concat(
-        of(userSlice.actions.profilePageStarted()),
-        from(httpApi.getUserById(Number(id))).pipe(
-          switchMap((data) => of(userSlice.actions.profilePageReceived(data))),
-        ),
-      );
-    },
+    return concat(
+      of(userSlice.actions.profilePageStarted()),
+      from(httpApi.getUserById(Number(id))).pipe(
+        switchMap((data) => of(userSlice.actions.profilePageReceived(data))),
+      ),
+    );
+  };
+
+const userRouterEpic = routerEpic(webappRoutes.profileRoute, (match) =>
+  combineEpics(userLoadProfilePageByIdEpic(match)),
 );
+
+const userUpdateProfileEpic: TAppEpic = (action$, __, { httpApi }) =>
+  action$.pipe(
+    ofType(userSlice.actions.update.type),
+    switchMap((payload) =>
+      from(httpApi.updateUser(payload)).pipe(
+        switchMap((value) => of(userSlice.actions.updateResult(value))),
+      ),
+    ),
+  );
 
 const updateProfileRouterEpic = routerEpic(
   webappRoutes.updateProfileRoute,
-  () =>
-    (action$, __, { httpApi }) =>
-      action$.pipe(
-        ofType(userSlice.actions.update.type),
-        switchMap((payload) =>
-          from(httpApi.updateUser(payload)).pipe(
-            switchMap((value) => of(userSlice.actions.updateResult(value))),
-          ),
-        ),
-      ),
+  (match) =>
+    combineEpics(userLoadProfilePageByIdEpic(match), userUpdateProfileEpic),
 );
 
 const userRootEpic = combineEpics(

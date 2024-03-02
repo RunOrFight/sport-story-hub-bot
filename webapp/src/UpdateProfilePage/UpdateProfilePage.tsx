@@ -21,7 +21,11 @@ const UpdateProfilePageForm = () => {
     dispatch(userSlice.actions.update(values));
   };
 
-  if (!profilePage || (userId && userId !== profilePage.id)) {
+  if (!userId || !profilePage) {
+    return <Skeleton />;
+  }
+
+  if (userId !== profilePage.id) {
     return (
       <Navigate
         to={generatePath(webappRoutes.profileRoute, {
@@ -45,7 +49,9 @@ const UpdateProfilePageForm = () => {
         </Link>
       </Flex>
       <Form form={form} onFinish={onFinish} initialValues={initialValues}>
-        <Form.Item name={"username"} hidden />
+        <Form.Item name={"username"} hidden>
+          <Input />
+        </Form.Item>
 
         <Form.Item label={"Name"} name={"name"}>
           <Input />
