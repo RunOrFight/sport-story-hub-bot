@@ -6,7 +6,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { locationsSlice } from "../Store/Locations/LocationsSlice.ts";
 import { TLocationCreatePayload } from "../../../src/types/location.types.ts";
 import { webappRoutes } from "../../../src/constants/webappRoutes.ts";
-import { ESliceStatus } from "../Store/ESliceStatus.ts";
+import { ERequestStatus } from "../Store/RequestManager/ERequestStatus.ts";
 import { ComponentType, createElement } from "react";
 import { withProps } from "../Utils/WithProps.ts";
 
@@ -66,21 +66,23 @@ const CreateLocationForm = () => {
   );
 };
 
-const SLICE_STATUS_TO_COMPONENT_TYPE_MAP: Record<ESliceStatus, ComponentType> =
-  {
-    [ESliceStatus.idle]: CreateLocationForm,
-    [ESliceStatus.loading]: withProps(Skeleton)({ style: { padding: 16 } }),
-    [ESliceStatus.error]: withProps(Result)({
-      status: "error",
-      title: "Update failed",
-      extra: <GoToLocations />,
-    }),
-    [ESliceStatus.success]: withProps(Result)({
-      status: "success",
-      title: "Success",
-      extra: <GoToLocations />,
-    }),
-  };
+const SLICE_STATUS_TO_COMPONENT_TYPE_MAP: Record<
+  ERequestStatus,
+  ComponentType
+> = {
+  [ERequestStatus.idle]: CreateLocationForm,
+  [ERequestStatus.loading]: withProps(Skeleton)({ style: { padding: 16 } }),
+  [ERequestStatus.error]: withProps(Result)({
+    status: "error",
+    title: "Update failed",
+    extra: <GoToLocations />,
+  }),
+  [ERequestStatus.success]: withProps(Result)({
+    status: "success",
+    title: "Success",
+    extra: <GoToLocations />,
+  }),
+};
 
 const CreateLocationPage = () => {
   const status = useSelector(locationsSelectors.createStatus);

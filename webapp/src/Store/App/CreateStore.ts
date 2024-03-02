@@ -1,14 +1,15 @@
 import { Action, configureStore } from "@reduxjs/toolkit";
-import { userSlice } from "./User/UserSlice.ts";
-import { appEpic } from "./App/Epics/AppEpic.ts";
+import { userSlice } from "../User/UserSlice.ts";
+import { appEpic } from "./Epics/AppEpic.ts";
 import { createEpicMiddleware } from "redux-observable";
-import { httpApi } from "../httpApi.ts";
+import { httpApi } from "../../HttpApi/HttpApi.ts";
 import {
   createRouterMiddleware,
   createRouterReducerMapObject,
 } from "@lagunovsky/redux-react-router";
 import { createBrowserHistory } from "history";
-import { locationsSlice } from "./Locations/LocationsSlice.ts";
+import { locationsSlice } from "../Locations/LocationsSlice.ts";
+import { requestManagerSlice } from "../RequestManager/RequestManagerSlice.ts";
 
 const history = createBrowserHistory();
 const routerMiddleware = createRouterMiddleware(history);
@@ -23,6 +24,7 @@ export const createStore = () => {
       ...createRouterReducerMapObject(history),
       user: userSlice.reducer,
       locations: locationsSlice.reducer,
+      requestManager: requestManagerSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().prepend(routerMiddleware).concat(epicMiddleware),

@@ -8,7 +8,7 @@ import {
   userProfilePageNotNilSelector,
   userSelectors,
 } from "../Store/User/UserSelectors.ts";
-import { ESliceStatus } from "../Store/ESliceStatus.ts";
+import { ERequestStatus } from "../Store/RequestManager/ERequestStatus.ts";
 import { ComponentType, createElement, Fragment } from "react";
 import { withProps } from "../Utils/WithProps.ts";
 import { generatePath, Link } from "react-router-dom";
@@ -81,13 +81,15 @@ const ProfilePageSuccess = () => {
   );
 };
 
-const SLICE_STATUS_TO_COMPONENT_TYPE_MAP: Record<ESliceStatus, ComponentType> =
-  {
-    [ESliceStatus.idle]: Fragment,
-    [ESliceStatus.loading]: withProps(Skeleton)({ style: { padding: 16 } }),
-    [ESliceStatus.error]: Error,
-    [ESliceStatus.success]: ProfilePageSuccess,
-  };
+const SLICE_STATUS_TO_COMPONENT_TYPE_MAP: Record<
+  ERequestStatus,
+  ComponentType
+> = {
+  [ERequestStatus.idle]: Fragment,
+  [ERequestStatus.loading]: withProps(Skeleton)({ style: { padding: 16 } }),
+  [ERequestStatus.error]: Error,
+  [ERequestStatus.success]: ProfilePageSuccess,
+};
 
 const ProfilePage = () => {
   const status = useSelector(userSelectors.profilePageStatus);

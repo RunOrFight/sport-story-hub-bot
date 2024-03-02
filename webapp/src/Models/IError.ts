@@ -1,5 +1,5 @@
-interface IError {
+interface IWithError {
   error: string;
 }
 
-export type { IError };
+export type { IWithError };

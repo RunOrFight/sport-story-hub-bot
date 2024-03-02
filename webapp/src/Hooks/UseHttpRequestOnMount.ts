@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { httpApi, type THttpApi } from "../httpApi.ts";
+import { httpApi, type THttpApi } from "../HttpApi/HttpApi.ts";
 
 type THttpRequestKey = keyof THttpApi;
 

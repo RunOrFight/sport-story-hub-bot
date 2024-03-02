@@ -1,5 +1,5 @@
 import { Selector } from "react-redux";
-import { AppState } from "../Store/CreateStore.ts";
+import { AppState } from "../Store/App/CreateStore.ts";
 
 const getNotNil = <T>(candidate: T, entity: string): NonNullable<T> => {
   if (!candidate) {

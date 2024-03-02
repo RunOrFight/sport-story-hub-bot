@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { locationsSelectors } from "../Store/Locations/LocationsSelector.ts";
-import { ESliceStatus } from "../Store/ESliceStatus.ts";
+import { ERequestStatus } from "../Store/RequestManager/ERequestStatus.ts";
 import { ComponentType, createElement, FC, Fragment } from "react";
 import { withProps } from "../Utils/WithProps.ts";
 import { Button, Card, Flex, Skeleton } from "antd";
@@ -10,6 +10,9 @@ import AnchorLink from "antd/es/anchor/AnchorLink";
 import { generatePath, Link } from "react-router-dom";
 import { webappRoutes } from "../../../src/constants/webappRoutes.ts";
 import { locationsSlice } from "../Store/Locations/LocationsSlice.ts";
+import { requestManagerSlice } from "../Store/RequestManager/RequestManagerSlice.ts";
+import { LOCATIONS_GET_ALL_REQUEST_SYMBOL } from "../Store/Locations/LocationsVariables.ts";
+import { useParamSelector } from "../Hooks/UseParamSelector.ts";
 
 const LocationCard: FC<Location> = ({ preview, url, address, title, id }) => {
   const dispatch = useDispatch();
@@ -67,18 +70,23 @@ const LocationsPageSuccess = () => {
   );
 };
 
-const SLICE_STATUS_TO_COMPONENT_TYPE_MAP: Record<ESliceStatus, ComponentType> =
-  {
-    [ESliceStatus.idle]: Fragment,
-    [ESliceStatus.loading]: withProps(Skeleton)({
-      style: { padding: "16px" },
-    }),
-    [ESliceStatus.error]: Fragment,
-    [ESliceStatus.success]: LocationsPageSuccess,
-  };
+const SLICE_STATUS_TO_COMPONENT_TYPE_MAP: Record<
+  ERequestStatus,
+  ComponentType
+> = {
+  [ERequestStatus.idle]: Fragment,
+  [ERequestStatus.loading]: withProps(Skeleton)({
+    style: { padding: "16px" },
+  }),
+  [ERequestStatus.error]: Fragment,
+  [ERequestStatus.success]: LocationsPageSuccess,
+};
 
 const LocationsPage = () => {
-  const status = useSelector(locationsSelectors.status);
+  const status = useParamSelector(
+    requestManagerSlice.selectors.statusBySymbol,
+    LOCATIONS_GET_ALL_REQUEST_SYMBOL,
+  );
 
   return createElement(SLICE_STATUS_TO_COMPONENT_TYPE_MAP[status]);
 };

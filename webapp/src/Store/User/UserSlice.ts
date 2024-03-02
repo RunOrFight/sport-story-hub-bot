@@ -5,29 +5,29 @@ import {
   IUserInitResponseData,
   IUserUpdatePayload,
 } from "../../../../src/types/user.types.ts";
-import { IError } from "../../Models/IError.ts";
-import { ESliceStatus } from "../ESliceStatus.ts";
+import { IWithError } from "../../Models/IError.ts";
+import { ERequestStatus } from "../RequestManager/ERequestStatus.ts";
 
 interface IUserState {
-  status: ESliceStatus;
+  status: ERequestStatus;
   info: TUser | null;
   isNewUser: boolean;
   profilePage: TUser | null;
   error: string | null;
-  profilePageStatus: ESliceStatus;
+  profilePageStatus: ERequestStatus;
   profilePageError: string | null;
-  updateStatus: ESliceStatus;
+  updateStatus: ERequestStatus;
 }
 
 const initialState: IUserState = {
-  status: ESliceStatus.idle,
+  status: ERequestStatus.idle,
   info: null,
   isNewUser: true,
   error: null,
   profilePage: null,
   profilePageError: null,
-  profilePageStatus: ESliceStatus.idle,
-  updateStatus: ESliceStatus.idle,
+  profilePageStatus: ERequestStatus.idle,
+  updateStatus: ERequestStatus.idle,
 };
 
 const userSlice = createSlice({
@@ -35,52 +35,52 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     started: (state) => {
-      state.status = ESliceStatus.loading;
+      state.status = ERequestStatus.loading;
     },
     received: (
       state,
-      { payload }: PayloadAction<IUserInitResponse | IError>,
+      { payload }: PayloadAction<IUserInitResponse | IWithError>,
     ) => {
       if ("error" in payload) {
         state.error = payload.error;
-        state.status = ESliceStatus.error;
+        state.status = ERequestStatus.error;
 
         return;
       }
 
       state.info = payload.data.user;
-      state.status = ESliceStatus.success;
+      state.status = ERequestStatus.success;
       state.isNewUser = payload.data.isNewUser;
     },
     profilePageStarted: (state) => {
-      state.profilePageStatus = ESliceStatus.loading;
+      state.profilePageStatus = ERequestStatus.loading;
     },
     profilePageReceived: (
       state,
-      { payload }: PayloadAction<IUserInitResponseData | IError>,
+      { payload }: PayloadAction<IUserInitResponseData | IWithError>,
     ) => {
       if ("error" in payload) {
         state.profilePageError = payload.error;
-        state.profilePageStatus = ESliceStatus.error;
+        state.profilePageStatus = ERequestStatus.error;
 
         return;
       }
 
       state.profilePage = payload.user;
-      state.profilePageStatus = ESliceStatus.success;
+      state.profilePageStatus = ERequestStatus.success;
     },
     update: (state, _: PayloadAction<IUserUpdatePayload>) => {
-      state.updateStatus = ESliceStatus.loading;
+      state.updateStatus = ERequestStatus.loading;
     },
-    updateResult: (state, { payload }: PayloadAction<IError>) => {
+    updateResult: (state, { payload }: PayloadAction<IWithError>) => {
       if ("error" in payload) {
-        state.updateStatus = ESliceStatus.error;
+        state.updateStatus = ERequestStatus.error;
         return;
       }
-      state.updateStatus = ESliceStatus.success;
+      state.updateStatus = ERequestStatus.success;
     },
     updateClear: (state) => {
-      state.updateStatus = ESliceStatus.idle;
+      state.updateStatus = ERequestStatus.idle;
     },
   },
 });

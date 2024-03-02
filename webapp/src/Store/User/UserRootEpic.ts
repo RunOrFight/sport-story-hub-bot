@@ -4,7 +4,7 @@ import { userSlice } from "./UserSlice.ts";
 import { combineEpics, ofType } from "redux-observable";
 import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
-import { routerEpic } from "../RouterEpic.ts";
+import { routerEpic } from "../Utils/RouterEpic.ts";
 import { isDev } from "../../Utils/OneLineUtils.ts";
 import { PathMatch } from "react-router-dom";
 

@@ -1,5 +1,5 @@
-import { createPropertySelectors } from "../CreatePropertySelectors.ts";
-import { AppState } from "../CreateStore.ts";
+import { createPropertySelectors } from "../Utils/CreatePropertySelectors.ts";
+import { AppState } from "../App/CreateStore.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
 import { TLocationUpdatePayload } from "../../../../src/types/location.types.ts";
 

@@ -1,8 +1,8 @@
 import { combineEpics, ofType } from "redux-observable";
-import { routerEpic } from "../RouterEpic.ts";
+import { routerEpic } from "../Utils/RouterEpic.ts";
 import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { TAppEpic } from "../App/Epics/TAppEpic.ts";
-import { catchError, concat, delay, from, of, switchMap } from "rxjs";
+import { catchError, delay, from, of, switchMap } from "rxjs";
 import { locationsSlice } from "./LocationsSlice.ts";
 import { PayloadAction } from "@reduxjs/toolkit";
 import {
@@ -10,16 +10,15 @@ import {
   TLocationDeletePayload,
   TLocationUpdatePayload,
 } from "../../../../src/types/location.types.ts";
+import { httpRequestEpicFactory } from "../Utils/HttpRequestEpicFactory.ts";
+import { LOCATIONS_GET_ALL_REQUEST_SYMBOL } from "./LocationsVariables.ts";
 
-const locationsLoadEpic: TAppEpic = (_, __, { httpApi }) => {
-  return concat(
-    of(locationsSlice.actions.started()),
-    from(httpApi.getAllLocations()).pipe(
-      switchMap((data) => of(locationsSlice.actions.received(data))),
-      catchError(() => of(locationsSlice.actions.error())),
-    ),
-  );
-};
+const locationsLoadEpic: TAppEpic = (_, __, { httpApi }) =>
+  httpRequestEpicFactory({
+    input: httpApi.getAllLocations(),
+    requestSymbol: LOCATIONS_GET_ALL_REQUEST_SYMBOL,
+    receivedActionCreator: locationsSlice.actions.received,
+  });
 
 const deleteLocationEpic: TAppEpic = (action$, state$, dependencies) =>
   action$.pipe(

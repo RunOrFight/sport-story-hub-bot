@@ -1,30 +1,25 @@
-import { TUser } from "./Models/TUser.ts";
-import { TEvent } from "./Models/TEvent.ts";
-import { IError } from "./Models/IError.ts";
+import { TUser } from "../Models/TUser.ts";
+import { TEvent } from "../Models/TEvent.ts";
+import { IWithError } from "../Models/IError.ts";
 import {
   IUserInitResponse,
   IUserInitResponseData,
   IUserUpdatePayload,
-} from "../../src/types/user.types.ts";
-import { Location } from "../../src/database/entities/Location.ts";
+} from "../../../src/types/user.types.ts";
+import { Location } from "../../../src/database/entities/Location.ts";
 import {
   TLocationCreatePayload,
   TLocationDeletePayload,
   TLocationUpdatePayload,
-} from "../../src/types/location.types.ts";
+} from "../../../src/types/location.types.ts";
+import { simpleGetRequest } from "./RequestUtils.ts";
+import type { IGetAllEventsResponse } from "./HttpApiTypes.ts";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "No url";
 
 const httpApi = {
-  getAllEvents: async (): Promise<{ events: TEvent[] }> => {
-    const response = await fetch(`${BASE_URL}/event/all`);
-    if (!response.ok) {
-      console.error(response.statusText);
+  getAllEvents: simpleGetRequest<IGetAllEventsResponse>("event/all"),
 
-      return { events: [] };
-    }
-    return await response.json();
-  },
   getEventById: async (eventId: string): Promise<{ event: TEvent } | null> => {
     const response = await fetch(`${BASE_URL}/event/getById/${eventId}`);
     if (!response.ok) {
@@ -34,11 +29,7 @@ const httpApi = {
     }
     return await response.json();
   },
-  getEventsLocations: async () => {
-    const response = await fetch(`${BASE_URL}/location/all`);
-
-    return await response.json();
-  },
+  getEventsLocations: simpleGetRequest<IGetAllEventsResponse>("locations/all"),
   getAllUsers: async (): Promise<{ users: TUser[] }> => {
     const response = await fetch(`${BASE_URL}/user/all`);
     if (!response.ok) {
@@ -50,7 +41,7 @@ const httpApi = {
   },
   getOrCreateUserByUsername: async (
     username: string,
-  ): Promise<IUserInitResponse | IError> => {
+  ): Promise<IUserInitResponse | IWithError> => {
     const response = await fetch(`${BASE_URL}/user/init`, {
       body: JSON.stringify({ username }),
       headers: {
@@ -65,7 +56,9 @@ const httpApi = {
 
     return await response.json();
   },
-  getUserById: async (id: number): Promise<IUserInitResponseData | IError> => {
+  getUserById: async (
+    id: number,
+  ): Promise<IUserInitResponseData | IWithError> => {
     const response = await fetch(`${BASE_URL}/user/getById/${id}`);
 
     if (!response.ok) {

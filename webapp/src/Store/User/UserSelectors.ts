@@ -1,6 +1,6 @@
-import { AppState } from "../CreateStore.ts";
+import { AppState } from "../App/CreateStore.ts";
 import { getNotNil, getNotNilSelector } from "../../Utils/GetNotNil.ts";
-import { createPropertySelectors } from "../CreatePropertySelectors.ts";
+import { createPropertySelectors } from "../Utils/CreatePropertySelectors.ts";
 
 const userSelectors = createPropertySelectors((state: AppState) => state.user);
 

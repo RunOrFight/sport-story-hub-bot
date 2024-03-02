@@ -1,7 +1,7 @@
 import { type Action } from "@reduxjs/toolkit";
 import { type Epic } from "redux-observable";
-import { httpApi } from "../../../httpApi.ts";
-import { type AppState } from "../../CreateStore.ts";
+import { httpApi } from "../../../HttpApi/HttpApi.ts";
+import { type AppState } from "../CreateStore.ts";
 
 interface IAppEpicDependencies {
   httpApi: typeof httpApi;

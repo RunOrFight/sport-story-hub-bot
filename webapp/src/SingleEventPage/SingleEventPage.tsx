@@ -10,7 +10,7 @@ import {
   getReadableEventTime,
 } from "../Utils/GetReadableEventDate.ts";
 import { type FC } from "react";
-import { httpApi } from "../httpApi.ts";
+import { httpApi } from "../HttpApi/HttpApi.ts";
 
 const Team: FC<TEventGameTeam> = ({ name, teamsParticipants }) => {
   return (

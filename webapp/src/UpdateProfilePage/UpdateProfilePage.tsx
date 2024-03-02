@@ -8,7 +8,7 @@ import {
 import { Button, Flex, Form, Input, Result, Skeleton } from "antd";
 import { userSlice } from "../Store/User/UserSlice.ts";
 import { IUserUpdatePayload } from "../../../src/types/user.types.ts";
-import { ESliceStatus } from "../Store/ESliceStatus.ts";
+import { ERequestStatus } from "../Store/RequestManager/ERequestStatus.ts";
 import { ComponentType, createElement } from "react";
 import { withProps } from "../Utils/WithProps.ts";
 
@@ -93,21 +93,23 @@ const GoToProfile = () => {
   );
 };
 
-const SLICE_STATUS_TO_COMPONENT_TYPE_MAP: Record<ESliceStatus, ComponentType> =
-  {
-    [ESliceStatus.idle]: UpdateProfilePageForm,
-    [ESliceStatus.loading]: withProps(Skeleton)({ style: { padding: 16 } }),
-    [ESliceStatus.error]: withProps(Result)({
-      status: "error",
-      title: "Update failed",
-      extra: <GoToProfile />,
-    }),
-    [ESliceStatus.success]: withProps(Result)({
-      status: "success",
-      title: "Success",
-      extra: <GoToProfile />,
-    }),
-  };
+const SLICE_STATUS_TO_COMPONENT_TYPE_MAP: Record<
+  ERequestStatus,
+  ComponentType
+> = {
+  [ERequestStatus.idle]: UpdateProfilePageForm,
+  [ERequestStatus.loading]: withProps(Skeleton)({ style: { padding: 16 } }),
+  [ERequestStatus.error]: withProps(Result)({
+    status: "error",
+    title: "Update failed",
+    extra: <GoToProfile />,
+  }),
+  [ERequestStatus.success]: withProps(Result)({
+    status: "success",
+    title: "Success",
+    extra: <GoToProfile />,
+  }),
+};
 
 const UpdateProfilePage = () => {
   const status = useSelector(userSelectors.updateStatus);

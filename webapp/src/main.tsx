@@ -11,7 +11,7 @@ import { ProfilePage } from "./ProfilePage/ProfilePage.tsx";
 import { isDev } from "./Utils/OneLineUtils.ts";
 import { Provider } from "react-redux";
 import { WelcomePage } from "./WelcomePage/WelcomePage.tsx";
-import { history, store } from "./Store/CreateStore.ts";
+import { history, store } from "./Store/App/CreateStore.ts";
 import { ReduxRouter } from "@lagunovsky/redux-react-router";
 import { LocationsPage } from "./LocationsPage/LocationsPage.tsx";
 import { UpdateLocationPage } from "./UpdateLocationPage/UpdateLocationPage.tsx";

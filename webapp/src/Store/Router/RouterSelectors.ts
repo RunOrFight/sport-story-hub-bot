@@ -1,4 +1,4 @@
-import { AppState } from "../CreateStore.ts";
+import { AppState } from "../App/CreateStore.ts";
 import { reduxRouterSelector } from "@lagunovsky/redux-react-router";
 
 const routerLocationSelector = (state: AppState) =>
