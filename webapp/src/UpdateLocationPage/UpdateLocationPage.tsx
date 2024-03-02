@@ -1,9 +1,6 @@
 import { Button, Flex, Form, Input, Result, Skeleton, Upload } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  locationsSelectors,
-  updateLocationFormInitialValuesByIdSelector,
-} from "../Store/Locations/LocationsSelector.ts";
+import { updateLocationFormInitialValuesByIdSelector } from "../Store/Locations/LocationsSelector.ts";
 import { Link, useParams } from "react-router-dom";
 import { getNotNil } from "../Utils/GetNotNil.ts";
 import { UploadOutlined } from "@ant-design/icons";
@@ -13,6 +10,7 @@ import { webappRoutes } from "../../../src/constants/webappRoutes.ts";
 import { ESliceStatus } from "../Store/ESliceStatus.ts";
 import { ComponentType, createElement } from "react";
 import { withProps } from "../Utils/WithProps.ts";
+import { userSelectors } from "../Store/User/UserSelectors.ts";
 
 const GoToLocations = () => {
   const dispatch = useDispatch();
@@ -50,7 +48,7 @@ const UpdateLocationForm = () => {
         </Link>
       </Flex>
       <Form form={form} onFinish={onFinish} initialValues={initialValues}>
-        <Form.Item name={"id"} style={{ display: "none" }} />
+        <Form.Item name={"id"} hidden />
 
         <Form.Item required label={"Title"} name={"title"}>
           <Input />
@@ -96,7 +94,9 @@ const SLICE_STATUS_TO_COMPONENT_TYPE_MAP: Record<ESliceStatus, ComponentType> =
   };
 
 const UpdateLocationPage = () => {
-  const status = useSelector(locationsSelectors.updateStatus);
+  const status = useSelector(userSelectors.updateStatus);
+
+  console.log(status, 123);
 
   return createElement(SLICE_STATUS_TO_COMPONENT_TYPE_MAP[status]);
 };

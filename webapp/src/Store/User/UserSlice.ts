@@ -1,6 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { type TUser } from "../../Models/TUser.ts";
-import { IUserInitResponse } from "../../../../src/types/user.types.ts";
+import {
+  IUserInitResponse,
+  IUserInitResponseData,
+  IUserUpdatePayload,
+} from "../../../../src/types/user.types.ts";
 import { IError } from "../../Models/IError.ts";
 import { ESliceStatus } from "../ESliceStatus.ts";
 
@@ -11,6 +15,8 @@ interface IUserState {
   profilePage: TUser | null;
   error: string | null;
   profilePageStatus: ESliceStatus;
+  profilePageError: string | null;
+  updateStatus: ESliceStatus;
 }
 
 const initialState: IUserState = {
@@ -19,7 +25,9 @@ const initialState: IUserState = {
   isNewUser: true,
   error: null,
   profilePage: null,
+  profilePageError: null,
   profilePageStatus: ESliceStatus.idle,
+  updateStatus: ESliceStatus.idle,
 };
 
 const userSlice = createSlice({
@@ -43,6 +51,36 @@ const userSlice = createSlice({
       state.info = payload.data.user;
       state.status = ESliceStatus.success;
       state.isNewUser = payload.data.isNewUser;
+    },
+    profilePageStarted: (state) => {
+      state.profilePageStatus = ESliceStatus.loading;
+    },
+    profilePageReceived: (
+      state,
+      { payload }: PayloadAction<IUserInitResponseData | IError>,
+    ) => {
+      if ("error" in payload) {
+        state.profilePageError = payload.error;
+        state.profilePageStatus = ESliceStatus.error;
+
+        return;
+      }
+
+      state.profilePage = payload.user;
+      state.profilePageStatus = ESliceStatus.success;
+    },
+    update: (state, _: PayloadAction<IUserUpdatePayload>) => {
+      state.updateStatus = ESliceStatus.loading;
+    },
+    updateResult: (state, { payload }: PayloadAction<IError>) => {
+      if ("error" in payload) {
+        state.updateStatus = ESliceStatus.error;
+        return;
+      }
+      state.updateStatus = ESliceStatus.success;
+    },
+    updateClear: (state) => {
+      state.updateStatus = ESliceStatus.idle;
     },
   },
 });

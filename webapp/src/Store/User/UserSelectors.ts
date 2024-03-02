@@ -1,5 +1,5 @@
 import { AppState } from "../CreateStore.ts";
-import { getNotNil } from "../../Utils/GetNotNil.ts";
+import { getNotNil, getNotNilSelector } from "../../Utils/GetNotNil.ts";
 import { createPropertySelectors } from "../CreatePropertySelectors.ts";
 
 const userSelectors = createPropertySelectors((state: AppState) => state.user);
@@ -9,8 +9,9 @@ const userStatusSelector = userSelectors.status;
 const userInfoNotNilSelector = (state: AppState) =>
   getNotNil(userSelectors.info(state), "userInfoNotNilSelector");
 
-const userErrorNotNilSelector = (state: AppState) =>
-  getNotNil(userSelectors.error(state), "userErrorNotNilSelector");
+const userProfilePageErrorNotNilSelector = getNotNilSelector(
+  userSelectors.profilePageError,
+);
 
 const userInfoUsernameNotNilSelector = (state: AppState) =>
   getNotNil(
@@ -18,10 +19,19 @@ const userInfoUsernameNotNilSelector = (state: AppState) =>
     "userInfoUsernameNotNilSelector",
   );
 
+const userProfilePageNotNilSelector = getNotNilSelector(
+  userSelectors.profilePage,
+);
+
+const userInfoUserIdSelector = (state: AppState) =>
+  userSelectors.info(state)?.id;
+
 export {
   userStatusSelector,
   userInfoNotNilSelector,
-  userErrorNotNilSelector,
+  userProfilePageErrorNotNilSelector,
   userSelectors,
   userInfoUsernameNotNilSelector,
+  userProfilePageNotNilSelector,
+  userInfoUserIdSelector,
 };

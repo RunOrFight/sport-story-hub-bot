@@ -3,27 +3,35 @@ import { numberFormatter } from "../Utils/NumberFormatter.ts";
 import { EditOutlined, UserOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import {
-  userErrorNotNilSelector,
-  userInfoNotNilSelector,
-  userStatusSelector,
+  userInfoUserIdSelector,
+  userProfilePageErrorNotNilSelector,
+  userProfilePageNotNilSelector,
+  userSelectors,
 } from "../Store/User/UserSelectors.ts";
 import { ESliceStatus } from "../Store/ESliceStatus.ts";
 import { ComponentType, createElement, Fragment } from "react";
 import { withProps } from "../Utils/WithProps.ts";
-import { generatePath, Link, useParams } from "react-router-dom";
+import { generatePath, Link } from "react-router-dom";
 import { webappRoutes } from "../../../src/constants/webappRoutes.ts";
 
 const Error = () => {
-  const error = useSelector(userErrorNotNilSelector);
+  const error = useSelector(userProfilePageErrorNotNilSelector);
 
-  return <Result status={"error"} title={error} />;
+  return (
+    <Result
+      status={"error"}
+      title={error}
+      subTitle={"Это может произойти например, если вашего id нет в базе"}
+    />
+  );
 };
 
 const ProfilePageSuccess = () => {
-  const userInfo = useSelector(userInfoNotNilSelector);
-  const { username: usernameFromParams } = useParams();
+  const profilePage = useSelector(userProfilePageNotNilSelector);
+  const userId = useSelector(userInfoUserIdSelector);
 
   const {
+    id,
     goals,
     losses,
     Elo,
@@ -35,7 +43,7 @@ const ProfilePageSuccess = () => {
     draws,
     total,
     username,
-  } = userInfo;
+  } = profilePage;
 
   return (
     <Flex vertical style={{ padding: 10 }}>
@@ -51,10 +59,8 @@ const ProfilePageSuccess = () => {
             <Typography.Text>{username}</Typography.Text>
           </Typography>
 
-          {usernameFromParams === username ? (
-            <Link
-              to={generatePath(webappRoutes.updateProfileRoute, { username })}
-            >
+          {userId === id ? (
+            <Link to={generatePath(webappRoutes.updateProfileRoute, { id })}>
               <EditOutlined />
             </Link>
           ) : null}
@@ -84,7 +90,7 @@ const SLICE_STATUS_TO_COMPONENT_TYPE_MAP: Record<ESliceStatus, ComponentType> =
   };
 
 const ProfilePage = () => {
-  const status = useSelector(userStatusSelector);
+  const status = useSelector(userSelectors.profilePageStatus);
 
   return createElement(SLICE_STATUS_TO_COMPONENT_TYPE_MAP[status]);
 };

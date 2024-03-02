@@ -1,7 +1,11 @@
 import { TUser } from "./Models/TUser.ts";
 import { TEvent } from "./Models/TEvent.ts";
 import { IError } from "./Models/IError.ts";
-import { IUserInitResponse } from "../../src/types/user.types.ts";
+import {
+  IUserInitResponse,
+  IUserInitResponseData,
+  IUserUpdatePayload,
+} from "../../src/types/user.types.ts";
 import { Location } from "../../src/database/entities/Location.ts";
 import {
   TLocationCreatePayload,
@@ -53,6 +57,30 @@ const httpApi = {
         "Content-Type": "application/json",
       },
       method: "POST",
+    });
+
+    if (!response.ok) {
+      return { error: response.statusText };
+    }
+
+    return await response.json();
+  },
+  getUserById: async (id: number): Promise<IUserInitResponseData | IError> => {
+    const response = await fetch(`${BASE_URL}/user/getById/${id}`);
+
+    if (!response.ok) {
+      return { error: response.statusText };
+    }
+
+    return await response.json();
+  },
+  updateUser: async (payload: IUserUpdatePayload) => {
+    const response = await fetch(`${BASE_URL}/user/update`, {
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
     });
 
     if (!response.ok) {

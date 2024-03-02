@@ -73,17 +73,17 @@ const normalizeUsers = ({ users }: { users: TUser[] }) => {
 };
 
 const Row: FC<ILeaderboardUser> = ({
+  id,
   place,
   name,
   surname,
-  username,
   goals,
   winRate,
   Elo,
 }) => {
   return (
     <Link
-      to={generatePath(webappRoutes.profileRoute, { username })}
+      to={generatePath(webappRoutes.profileRoute, { id })}
       className={classes.row}
     >
       <span>{place}</span>
