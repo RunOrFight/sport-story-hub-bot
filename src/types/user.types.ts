@@ -1,29 +1,17 @@
-import { EStatisticProperty } from "../enums/statistic-propery-enum";
 import { User } from "../database/entities/User";
 
-interface IUserUpdatePayload {
+export type TUserUpdatePayload = {
   username: string;
   name?: string | null;
   surname?: string | null;
-}
+  photoId?: number | null;
+};
 
-interface IUserStatisticUpdatePayload {
-  id: number;
-  type: EStatisticProperty;
-}
-
-interface IUserInitResponseData {
+export type TUserInitResponseData = {
   user: User;
   isNewUser: boolean;
-}
+};
 
-interface IUserInitResponse {
-  data: IUserInitResponseData;
-}
-
-export type {
-  IUserUpdatePayload,
-  IUserStatisticUpdatePayload,
-  IUserInitResponseData,
-  IUserInitResponse,
+export type TUserInitResponse = {
+  data: TUserInitResponseData;
 };

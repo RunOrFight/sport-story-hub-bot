@@ -1,6 +1,6 @@
 import { Request, Router } from "express";
 import { UserController } from "../controllers/user.controller";
-import { IUserUpdatePayload } from "../types/user.types";
+import { TUserUpdatePayload } from "../types/user.types";
 
 export const UserRouter = Router();
 
@@ -45,12 +45,12 @@ UserRouter.put(
     req: Request<
       Record<string, unknown>,
       Record<string, unknown>,
-      IUserUpdatePayload
+      TUserUpdatePayload
     >,
     res,
   ) => {
     if (!req.body?.username) {
-      throw new Error("username is not found");
+      throw new Error("Username not found");
     }
     const updatedUser = await userController.updateUser(req.body);
     res.status(200).json({ updatedUser });

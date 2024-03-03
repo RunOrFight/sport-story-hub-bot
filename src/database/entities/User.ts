@@ -28,7 +28,7 @@ export class User {
 
   @OneToOne(() => File, { nullable: true })
   @JoinColumn({ name: "file_id" })
-  photo?: File;
+  photo?: File | null;
 
   @Column({ nullable: false, default: 0 })
   wins: number = 0;

@@ -1,6 +1,11 @@
 import db from "../database";
 import { User } from "../database/entities/User";
-import { IUserInitResponseData, IUserUpdatePayload } from "../types/user.types";
+import {
+  TUserInitResponse,
+  TUserInitResponseData,
+  TUserUpdatePayload,
+} from "../types/user.types";
+import { File } from "../database/entities/File";
 
 export class UserService {
   async getAllUsers(): Promise<Omit<User, "createdAt" | "updatedAt">[]> {
@@ -62,7 +67,7 @@ export class UserService {
 
   async userInit(payload: {
     username: string;
-  }): Promise<IUserInitResponseData> {
+  }): Promise<TUserInitResponseData> {
     const { username } = payload;
     const user = await db.getRepository(User).findOne({
       where: { username },
@@ -83,23 +88,31 @@ export class UserService {
     return { user: user, isNewUser: false };
   }
 
-  async updateUser(payload: IUserUpdatePayload): Promise<boolean> {
-    const { username, name, surname } = payload;
+  async updateUser(payload: TUserUpdatePayload): Promise<User> {
+    const { username, name, surname, photoId } = payload;
 
     const user = await db.getRepository(User).findOneBy({ username });
     if (!user) {
-      throw new Error("user not found");
+      throw new Error(`User with username: ${username} not found`);
     }
 
-    if (name || name === null) {
-      user.name = name;
-    }
+    user.name = name !== undefined ? name : user.name;
+    user.surname = surname !== undefined ? surname : user.surname;
 
-    if (surname || surname === null) {
-      user.surname = surname;
+    if (photoId !== undefined) {
+      if (photoId === null) {
+        user.photo = null;
+      } else if (!isNaN(photoId)) {
+        const photo = await db
+          .getRepository(File)
+          .findOne({ where: { id: photoId } });
+        if (photo) {
+          user.photo = photo;
+        }
+      }
     }
 
     await db.getRepository(User).save(user);
-    return true;
+    return user;
   }
 }

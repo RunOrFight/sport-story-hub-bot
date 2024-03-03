@@ -12,8 +12,9 @@ const userInitLoadEpic: TAppEpic = (_, state$, { httpApi }) =>
   state$.pipe(
     take(1),
     switchMap(() => {
+      console.log(Telegram.WebApp.initDataUnsafe, "USER HERE");
       const username = isDev
-        ? "@@admin@@"
+        ? Telegram.WebApp.initDataUnsafe.user?.username ?? "user_1"
         : Telegram.WebApp.initDataUnsafe.user?.username;
 
       if (!username) {

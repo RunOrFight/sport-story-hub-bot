@@ -7,7 +7,7 @@ const statisticsRoute = "/statistics";
 const profileRoute = "/profile/:id";
 const updateProfileRoute = `${profileRoute}/update`;
 const welcomeRoute = "/welcome";
-const locationsRoute = "/locations";
+const locationsRoute = "/location";
 const updateLocationRoute = `${locationsRoute}/update/:locationId`;
 const createLocationRoute = `${locationsRoute}/create`;
 

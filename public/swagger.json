@@ -58,7 +58,12 @@
 						"nullable": true
 					},
 					"photo": {
-						"$ref": "#/components/schemas/File"
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/File"
+							}
+						],
+						"nullable": true
 					},
 					"wins": {
 						"type": "number",
@@ -125,41 +130,44 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IUserInitResponseData": {
+			"TUserInitResponseData": {
 				"properties": {
-					"user": {
-						"$ref": "#/components/schemas/User"
-					},
 					"isNewUser": {
 						"type": "boolean"
+					},
+					"user": {
+						"$ref": "#/components/schemas/User"
 					}
 				},
 				"required": [
-					"user",
-					"isNewUser"
+					"isNewUser",
+					"user"
 				],
-				"type": "object",
-				"additionalProperties": false
+				"type": "object"
 			},
-			"IUserUpdatePayload": {
+			"TUserUpdatePayload": {
 				"properties": {
-					"username": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string",
+					"photoId": {
+						"type": "number",
+						"format": "double",
 						"nullable": true
 					},
 					"surname": {
 						"type": "string",
 						"nullable": true
+					},
+					"name": {
+						"type": "string",
+						"nullable": true
+					},
+					"username": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"username"
 				],
-				"type": "object",
-				"additionalProperties": false
+				"type": "object"
 			},
 			"EEventStatus": {
 				"enum": [
@@ -653,7 +661,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IUserInitResponseData"
+									"$ref": "#/components/schemas/TUserInitResponseData"
 								}
 							}
 						}
@@ -693,7 +701,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "boolean"
+									"$ref": "#/components/schemas/User"
 								}
 							}
 						}
@@ -709,7 +717,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IUserUpdatePayload"
+								"$ref": "#/components/schemas/TUserUpdatePayload"
 							}
 						}
 					}

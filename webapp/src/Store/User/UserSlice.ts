@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { type TUser } from "../../Models/TUser.ts";
 import {
-  IUserInitResponse,
-  IUserInitResponseData,
-  IUserUpdatePayload,
+  TUserInitResponse,
+  TUserInitResponseData,
+  TUserUpdatePayload,
 } from "../../../../src/types/user.types.ts";
 import { IWithError } from "../../Models/IError.ts";
 import { ERequestStatus } from "../RequestManager/ERequestStatus.ts";
@@ -39,7 +39,7 @@ const userSlice = createSlice({
     },
     received: (
       state,
-      { payload }: PayloadAction<IUserInitResponse | IWithError>,
+      { payload }: PayloadAction<TUserInitResponse | IWithError>,
     ) => {
       if ("error" in payload) {
         state.error = payload.error;
@@ -57,7 +57,7 @@ const userSlice = createSlice({
     },
     profilePageReceived: (
       state,
-      { payload }: PayloadAction<IUserInitResponseData | IWithError>,
+      { payload }: PayloadAction<TUserInitResponseData | IWithError>,
     ) => {
       if ("error" in payload) {
         state.profilePageError = payload.error;
@@ -69,7 +69,7 @@ const userSlice = createSlice({
       state.profilePage = payload.user;
       state.profilePageStatus = ERequestStatus.success;
     },
-    update: (state, _: PayloadAction<IUserUpdatePayload>) => {
+    update: (state, _: PayloadAction<TUserUpdatePayload>) => {
       state.updateStatus = ERequestStatus.loading;
     },
     updateResult: (state, { payload }: PayloadAction<IWithError>) => {

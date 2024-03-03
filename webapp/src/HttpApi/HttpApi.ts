@@ -2,9 +2,9 @@ import { TUser } from "../Models/TUser.ts";
 import { TEvent } from "../Models/TEvent.ts";
 import { IWithError } from "../Models/IError.ts";
 import {
-  IUserInitResponse,
-  IUserInitResponseData,
-  IUserUpdatePayload,
+  TUserInitResponse,
+  TUserInitResponseData,
+  TUserUpdatePayload,
 } from "../../../src/types/user.types.ts";
 import { Location } from "../../../src/database/entities/Location.ts";
 import {
@@ -29,7 +29,7 @@ const httpApi = {
     }
     return await response.json();
   },
-  getEventsLocations: simpleGetRequest<IGetAllEventsResponse>("locations/all"),
+  getEventsLocations: simpleGetRequest<IGetAllEventsResponse>("location/all"),
   getAllUsers: async (): Promise<{ users: TUser[] }> => {
     const response = await fetch(`${BASE_URL}/user/all`);
     if (!response.ok) {
@@ -41,7 +41,7 @@ const httpApi = {
   },
   getOrCreateUserByUsername: async (
     username: string,
-  ): Promise<IUserInitResponse | IWithError> => {
+  ): Promise<TUserInitResponse | IWithError> => {
     const response = await fetch(`${BASE_URL}/user/init`, {
       body: JSON.stringify({ username }),
       headers: {
@@ -58,7 +58,7 @@ const httpApi = {
   },
   getUserById: async (
     id: number,
-  ): Promise<IUserInitResponseData | IWithError> => {
+  ): Promise<TUserInitResponseData | IWithError> => {
     const response = await fetch(`${BASE_URL}/user/getById/${id}`);
 
     if (!response.ok) {
@@ -67,7 +67,7 @@ const httpApi = {
 
     return await response.json();
   },
-  updateUser: async (payload: IUserUpdatePayload) => {
+  updateUser: async (payload: TUserUpdatePayload) => {
     const response = await fetch(`${BASE_URL}/user/update`, {
       body: JSON.stringify(payload),
       headers: {
