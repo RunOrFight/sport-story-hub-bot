@@ -20,10 +20,10 @@ export class Event {
   id!: number;
 
   @Column({ type: "timestamp", nullable: true, name: "date_time" })
-  dateTime?: Date;
+  dateTime?: Date | null;
 
-  @Column({ nullable: true })
-  price?: string;
+  @Column({ type: "varchar", nullable: true })
+  price?: string | null;
 
   @Column({
     nullable: true,
@@ -33,15 +33,15 @@ export class Event {
   })
   status?: EEventStatus;
 
-  @Column({ nullable: true })
-  participantsLimit?: number;
+  @Column({ type: "int", nullable: true })
+  participantsLimit?: number | null;
 
-  @Column({ nullable: true })
-  description?: string;
+  @Column({ type: "text", nullable: true })
+  description?: string | null;
 
   @OneToOne(() => Location)
   @JoinColumn({ name: "location_id" })
-  location?: Location;
+  location?: Location | null;
 
   @OneToMany(() => Participant, (participant) => participant.event)
   participants!: Participant[];

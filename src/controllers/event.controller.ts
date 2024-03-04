@@ -1,5 +1,10 @@
-import { Body, Delete, Get, Path, Post, Route, Tags } from "tsoa";
+import { Body, Delete, Get, Path, Post, Put, Route, Tags } from "tsoa";
 import { EventService } from "../services/event.service";
+import {
+  TEventCreatePayload,
+  TEventDeletePayload,
+  TEventUpdatePayload,
+} from "../types/event.types";
 
 @Route("/api/event")
 @Tags("Events")
@@ -26,5 +31,20 @@ export class EventController {
   async leaveEvent(@Body() payload: { eventId: number; username: string }) {
     const { eventId, username } = payload;
     return this.eventService.leaveEvent(eventId, username);
+  }
+
+  @Post("/create")
+  async createEvent(@Body() payload: TEventCreatePayload) {
+    return this.eventService.createEvent(payload);
+  }
+
+  @Put("/update")
+  async updateEvent(@Body() payload: TEventUpdatePayload) {
+    return this.eventService.updateEvent(payload);
+  }
+
+  @Delete("/delete")
+  async deleteEvent(@Body() payload: TEventDeletePayload) {
+    return this.eventService.deleteEvent(payload);
   }
 }

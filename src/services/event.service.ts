@@ -2,7 +2,11 @@ import { Event } from "../database/entities/Event";
 import db from "../database";
 import { User } from "../database/entities/User";
 import { Participant } from "../database/entities/Participant";
-import { TEventCreatePayload } from "../types/event.types";
+import {
+  TEventCreatePayload,
+  TEventDeletePayload,
+  TEventUpdatePayload,
+} from "../types/event.types";
 import { Location } from "../database/entities/Location";
 
 export class EventService {
@@ -152,5 +156,67 @@ export class EventService {
     }
 
     return createdEvent;
+  }
+
+  async updateEvent(payload: TEventUpdatePayload): Promise<Event> {
+    const {
+      id,
+      dateTime,
+      price,
+      description,
+      participantsLimit,
+      locationId,
+      status,
+    } = payload;
+
+    const event = await db.getRepository(Event).findOneBy({ id });
+
+    if (!event) {
+      throw new Error(`Event with id ${id} not found`);
+    }
+
+    event.dateTime = dateTime !== undefined ? dateTime : event.dateTime;
+    event.price = price !== undefined ? price : event.price;
+    event.description =
+      description !== undefined ? description : event.description;
+    event.participantsLimit =
+      participantsLimit !== undefined
+        ? participantsLimit
+        : event.participantsLimit;
+    event.status = status !== undefined ? status : event.status;
+
+    if (locationId !== undefined) {
+      if (locationId === null) {
+        event.location = null;
+      } else if (!isNaN(locationId)) {
+        const location = await db
+          .getRepository(Location)
+          .findOneBy({ id: locationId });
+        if (location) {
+          event.location = location;
+        }
+      }
+    }
+
+    const updatedEvent = await db.getRepository(Event).save(event);
+
+    if (!updatedEvent) {
+      throw new Error("Event was not created");
+    }
+
+    return updatedEvent;
+  }
+
+  async deleteEvent(payload: TEventDeletePayload): Promise<boolean> {
+    const { id } = payload;
+
+    const event = await db.getRepository(Event).findOneBy({ id });
+
+    if (!event) {
+      throw new Error(`Location with id ${id} not found`);
+    }
+
+    await db.getRepository(Event).delete({ id: event.id });
+    return true;
   }
 }
