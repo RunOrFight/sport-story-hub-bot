@@ -533,6 +533,38 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"TEventParticipantJoin": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"eventId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"username",
+					"eventId"
+				],
+				"type": "object"
+			},
+			"TEventParticipantLeave": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"eventId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"username",
+					"eventId"
+				],
+				"type": "object"
+			},
 			"TEventCreatePayload": {
 				"properties": {
 					"locationId": {
@@ -662,6 +694,87 @@
 				},
 				"required": [
 					"id"
+				],
+				"type": "object"
+			},
+			"TTeamCreatePayload": {
+				"properties": {
+					"eventId": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"eventId",
+					"name"
+				],
+				"type": "object"
+			},
+			"TTeamUpdatePayload": {
+				"properties": {
+					"eventId": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id"
+				],
+				"type": "object"
+			},
+			"TTeamDeletePayload": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id"
+				],
+				"type": "object"
+			},
+			"TTeamParticipantAddPayload": {
+				"properties": {
+					"participantId": {
+						"type": "number",
+						"format": "double"
+					},
+					"teamId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"participantId",
+					"teamId"
+				],
+				"type": "object"
+			},
+			"TTeamParticipantDeletePayload": {
+				"properties": {
+					"participantId": {
+						"type": "number",
+						"format": "double"
+					},
+					"teamId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"participantId",
+					"teamId"
 				],
 				"type": "object"
 			}
@@ -888,20 +1001,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"properties": {
-									"username": {
-										"type": "string"
-									},
-									"eventId": {
-										"type": "number",
-										"format": "double"
-									}
-								},
-								"required": [
-									"username",
-									"eventId"
-								],
-								"type": "object"
+								"$ref": "#/components/schemas/TEventParticipantJoin"
 							}
 						}
 					}
@@ -933,20 +1033,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"properties": {
-									"username": {
-										"type": "string"
-									},
-									"eventId": {
-										"type": "number",
-										"format": "double"
-									}
-								},
-								"required": [
-									"username",
-									"eventId"
-								],
-								"type": "object"
+								"$ref": "#/components/schemas/TEventParticipantLeave"
 							}
 						}
 					}
@@ -1164,6 +1251,166 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/TLocationDeletePayload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/team/create": {
+			"post": {
+				"operationId": "CreateTeam",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Team"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Teams"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TTeamCreatePayload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/team/update": {
+			"put": {
+				"operationId": "UpdateTeam",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Team"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Teams"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TTeamUpdatePayload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/team/delete": {
+			"delete": {
+				"operationId": "DeleteTeam",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Teams"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TTeamDeletePayload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/team-participant/create": {
+			"post": {
+				"operationId": "AddTeamParticipant",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TeamParticipant"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"TeamParticipants"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TTeamParticipantAddPayload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/team-participant/delete": {
+			"delete": {
+				"operationId": "DeleteTeamParticipant",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"TeamParticipants"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TTeamParticipantDeletePayload"
 							}
 						}
 					}
