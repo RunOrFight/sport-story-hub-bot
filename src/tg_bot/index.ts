@@ -152,9 +152,9 @@ export const botEventsInit = () => {
       }
 
       if (msg.data?.startsWith("join")) {
-        await eventService.joinEvent(eventId, username);
+        await eventService.joinEvent({ eventId, username });
       } else if (msg.data?.startsWith("leave")) {
-        await eventService.leaveEvent(eventId, username);
+        await eventService.leaveEvent({ eventId, username });
       }
 
       const eventForMessage =

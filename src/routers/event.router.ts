@@ -3,6 +3,8 @@ import { Request, Router } from "express";
 import {
   TEventCreatePayload,
   TEventDeletePayload,
+  TEventParticipantJoin,
+  TEventParticipantLeave,
   TEventUpdatePayload,
 } from "../types/event.types";
 
@@ -30,7 +32,7 @@ EventRouter.post(
     req: Request<
       Record<string, unknown>,
       Record<string, unknown>,
-      { eventId: number; username: string }
+      TEventParticipantJoin
     >,
     res,
   ) => {
@@ -48,7 +50,7 @@ EventRouter.delete(
     req: Request<
       Record<string, unknown>,
       Record<string, unknown>,
-      { eventId: number; username: string }
+      TEventParticipantLeave
     >,
     res,
   ) => {

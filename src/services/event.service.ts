@@ -4,7 +4,7 @@ import { User } from "../database/entities/User";
 import { Participant } from "../database/entities/Participant";
 import {
   TEventCreatePayload,
-  TEventDeletePayload,
+  TEventDeletePayload, TEventParticipantJoin, TEventParticipantLeave,
   TEventUpdatePayload,
 } from "../types/event.types";
 import { Location } from "../database/entities/Location";
@@ -70,7 +70,8 @@ export class EventService {
     return eventForMessage;
   }
 
-  async joinEvent(eventId: number, username: string): Promise<boolean> {
+  async joinEvent(payload: TEventParticipantJoin): Promise<boolean> {
+    const { username, eventId } = payload;
     const user = await db.getRepository(User).findOne({ where: { username } });
     if (!user) {
       throw new Error(`User ${username} not found`);
@@ -105,7 +106,8 @@ export class EventService {
     return true;
   }
 
-  async leaveEvent(eventId: number, username: string): Promise<boolean> {
+  async leaveEvent(payload: TEventParticipantLeave): Promise<boolean> {
+    const { username, eventId } = payload;
     const participants = await db.getRepository(Participant).find({
       relations: {
         user: true,

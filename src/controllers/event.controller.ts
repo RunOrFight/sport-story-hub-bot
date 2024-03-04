@@ -2,7 +2,7 @@ import { Body, Delete, Get, Path, Post, Put, Route, Tags } from "tsoa";
 import { EventService } from "../services/event.service";
 import {
   TEventCreatePayload,
-  TEventDeletePayload,
+  TEventDeletePayload, TEventParticipantJoin, TEventParticipantLeave,
   TEventUpdatePayload,
 } from "../types/event.types";
 
@@ -22,15 +22,13 @@ export class EventController {
   }
 
   @Post("/join-event")
-  async joinEvent(@Body() payload: { eventId: number; username: string }) {
-    const { eventId, username } = payload;
-    return this.eventService.joinEvent(eventId, username);
+  async joinEvent(@Body() payload: TEventParticipantJoin) {
+    return this.eventService.joinEvent(payload);
   }
 
   @Delete("/leave-event")
-  async leaveEvent(@Body() payload: { eventId: number; username: string }) {
-    const { eventId, username } = payload;
-    return this.eventService.leaveEvent(eventId, username);
+  async leaveEvent(@Body() payload: TEventParticipantLeave) {
+    return this.eventService.leaveEvent(payload);
   }
 
   @Post("/create")

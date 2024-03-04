@@ -21,3 +21,6 @@ export type TEventUpdatePayload = {
 export type TEventDeletePayload = {
   id: number;
 };
+
+export type TEventParticipantJoin = { eventId: number; username: string };
+export type TEventParticipantLeave = { eventId: number; username: string };
