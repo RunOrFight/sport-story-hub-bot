@@ -9,10 +9,10 @@ import {
   Skeleton,
 } from "antd";
 import dayjs from "dayjs";
-import { IEventLocation, IEventRaw } from "./types.ts";
+import { IEventLocation, IEventRaw } from "../../types.ts";
 import { useEffect, useState } from "react";
 import "dayjs/locale/ru.js";
-import { httpApi } from "./HttpApi/HttpApi.ts";
+import { httpApi } from "../../HttpApi/HttpApi.ts";
 
 interface ICreateEventFormValues extends Omit<IEventRaw, "dateTime"> {
   dateTime: ReturnType<typeof dayjs>;

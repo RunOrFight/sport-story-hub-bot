@@ -2,7 +2,7 @@ const emptyRoute = "/";
 const anyRoute = "/*";
 const eventsRoute = "/events";
 const singleEventRoute = `${eventsRoute}/:eventId`;
-const createEventRoute = `${eventsRoute}/create`;
+const manageEventsRoute = `${eventsRoute}/create`;
 const statisticsRoute = "/statistics";
 const profileRoute = "/profile/:id";
 const updateProfileRoute = `${profileRoute}/update`;
@@ -15,7 +15,7 @@ const webappRoutes = {
   emptyRoute,
   eventsRoute,
   singleEventRoute,
-  createEventRoute,
+  manageEventsRoute,
   statisticsRoute,
   profileRoute,
   welcomeRoute,

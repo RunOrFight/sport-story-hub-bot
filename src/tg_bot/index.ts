@@ -15,6 +15,26 @@ export const bot = new TelegramBot(process.env.TELEGRAM_BOT_ACCESS_TOKEN!, {
   polling: true,
 });
 
+const createWebAppUrl = (endpoint: string) =>
+  new URL(endpoint, process.env.WEB_APP_URL!).toString();
+
+const ADMIN_KEYBOARD = [
+  [
+    {
+      text: t(tKeys.webAppCreateEventButton),
+      web_app: {
+        url: createWebAppUrl(webappRoutes.manageEventsRoute),
+      },
+    },
+    {
+      text: t(tKeys.webAppManageLocationsButton),
+      web_app: {
+        url: createWebAppUrl(webappRoutes.locationsRoute),
+      },
+    },
+  ],
+];
+
 export const botEventsInit = () => {
   console.log(chalk.bgCyan("TELEGRAM BOT CREATED SUCCESSFULLY"));
 
@@ -29,28 +49,7 @@ export const botEventsInit = () => {
 
       await bot.sendMessage(chatId, t(tKeys.useButtonsHint), {
         reply_markup: {
-          keyboard: [
-            [
-              {
-                text: t(tKeys.webAppCreateEventButton),
-                web_app: {
-                  url: new URL(
-                    webappRoutes.createEventRoute,
-                    process.env.WEB_APP_URL!,
-                  ).toString(),
-                },
-              },
-              {
-                text: t(tKeys.webAppManageLocationsButton),
-                web_app: {
-                  url: new URL(
-                    webappRoutes.locationsRoute,
-                    process.env.WEB_APP_URL!,
-                  ).toString(),
-                },
-              },
-            ],
-          ],
+          keyboard: ADMIN_KEYBOARD,
         },
       });
     }),

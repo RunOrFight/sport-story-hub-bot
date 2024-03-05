@@ -3,6 +3,7 @@ import { ERequestStatus } from "../RequestManager/ERequestStatus.ts";
 import { Location } from "../../../../src/database/entities/Location.ts";
 import {
   TLocationCreatePayload,
+  TLocationDeletePayload,
   TLocationUpdatePayload,
 } from "../../../../src/types/location.types.ts";
 import { IGetAllLocationsResponse } from "../../HttpApi/HttpApiTypes.ts";
@@ -50,6 +51,7 @@ const locationsSlice = createSlice({
     createClear: (state) => {
       state.createStatus = ERequestStatus.idle;
     },
+    delete: (__, _: PayloadAction<TLocationDeletePayload>) => {},
   },
 });
 

@@ -1,18 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
-import { locationsSelectors } from "../Store/Locations/LocationsSelector.ts";
-import { ERequestStatus } from "../Store/RequestManager/ERequestStatus.ts";
+import { locationsSelectors } from "../../../Store/Locations/LocationsSelector.ts";
+import { ERequestStatus } from "../../../Store/RequestManager/ERequestStatus.ts";
 import { ComponentType, createElement, FC, Fragment } from "react";
-import { withProps } from "../Utils/WithProps.ts";
+import { withProps } from "../../../Utils/WithProps.ts";
 import { Button, Card, Flex, Skeleton } from "antd";
-import { Location } from "../../../src/database/entities/Location.ts";
+import { Location } from "../../../../../src/database/entities/Location.ts";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import AnchorLink from "antd/es/anchor/AnchorLink";
 import { generatePath, Link } from "react-router-dom";
-import { webappRoutes } from "../../../src/constants/webappRoutes.ts";
-import { locationsSlice } from "../Store/Locations/LocationsSlice.ts";
-import { requestManagerSlice } from "../Store/RequestManager/RequestManagerSlice.ts";
-import { LOCATIONS_GET_ALL_REQUEST_SYMBOL } from "../Store/Locations/LocationsVariables.ts";
-import { useParamSelector } from "../Hooks/UseParamSelector.ts";
+import { webappRoutes } from "../../../../../src/constants/webappRoutes.ts";
+import { locationsSlice } from "../../../Store/Locations/LocationsSlice.ts";
+import { requestManagerSlice } from "../../../Store/RequestManager/RequestManagerSlice.ts";
+import { LOCATIONS_GET_ALL_REQUEST_SYMBOL } from "../../../Store/Locations/LocationsVariables.ts";
+import { useParamSelector } from "../../../Hooks/UseParamSelector.ts";
 
 const LocationCard: FC<Location> = ({ preview, url, address, title, id }) => {
   const dispatch = useDispatch();
