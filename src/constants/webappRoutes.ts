@@ -2,14 +2,15 @@ const emptyRoute = "/";
 const anyRoute = "/*";
 const eventsRoute = "/events";
 const singleEventRoute = `${eventsRoute}/:eventId`;
-const manageEventsRoute = `${eventsRoute}/create`;
+const adminRoute = "/admin";
 const statisticsRoute = "/statistics";
 const profileRoute = "/profile/:id";
 const updateProfileRoute = `${profileRoute}/update`;
 const welcomeRoute = "/welcome";
 const locationsRoute = "/location";
-const updateLocationRoute = `${locationsRoute}/update/:locationId`;
-const createLocationRoute = `${locationsRoute}/create`;
+const manageEventsRoute = `${adminRoute}${eventsRoute}`;
+const updateLocationRoute = `${adminRoute}${locationsRoute}/update/:locationId`;
+const createLocationRoute = `${adminRoute}${locationsRoute}/create`;
 
 const webappRoutes = {
   emptyRoute,

@@ -8,11 +8,11 @@ import {
   userProfilePageNotNilSelector,
   userSelectors,
 } from "../Store/User/UserSelectors.ts";
-import { ERequestStatus } from "../Store/RequestManager/ERequestStatus.ts";
 import { ComponentType, createElement, Fragment } from "react";
 import { withProps } from "../Utils/WithProps.ts";
 import { generatePath, Link } from "react-router-dom";
 import { webappRoutes } from "../../../src/constants/webappRoutes.ts";
+import { ERequestStatus } from "../Store/RequestManager/RequestManagerModels.ts";
 
 const Error = () => {
   const error = useSelector(userProfilePageErrorNotNilSelector);

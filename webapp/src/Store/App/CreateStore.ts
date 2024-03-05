@@ -10,6 +10,7 @@ import {
 import { createBrowserHistory } from "history";
 import { locationsSlice } from "../Locations/LocationsSlice.ts";
 import { requestManagerSlice } from "../RequestManager/RequestManagerSlice.ts";
+import { eventsSlice } from "../Events/EventsSlice.ts";
 
 const history = createBrowserHistory();
 const routerMiddleware = createRouterMiddleware(history);
@@ -25,6 +26,7 @@ export const createStore = () => {
       user: userSlice.reducer,
       locations: locationsSlice.reducer,
       requestManager: requestManagerSlice.reducer,
+      events: eventsSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().prepend(routerMiddleware).concat(epicMiddleware),

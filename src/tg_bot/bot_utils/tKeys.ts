@@ -32,7 +32,7 @@ const translates: Record<string, Record<string, string>> = {
     eventMessageWarning1:
       "Это первая версия бота, возможны ошибки.\nПо всем вопросом писать @privetenn",
     eventMessageInvited: "+1 от",
-    webAppCreateEventButton: "Создать событие",
+    webAppCreateEventButton: "События",
     webAppManageLocationsButton: "Локации",
   },
 };

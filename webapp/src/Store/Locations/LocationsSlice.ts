@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ERequestStatus } from "../RequestManager/ERequestStatus.ts";
 import { Location } from "../../../../src/database/entities/Location.ts";
 import {
   TLocationCreatePayload,
@@ -7,6 +6,7 @@ import {
   TLocationUpdatePayload,
 } from "../../../../src/types/location.types.ts";
 import { IGetAllLocationsResponse } from "../../HttpApi/HttpApiTypes.ts";
+import { ERequestStatus } from "../RequestManager/RequestManagerModels.ts";
 
 interface ILocationsState {
   updateStatus: ERequestStatus;

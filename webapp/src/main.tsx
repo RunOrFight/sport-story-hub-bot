@@ -1,7 +1,6 @@
 import ReactDOM from "react-dom/client";
 import { Route, Routes } from "react-router-dom";
 import { EventsPage } from "./EventsPage/EventsPage.tsx";
-import { CreateEventForm } from "./AdminUI/Events/CreateEventForm.tsx";
 import { webappRoutes } from "../../src/constants/webappRoutes.ts";
 import { SingleEventPage } from "./SingleEventPage/SingleEventPage.tsx";
 import { Layout } from "./Layout/Layout.tsx";
@@ -17,6 +16,7 @@ import { LocationsPage } from "./AdminUI/Locations/LocationsPage/LocationsPage.t
 import { UpdateLocationPage } from "./AdminUI/Locations/UpdateLocationPage/UpdateLocationPage.tsx";
 import { CreateLocationPage } from "./AdminUI/Locations/CreateLocationPage/CreateLocationPage.tsx";
 import { UpdateProfilePage } from "./UpdateProfilePage/UpdateProfilePage.tsx";
+import { ManageEventsPage } from "./AdminUI/Events/ManageEventsPage.tsx";
 
 document.body.setAttribute("data-dev", String(isDev));
 
@@ -38,7 +38,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </Route>
         <Route
           path={webappRoutes.manageEventsRoute}
-          element={<CreateEventForm />}
+          element={<ManageEventsPage />}
         />
         <Route path={webappRoutes.locationsRoute} element={<LocationsPage />} />
 

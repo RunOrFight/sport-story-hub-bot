@@ -6,7 +6,8 @@ import {
   TUserUpdatePayload,
 } from "../../../../src/types/user.types.ts";
 import { IWithError } from "../../Models/IError.ts";
-import { ERequestStatus } from "../RequestManager/ERequestStatus.ts";
+
+import { ERequestStatus } from "../RequestManager/RequestManagerModels.ts";
 
 interface IUserState {
   status: ERequestStatus;

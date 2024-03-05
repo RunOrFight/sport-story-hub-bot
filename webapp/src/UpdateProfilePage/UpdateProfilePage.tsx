@@ -7,17 +7,17 @@ import {
 } from "../Store/User/UserSelectors.ts";
 import { Button, Flex, Form, Input, Result, Skeleton } from "antd";
 import { userSlice } from "../Store/User/UserSlice.ts";
-import { IUserUpdatePayload } from "../../../src/types/user.types.ts";
-import { ERequestStatus } from "../Store/RequestManager/ERequestStatus.ts";
 import { ComponentType, createElement } from "react";
 import { withProps } from "../Utils/WithProps.ts";
+import { ERequestStatus } from "../Store/RequestManager/RequestManagerModels.ts";
+import { TUserUpdatePayload } from "../../../src/types/user.types.ts";
 
 const UpdateProfilePageForm = () => {
   const userId = useSelector(userInfoUserIdSelector);
   const profilePage = useSelector(userSelectors.profilePage);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const onFinish = (values: IUserUpdatePayload) => {
+  const onFinish = (values: TUserUpdatePayload) => {
     dispatch(userSlice.actions.update(values));
   };
 
@@ -35,7 +35,7 @@ const UpdateProfilePageForm = () => {
     );
   }
 
-  const initialValues: IUserUpdatePayload = {
+  const initialValues: TUserUpdatePayload = {
     name: profilePage.name,
     surname: profilePage.surname,
     username: profilePage.username,

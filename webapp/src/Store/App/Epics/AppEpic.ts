@@ -3,9 +3,10 @@ import { catchError } from "rxjs";
 import { TAppEpic } from "./TAppEpic.ts";
 import { userRootEpic } from "../../User/UserRootEpic.ts";
 import { locationsRootEpic } from "../../Locations/LocationsRootEpic.ts";
+import { eventsRootEpic } from "../../Events/EventsRootEpic.ts";
 
 const appEpic: TAppEpic = (action$, store$, dependencies) =>
-  combineEpics(userRootEpic, locationsRootEpic)(
+  combineEpics(userRootEpic, locationsRootEpic, eventsRootEpic)(
     action$,
     store$,
     dependencies,

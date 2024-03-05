@@ -1,6 +1,6 @@
-import { ERequestStatus } from "./ERequestStatus.ts";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IWithError } from "../../Models/IError.ts";
+import { ERequestStatus } from "./RequestManagerModels.ts";
 
 interface IRequestManagerSlice {
   [key: symbol]: {
@@ -45,6 +45,8 @@ const requestManagerSlice = createSlice({
   selectors: {
     statusBySymbol: (sliceState, symbol: symbol) =>
       sliceState[symbol].status ?? ERequestStatus.idle,
+    errorBySymbol: (sliceState, symbol: symbol) =>
+      sliceState[symbol].error ?? "Unknown Error",
   },
 });
 

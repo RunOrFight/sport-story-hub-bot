@@ -6,9 +6,9 @@ import { UploadOutlined } from "@ant-design/icons";
 import { locationsSlice } from "../../../Store/Locations/LocationsSlice.ts";
 import { TLocationCreatePayload } from "../../../../../src/types/location.types.ts";
 import { webappRoutes } from "../../../../../src/constants/webappRoutes.ts";
-import { ERequestStatus } from "../../../Store/RequestManager/ERequestStatus.ts";
 import { ComponentType, createElement } from "react";
 import { withProps } from "../../../Utils/WithProps.ts";
+import { ERequestStatus } from "../../../Store/RequestManager/RequestManagerModels.ts";
 
 const GoToLocations = () => {
   const dispatch = useDispatch();
