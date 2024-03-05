@@ -6,8 +6,6 @@ import {
   TTeamDeletePayload,
   TTeamUpdatePayload,
 } from "../types/team.types";
-import { Participant } from "../database/entities/Participant";
-import { TeamParticipant } from "../database/entities/TeamParticipant";
 
 export class TeamService {
   async getTeamsByEventId(): Promise<Team[]> {
