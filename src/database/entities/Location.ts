@@ -2,10 +2,10 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToOne,
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from "typeorm";
 import { File } from "./File";
 
@@ -23,7 +23,7 @@ export class Location {
   @Column({ nullable: true, type: "varchar" })
   address?: string | null;
 
-  @OneToOne(() => File, { nullable: true })
+  @ManyToOne(() => File, { nullable: true })
   @JoinColumn({ name: "file_id" })
   preview?: File | null;
 

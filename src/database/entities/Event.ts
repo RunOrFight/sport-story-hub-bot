@@ -3,8 +3,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -39,17 +39,23 @@ export class Event {
   @Column({ type: "text", nullable: true })
   description?: string | null;
 
-  @OneToOne(() => Location)
+  @ManyToOne(() => Location)
   @JoinColumn({ name: "location_id" })
   location?: Location | null;
 
-  @OneToMany(() => Participant, (participant) => participant.event)
+  @OneToMany(() => Participant, (participant) => participant.event, {
+    onDelete: "CASCADE",
+  })
   participants!: Participant[];
 
-  @OneToMany(() => Game, (game) => game.event)
+  @OneToMany(() => Game, (game) => game.event, {
+    onDelete: "CASCADE",
+  })
   games!: Game[];
 
-  @OneToMany(() => Team, (team) => team.event)
+  @OneToMany(() => Team, (team) => team.event, {
+    onDelete: "CASCADE",
+  })
   teams!: Team[];
 
   @CreateDateColumn({ name: "created_at" })

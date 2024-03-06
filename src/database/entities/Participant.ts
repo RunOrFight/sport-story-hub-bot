@@ -9,10 +9,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BeforeInsert,
-  BeforeUpdate,
-  BeforeRemove,
   AfterRemove,
-  AfterInsert,
 } from "typeorm";
 import { User } from "./User";
 import { Event } from "./Event";
@@ -40,7 +37,9 @@ export class Participant {
   @JoinColumn({ name: "parent_participant_id" })
   parentParticipant?: Participant;
 
-  @OneToMany(() => TeamParticipant, (tp) => tp.participant)
+  @OneToMany(() => TeamParticipant, (tp) => tp.participant, {
+    onDelete: "CASCADE",
+  })
   teamsParticipants!: TeamParticipant[];
 
   @CreateDateColumn({ name: "created_at" })

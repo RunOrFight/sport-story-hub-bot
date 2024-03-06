@@ -24,10 +24,14 @@ export class Team {
   @JoinColumn({ name: "event_id" })
   event!: Event;
 
-  @OneToMany(() => GameTeam, (gt) => gt.team)
+  @OneToMany(() => GameTeam, (gt) => gt.team, {
+    onDelete: "CASCADE",
+  })
   gameTeams!: GameTeam[];
 
-  @OneToMany(() => TeamParticipant, (tp) => tp.team)
+  @OneToMany(() => TeamParticipant, (tp) => tp.team, {
+    onDelete: "CASCADE",
+  })
   teamsParticipants!: TeamParticipant[];
 
   @CreateDateColumn({ name: "created_at" })

@@ -778,6 +778,51 @@
 				],
 				"type": "object"
 			},
+			"GameTeamDTO": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"team": {
+						"$ref": "#/components/schemas/Team"
+					}
+				},
+				"required": [
+					"id",
+					"team"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GameDTO": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"event": {
+						"$ref": "#/components/schemas/Event"
+					},
+					"gameTeams": {
+						"items": {
+							"$ref": "#/components/schemas/GameTeamDTO"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"event",
+					"gameTeams"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"TGameCreatePayload": {
 				"properties": {
 					"teamIds": {
@@ -1484,7 +1529,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Game"
+									"$ref": "#/components/schemas/GameDTO"
 								}
 							}
 						}
@@ -1516,7 +1561,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Game"
+									"$ref": "#/components/schemas/GameDTO"
 								}
 							}
 						}

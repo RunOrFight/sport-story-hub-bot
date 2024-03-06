@@ -3,11 +3,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   JoinColumn,
-  OneToOne,
   BeforeInsert,
   BeforeUpdate,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from "typeorm";
 import { File } from "./File";
 import { EUserRole } from "../../enums/user-role.enum";
@@ -26,7 +26,7 @@ export class User {
   @Column({ nullable: true, type: "varchar" })
   public surname?: string | null;
 
-  @OneToOne(() => File, { nullable: true })
+  @ManyToOne(() => File, { nullable: true })
   @JoinColumn({ name: "file_id" })
   photo?: File | null;
 
