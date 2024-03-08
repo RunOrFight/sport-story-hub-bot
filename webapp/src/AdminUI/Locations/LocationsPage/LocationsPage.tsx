@@ -2,9 +2,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { locationsSelectors } from "../../../Store/Locations/LocationsSelector.ts";
 import { ComponentType, createElement, FC, Fragment } from "react";
 import { withProps } from "../../../Utils/WithProps.ts";
-import { Button, Card, Flex, Skeleton } from "antd";
+import { Card, Flex, Skeleton } from "antd";
 import { Location } from "../../../../../src/database/entities/Location.ts";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import AnchorLink from "antd/es/anchor/AnchorLink";
 import { generatePath, Link } from "react-router-dom";
 import { webappRoutes } from "../../../../../src/constants/webappRoutes.ts";
@@ -13,6 +13,7 @@ import { requestManagerSlice } from "../../../Store/RequestManager/RequestManage
 import { LOCATIONS_GET_ALL_REQUEST_SYMBOL } from "../../../Store/Locations/LocationsVariables.ts";
 import { useParamSelector } from "../../../Hooks/UseParamSelector.ts";
 import { ERequestStatus } from "../../../Store/RequestManager/RequestManagerModels.ts";
+import { CreateButton } from "../../../Components/CreateButton.tsx";
 
 const LocationCard: FC<Location> = ({ preview, url, address, title, id }) => {
   const dispatch = useDispatch();
@@ -53,18 +54,7 @@ const LocationsPageSuccess = () => {
       ))}
 
       <Link to={webappRoutes.createLocationRoute}>
-        <Button
-          type={"primary"}
-          style={{
-            position: "fixed",
-            bottom: "16px",
-            width: "calc(100% - 32px)",
-            left: "16px",
-          }}
-          icon={<PlusOutlined />}
-        >
-          {"Create New"}
-        </Button>
+        <CreateButton />
       </Link>
     </Flex>
   );

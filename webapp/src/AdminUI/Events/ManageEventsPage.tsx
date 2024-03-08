@@ -6,6 +6,9 @@ import { EVENTS_GET_ALL_REQUEST_SYMBOL } from "../../Store/Events/EventsVariable
 import { isEmpty } from "../../Utils/OneLineUtils.ts";
 import { Empty, Flex } from "antd";
 import { EventCard } from "../../Components/EventCard.tsx";
+import { Link } from "react-router-dom";
+import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
+import { CreateButton } from "../../Components/CreateButton.tsx";
 
 const ManageEventsPageSuccess = () => {
   const events = useSelector(eventsSlice.selectors.edges);
@@ -17,10 +20,14 @@ const ManageEventsPageSuccess = () => {
   }
 
   return (
-    <Flex vertical style={{ padding: 16 }}>
+    <Flex vertical style={{ padding: "16px 16px 62px" }}>
       {events.map((event) => (
         <EventCard {...event} key={event.id} />
       ))}
+
+      <Link to={webappRoutes.createEventsRoute}>
+        <CreateButton />
+      </Link>
     </Flex>
   );
 };
