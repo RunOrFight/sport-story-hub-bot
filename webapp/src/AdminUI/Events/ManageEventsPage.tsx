@@ -4,11 +4,35 @@ import { withProps } from "../../Utils/WithProps.ts";
 import { RequestStatusToComponent } from "../../Components/RequestStatusToComponent.tsx";
 import { EVENTS_GET_ALL_REQUEST_SYMBOL } from "../../Store/Events/EventsVariables.ts";
 import { isEmpty } from "../../Utils/OneLineUtils.ts";
-import { Empty, Flex } from "antd";
-import { EventCard } from "../../Components/EventCard.tsx";
-import { Link } from "react-router-dom";
+import { Card, Empty, Flex } from "antd";
+import { generatePath, Link } from "react-router-dom";
 import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { CreateButton } from "../../Components/CreateButton.tsx";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { FC } from "react";
+import { TEvent } from "../../Models/TEvent.ts";
+
+const ManageEventCard: FC<TEvent> = ({ id, location }) => {
+  const onClick = () => void 0;
+
+  return (
+    <Card
+      cover={<img alt="example" src={location?.preview?.url} />}
+      actions={[
+        <Link
+          to={generatePath(webappRoutes.updateLocationRoute, {
+            locationId: id,
+          })}
+        >
+          <EditOutlined key="edit" />
+        </Link>,
+        <DeleteOutlined key="delete" onClick={onClick} />,
+      ]}
+    >
+      <Card.Meta title={location?.title} description={location?.address} />
+    </Card>
+  );
+};
 
 const ManageEventsPageSuccess = () => {
   const events = useSelector(eventsSlice.selectors.edges);
@@ -20,12 +44,12 @@ const ManageEventsPageSuccess = () => {
   }
 
   return (
-    <Flex vertical style={{ padding: "16px 16px 62px" }}>
+    <Flex vertical style={{ padding: "16px 16px 62px" }} gap={16}>
       {events.map((event) => (
-        <EventCard {...event} key={event.id} />
+        <ManageEventCard {...event} key={event.id} />
       ))}
 
-      <Link to={webappRoutes.createEventsRoute}>
+      <Link to={webappRoutes.createEventRoute}>
         <CreateButton />
       </Link>
     </Flex>

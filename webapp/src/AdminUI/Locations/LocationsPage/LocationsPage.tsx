@@ -23,24 +23,22 @@ const LocationCard: FC<Location> = ({ preview, url, address, title, id }) => {
   };
 
   return (
-    <>
-      <Card
-        cover={<img alt="example" src={preview?.url} />}
-        actions={[
-          <Link
-            to={generatePath(webappRoutes.updateLocationRoute, {
-              locationId: id,
-            })}
-          >
-            <EditOutlined key="edit" />
-          </Link>,
-          <DeleteOutlined key="delete" onClick={onClick} />,
-        ]}
-      >
-        <Card.Meta title={title} description={address} />
-        {url ? <AnchorLink href={url} title={"Url"} /> : url}
-      </Card>
-    </>
+    <Card
+      cover={<img alt="example" src={preview?.url} />}
+      actions={[
+        <Link
+          to={generatePath(webappRoutes.updateLocationRoute, {
+            locationId: id,
+          })}
+        >
+          <EditOutlined key="edit" />
+        </Link>,
+        <DeleteOutlined key="delete" onClick={onClick} />,
+      ]}
+    >
+      <Card.Meta title={title} description={address} />
+      {url ? <AnchorLink href={url} title={"Url"} /> : url}
+    </Card>
   );
 };
 

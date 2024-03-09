@@ -9,7 +9,8 @@ const updateProfileRoute = `${profileRoute}/update`;
 const welcomeRoute = "/welcome";
 const locationsRoute = "/location";
 const manageEventsRoute = `${adminRoute}${eventsRoute}`;
-const createEventsRoute = `${manageEventsRoute}/create`;
+const createEventRoute = `${manageEventsRoute}/create`;
+const updateEventRoute = `${manageEventsRoute}/update/:eventId`;
 const updateLocationRoute = `${adminRoute}${locationsRoute}/update/:locationId`;
 const createLocationRoute = `${adminRoute}${locationsRoute}/create`;
 
@@ -26,7 +27,8 @@ const webappRoutes = {
   updateLocationRoute,
   createLocationRoute,
   updateProfileRoute,
-  createEventsRoute,
+  createEventRoute,
+  updateEventRoute,
 };
 
 export { webappRoutes };

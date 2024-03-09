@@ -1,4 +1,4 @@
-import { concat, from, merge, of, switchMap } from "rxjs";
+import { concat, EMPTY, from, merge, of, switchMap } from "rxjs";
 import { requestManagerSlice } from "../RequestManager/RequestManagerSlice.ts";
 import { IWithError } from "../../Models/IError.ts";
 import { PayloadActionCreator } from "@reduxjs/toolkit";
@@ -6,7 +6,7 @@ import { PayloadActionCreator } from "@reduxjs/toolkit";
 interface IHttpRequestEpicFactoryProps<T> {
   input: Promise<T | IWithError>;
   requestSymbol: symbol;
-  receivedActionCreator: PayloadActionCreator<T>;
+  receivedActionCreator?: PayloadActionCreator<T>;
 }
 
 const httpRequestEpicFactory = <T extends object>({
@@ -29,7 +29,7 @@ const httpRequestEpicFactory = <T extends object>({
 
         return merge(
           of(requestManagerSlice.actions.success({ symbol: requestSymbol })),
-          of(receivedActionCreator(result)),
+          receivedActionCreator ? of(receivedActionCreator(result)) : EMPTY,
         );
       }),
     ),

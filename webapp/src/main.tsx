@@ -43,7 +43,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         />
 
         <Route
-          path={webappRoutes.createEventsRoute}
+          path={webappRoutes.createEventRoute}
           element={<CreateEventForm />}
         />
         <Route path={webappRoutes.locationsRoute} element={<LocationsPage />} />

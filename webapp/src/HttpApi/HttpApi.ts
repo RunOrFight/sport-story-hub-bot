@@ -1,5 +1,4 @@
 import { TUser } from "../Models/TUser.ts";
-import { TEvent } from "../Models/TEvent.ts";
 import { IWithError } from "../Models/IError.ts";
 import {
   TUserInitResponse,
@@ -12,23 +11,18 @@ import {
   TLocationDeletePayload,
   TLocationUpdatePayload,
 } from "../../../src/types/location.types.ts";
-import { simpleGetRequest } from "./RequestUtils.ts";
+import { simpleGetRequest, simplePostRequest } from "./RequestUtils.ts";
 import type { IGetAllEventsResponse } from "./HttpApiTypes.ts";
+import { TEvent } from "../Models/TEvent.ts";
+import { TEventCreatePayload } from "../../../src/types/event.types.ts";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "No url";
 
 const httpApi = {
   getAllEvents: simpleGetRequest<IGetAllEventsResponse>("event/all"),
-
-  getEventById: async (eventId: string): Promise<{ event: TEvent } | null> => {
-    const response = await fetch(`${BASE_URL}/event/getById/${eventId}`);
-    if (!response.ok) {
-      console.error(response.statusText);
-
-      return null;
-    }
-    return await response.json();
-  },
+  getEventById: (eventId: string) =>
+    simpleGetRequest<TEvent>(`/event/getById/${eventId}`)(),
+  createEvent: simplePostRequest<TEventCreatePayload>("/event/create"),
   getEventsLocations: simpleGetRequest<IGetAllEventsResponse>("location/all"),
   getAllUsers: async (): Promise<{ users: TUser[] }> => {
     const response = await fetch(`${BASE_URL}/user/all`);

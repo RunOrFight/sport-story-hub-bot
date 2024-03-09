@@ -31,4 +31,22 @@ const simpleGetRequest = <Response>(
   };
 };
 
-export { simpleGetRequest };
+const simplePostRequest = <T extends Record<string, any>>(endpoint: string) => {
+  return async (payload: T) => {
+    const response = await fetch(`${BASE_URL}/${endpoint}`, {
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+    if (!response.ok) {
+      console.error(response.statusText);
+
+      return { error: response.statusText };
+    }
+    return {};
+  };
+};
+
+export { simpleGetRequest, simplePostRequest };

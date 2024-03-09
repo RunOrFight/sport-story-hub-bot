@@ -1,18 +1,13 @@
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Select,
-  Skeleton,
-} from "antd";
+import { Button, DatePicker, Form, Input, InputNumber, Select } from "antd";
 import dayjs from "dayjs";
-import { IEventLocation, IEventRaw } from "../../types.ts";
-import { useEffect, useState } from "react";
+import { IEventRaw } from "../../types.ts";
 import "dayjs/locale/ru.js";
-import { httpApi } from "../../HttpApi/HttpApi.ts";
+import { useDispatch, useSelector } from "react-redux";
+import { locationsSelectors } from "../../Store/Locations/LocationsSelector.ts";
+import { withProps } from "../../Utils/WithProps.ts";
+import { RequestStatusToComponent } from "../../Components/RequestStatusToComponent.tsx";
+import { LOCATIONS_GET_ALL_REQUEST_SYMBOL } from "../../Store/Locations/LocationsVariables.ts";
+import { eventsSlice } from "../../Store/Events/EventsSlice.ts";
 
 interface ICreateEventFormValues extends Omit<IEventRaw, "dateTime"> {
   dateTime: ReturnType<typeof dayjs>;
@@ -35,111 +30,88 @@ const errorMessage = {
   content: "Something went wrong",
 } as const;
 
-const CreateEventForm = () => {
-  const [messageApi, contextHolder] = message.useMessage();
-  const [locations, setLocations] = useState<IEventLocation[] | null>(null);
+const CreateEventFormSuccess = () => {
+  const locations = useSelector(locationsSelectors.data);
   const [form] = Form.useForm();
+  const dispatch = useDispatch();
 
   const onFinish = async (values: ICreateEventFormValues) => {
     const dateTime = values.dateTime.locale("ru").toDate();
 
-    Telegram.WebApp.sendData(
-      JSON.stringify({
-        ...values,
-        dateTime,
-      }),
-    );
-
-    messageApi.open(successMessage);
+    dispatch(eventsSlice.actions.create({ ...values, dateTime }));
   };
-
-  const onFinishFailed = () => {
-    messageApi.open(errorMessage);
-  };
-
-  useEffect(() => {
-    httpApi.getEventsLocations().then((response) => {
-      console.log(response);
-      const locations = response.locations;
-      setLocations(locations);
-      locations.length !== 0 &&
-        form.setFieldValue("locationId", locations[0].id);
-    });
-  }, [form]);
-
-  if (!locations) {
-    return <Skeleton active />;
-  }
 
   return (
-    <>
-      {contextHolder}
-      <Form
-        form={form}
-        layout={"vertical"}
-        name="basic"
-        onFinish={onFinish}
-        initialValues={initialValues}
-        onFinishFailed={onFinishFailed}
-        autoComplete="off"
-        style={{ padding: 16 }}
+    <Form
+      form={form}
+      layout={"vertical"}
+      name="basic"
+      onFinish={onFinish}
+      initialValues={initialValues}
+      autoComplete="off"
+      style={{ padding: 16 }}
+    >
+      <Form.Item<IEventRaw>
+        label="Place"
+        name="locationId"
+        rules={[{ required: true }]}
+        initialValue={locations[0].id}
       >
-        <Form.Item<IEventRaw>
-          label="Place"
-          name="locationId"
-          rules={[{ required: true }]}
-        >
-          <Select
-            allowClear
-            options={locations}
-            fieldNames={{ label: "title", value: "id" }}
-          />
-        </Form.Item>
+        <Select
+          allowClear
+          options={locations}
+          fieldNames={{ label: "title", value: "id" }}
+        />
+      </Form.Item>
 
-        <Form.Item<IEventRaw>
-          label="Date"
-          name="dateTime"
-          rules={[{ required: true }]}
-        >
-          <DatePicker
-            format={"YYYY-MM-DD HH:mm:ss"}
-            showTime
-            style={{ width: "100%" }}
-          />
-        </Form.Item>
+      <Form.Item<IEventRaw>
+        label="Date"
+        name="dateTime"
+        rules={[{ required: true }]}
+      >
+        <DatePicker
+          format={"YYYY-MM-DD HH:mm:ss"}
+          showTime
+          style={{ width: "100%" }}
+        />
+      </Form.Item>
 
-        <Form.Item<IEventRaw>
-          label="Price"
-          name="price"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
+      <Form.Item<IEventRaw>
+        label="Price"
+        name="price"
+        rules={[{ required: true }]}
+      >
+        <Input />
+      </Form.Item>
 
-        <Form.Item<IEventRaw>
-          label="Participants Limit"
-          name="participantsLimit"
-          rules={[{ required: true }]}
-        >
-          <InputNumber style={{ width: "100%" }} />
-        </Form.Item>
+      <Form.Item<IEventRaw>
+        label="Participants Limit"
+        name="participantsLimit"
+        rules={[{ required: true }]}
+      >
+        <InputNumber style={{ width: "100%" }} />
+      </Form.Item>
 
-        <Form.Item<IEventRaw>
-          label="Description"
-          name="description"
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
+      <Form.Item<IEventRaw>
+        label="Description"
+        name="description"
+        rules={[{ required: true }]}
+      >
+        <Input />
+      </Form.Item>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
-    </>
+      <Form.Item>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
   );
 };
+
+const CreateEventForm = withProps(RequestStatusToComponent)({
+  requestSymbol: LOCATIONS_GET_ALL_REQUEST_SYMBOL,
+  SUCCESS: CreateEventFormSuccess,
+});
 
 export { CreateEventForm };
