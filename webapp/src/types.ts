@@ -1,3 +1,5 @@
+import { EEventStatus } from "../../src/enums/event-status.enum.ts";
+
 interface IFile {
   id: number;
   url: string;
@@ -9,12 +11,6 @@ interface IEventLocation {
   url: string;
   address: string;
   preview: IFile;
-}
-
-enum EEventStatus {
-  WAITING = "waiting",
-  STARTED = "started",
-  FINISHED = "finished",
 }
 
 interface IUser {
@@ -43,4 +39,3 @@ interface IEventFull extends Omit<IEventRaw, "locationId"> {
 }
 
 export type { IEventRaw, IEventFull, IEventLocation, IUser };
-export { EEventStatus };

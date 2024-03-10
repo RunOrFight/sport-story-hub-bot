@@ -11,4 +11,8 @@ type TEventGame = TEvent["games"][number];
 
 type TEventGameTeam = TEventGame["gameTeams"][0]["team"];
 
-export type { TEvent, TEventGame, TEventGameTeam };
+interface IWithEvent {
+  event: TEvent;
+}
+
+export type { TEvent, TEventGame, TEventGameTeam, IWithEvent };

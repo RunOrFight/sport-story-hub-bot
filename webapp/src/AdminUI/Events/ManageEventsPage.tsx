@@ -20,8 +20,8 @@ const ManageEventCard: FC<TEvent> = ({ id, location }) => {
       cover={<img alt="example" src={location?.preview?.url} />}
       actions={[
         <Link
-          to={generatePath(webappRoutes.updateLocationRoute, {
-            locationId: id,
+          to={generatePath(webappRoutes.updateEventRoute, {
+            eventId: id,
           })}
         >
           <EditOutlined key="edit" />

@@ -11,18 +11,22 @@ import {
   TLocationDeletePayload,
   TLocationUpdatePayload,
 } from "../../../src/types/location.types.ts";
-import { simpleGetRequest, simplePostRequest } from "./RequestUtils.ts";
+import { requestWithPayload, simpleGetRequest } from "./RequestUtils.ts";
 import type { IGetAllEventsResponse } from "./HttpApiTypes.ts";
-import { TEvent } from "../Models/TEvent.ts";
-import { TEventCreatePayload } from "../../../src/types/event.types.ts";
+import { IWithEvent } from "../Models/TEvent.ts";
+import {
+  TEventCreatePayload,
+  TEventUpdatePayload,
+} from "../../../src/types/event.types.ts";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "No url";
 
 const httpApi = {
   getAllEvents: simpleGetRequest<IGetAllEventsResponse>("event/all"),
   getEventById: (eventId: string) =>
-    simpleGetRequest<TEvent>(`/event/getById/${eventId}`)(),
-  createEvent: simplePostRequest<TEventCreatePayload>("/event/create"),
+    simpleGetRequest<IWithEvent>(`/event/getById/${eventId}`)(),
+  createEvent: requestWithPayload<TEventCreatePayload>("POST", "/event/create"),
+  updateEvent: requestWithPayload<TEventUpdatePayload>("PUT", "/event/update"),
   getEventsLocations: simpleGetRequest<IGetAllEventsResponse>("location/all"),
   getAllUsers: async (): Promise<{ users: TUser[] }> => {
     const response = await fetch(`${BASE_URL}/user/all`);
