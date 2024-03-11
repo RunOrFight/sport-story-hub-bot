@@ -1,8 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IWithEvent, TEvent } from "../../Models/TEvent.ts";
-import { IGetAllEventsResponse } from "../../HttpApi/HttpApiTypes.ts";
+import {
+  IGetAllEventsResponse,
+  type IUpdateEventResponse,
+} from "../../HttpApi/HttpApiTypes.ts";
 import {
   TEventCreatePayload,
+  TEventDeletePayload,
   TEventUpdatePayload,
 } from "../../../../src/types/event.types.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
@@ -29,6 +33,9 @@ const eventsSlice = createSlice({
     },
     create: (_, __: PayloadAction<TEventCreatePayload>) => {},
     update: (_, __: PayloadAction<TEventUpdatePayload>) => {},
+    updated: (_, __: PayloadAction<IUpdateEventResponse>) => {},
+    delete: (_, __: PayloadAction<TEventDeletePayload>) => {},
+    deleted: (_, __: PayloadAction<boolean>) => {},
   },
   selectors: {
     edges: (sliceState) => sliceState.edges,

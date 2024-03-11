@@ -31,11 +31,11 @@ const simpleGetRequest = <Response>(
   };
 };
 
-const requestWithPayload = <T extends Record<string, any>>(
+const requestWithPayload = <P extends Record<string, any>, R>(
   method: RequestInit["method"],
   endpoint: string,
 ) => {
-  return async (payload: T) => {
+  return async (payload: P): Promise<R | IWithError> => {
     const response = await fetch(`${BASE_URL}/${endpoint}`, {
       body: JSON.stringify(payload),
       headers: {
@@ -48,7 +48,7 @@ const requestWithPayload = <T extends Record<string, any>>(
 
       return { error: response.statusText };
     }
-    return {};
+    return await response.json();
   };
 };
 

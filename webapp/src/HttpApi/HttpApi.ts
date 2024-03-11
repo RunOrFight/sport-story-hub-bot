@@ -12,10 +12,14 @@ import {
   TLocationUpdatePayload,
 } from "../../../src/types/location.types.ts";
 import { requestWithPayload, simpleGetRequest } from "./RequestUtils.ts";
-import type { IGetAllEventsResponse } from "./HttpApiTypes.ts";
+import type {
+  IGetAllEventsResponse,
+  IUpdateEventResponse,
+} from "./HttpApiTypes.ts";
 import { IWithEvent } from "../Models/TEvent.ts";
 import {
   TEventCreatePayload,
+  TEventDeletePayload,
   TEventUpdatePayload,
 } from "../../../src/types/event.types.ts";
 
@@ -25,8 +29,18 @@ const httpApi = {
   getAllEvents: simpleGetRequest<IGetAllEventsResponse>("event/all"),
   getEventById: (eventId: string) =>
     simpleGetRequest<IWithEvent>(`/event/getById/${eventId}`)(),
-  createEvent: requestWithPayload<TEventCreatePayload>("POST", "/event/create"),
-  updateEvent: requestWithPayload<TEventUpdatePayload>("PUT", "/event/update"),
+  createEvent: requestWithPayload<TEventCreatePayload, undefined>(
+    "POST",
+    "/event/create",
+  ),
+  updateEvent: requestWithPayload<TEventUpdatePayload, IUpdateEventResponse>(
+    "PUT",
+    "/event/update",
+  ),
+  deleteEvent: requestWithPayload<TEventDeletePayload, boolean>(
+    "DELETE",
+    "/event/delete",
+  ),
   getEventsLocations: simpleGetRequest<IGetAllEventsResponse>("location/all"),
   getAllUsers: async (): Promise<{ users: TUser[] }> => {
     const response = await fetch(`${BASE_URL}/user/all`);

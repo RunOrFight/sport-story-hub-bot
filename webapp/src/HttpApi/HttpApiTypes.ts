@@ -9,4 +9,12 @@ interface IGetAllLocationsResponse {
   locations: Location[];
 }
 
-export type { IGetAllEventsResponse, IGetAllLocationsResponse };
+interface IUpdateEventResponse {
+  updatedEvent: TEvent[];
+}
+
+export type {
+  IGetAllEventsResponse,
+  IGetAllLocationsResponse,
+  IUpdateEventResponse,
+};

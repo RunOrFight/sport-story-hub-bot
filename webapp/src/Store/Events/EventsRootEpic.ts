@@ -4,6 +4,7 @@ import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { httpRequestEpicFactory } from "../Utils/HttpRequestEpicFactory.ts";
 import { TAppEpic } from "../App/Epics/TAppEpic.ts";
 import {
+  EVENTS_DELETE_REQUEST_SYMBOL,
   EVENTS_GET_ALL_REQUEST_SYMBOL,
   EVENTS_GET_BY_ID_REQUEST_SYMBOL,
   EVENTS_UPDATE_REQUEST_SYMBOL,
@@ -13,6 +14,7 @@ import { locationsLoadEpic } from "../Locations/Epics/LocationsLoadEpic.ts";
 import { EMPTY, switchMap, tap } from "rxjs";
 import { fromActionCreator } from "../Utils/FromActionCreator.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
+import { message } from "antd";
 
 const loadEventsEpic: TAppEpic = (_, __, { httpApi }) =>
   httpRequestEpicFactory({
@@ -45,13 +47,49 @@ const createEventEpic: TAppEpic = (action$) =>
     ),
   );
 
-const updateEventEpic: TAppEpic = (action$, _, { httpApi }) =>
+const updateEventEpicFactory =
+  (eventId: string): TAppEpic =>
+  (action$, state$, dependencies) =>
+    action$.pipe(
+      fromActionCreator(eventsSlice.actions.update),
+      switchMap((action) =>
+        httpRequestEpicFactory({
+          input: dependencies.httpApi.updateEvent(action.payload),
+          requestSymbol: EVENTS_UPDATE_REQUEST_SYMBOL,
+          receivedActionCreator: eventsSlice.actions.updated,
+          onSuccess: () => {
+            message.open({
+              type: "success",
+              content: "Updated",
+            });
+            return loadEventByIdEpic(eventId)(action$, state$, dependencies);
+          },
+        }),
+      ),
+    );
+
+const deleteEventEpic: TAppEpic = (action$, state$, dependencies) =>
   action$.pipe(
-    fromActionCreator(eventsSlice.actions.update),
+    fromActionCreator(eventsSlice.actions.delete),
     switchMap((action) =>
       httpRequestEpicFactory({
-        input: httpApi.updateEvent(action.payload),
-        requestSymbol: EVENTS_UPDATE_REQUEST_SYMBOL,
+        input: dependencies.httpApi.deleteEvent(action.payload),
+        requestSymbol: EVENTS_DELETE_REQUEST_SYMBOL,
+        receivedActionCreator: eventsSlice.actions.deleted,
+        onSuccess: () => {
+          message.open({
+            type: "success",
+            content: "Deleted",
+          });
+          return loadEventsEpic(action$, state$, dependencies);
+        },
+        onError: (error) => {
+          message.open({
+            type: "error",
+            content: error,
+          });
+          return EMPTY;
+        },
       }),
     ),
   );
@@ -64,7 +102,9 @@ const updateEventRouterEpic = routerEpic(
       loadEventByIdEpic(
         getNotNil(match.params.eventId, "updateEventRouterEpic"),
       ),
-      updateEventEpic,
+      updateEventEpicFactory(
+        getNotNil(match.params.eventId, "updateEventRouterEpic"),
+      ),
     ),
 );
 
@@ -72,9 +112,8 @@ const createEventRouterEpic = routerEpic(webappRoutes.createEventRoute, () =>
   combineEpics(locationsLoadEpic, createEventEpic),
 );
 
-const manageEventsRouterEpic = routerEpic(
-  webappRoutes.manageEventsRoute,
-  () => loadEventsEpic,
+const manageEventsRouterEpic = routerEpic(webappRoutes.manageEventsRoute, () =>
+  combineEpics(loadEventsEpic, deleteEventEpic),
 );
 
 const clientEventsRouterEpic = routerEpic(

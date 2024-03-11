@@ -1,5 +1,5 @@
 import { eventsSlice } from "../../Store/Events/EventsSlice.ts";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { withProps } from "../../Utils/WithProps.ts";
 import { RequestStatusToComponent } from "../../Components/RequestStatusToComponent.tsx";
 import { EVENTS_GET_ALL_REQUEST_SYMBOL } from "../../Store/Events/EventsVariables.ts";
@@ -13,7 +13,11 @@ import { FC } from "react";
 import { TEvent } from "../../Models/TEvent.ts";
 
 const ManageEventCard: FC<TEvent> = ({ id, location }) => {
-  const onClick = () => void 0;
+  const dispatch = useDispatch();
+
+  const onClick = () => {
+    dispatch(eventsSlice.actions.delete({ id }));
+  };
 
   return (
     <Card
