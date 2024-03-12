@@ -19,6 +19,7 @@ import { UpdateProfilePage } from "./UpdateProfilePage/UpdateProfilePage.tsx";
 import { ManageEventsPage } from "./AdminUI/Events/ManageEventsPage.tsx";
 import { CreateEventForm } from "./AdminUI/Events/CreateEventForm.tsx";
 import { UpdateEventForm } from "./AdminUI/Events/UpdateEventForm.tsx";
+import { ManageSingleEventPage } from "./AdminUI/Events/ManageSingleEventPage.tsx";
 
 document.body.setAttribute("data-dev", String(isDev));
 
@@ -51,6 +52,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route
           path={webappRoutes.updateEventRoute}
           element={<UpdateEventForm />}
+        />
+
+        <Route
+          path={webappRoutes.manageSingleEventRoute}
+          element={<ManageSingleEventPage />}
         />
 
         <Route path={webappRoutes.locationsRoute} element={<LocationsPage />} />

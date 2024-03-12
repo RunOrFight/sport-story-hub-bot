@@ -8,7 +8,7 @@ import { Card, Empty, Flex } from "antd";
 import { generatePath, Link } from "react-router-dom";
 import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { CreateButton } from "../../Components/CreateButton.tsx";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, UserOutlined } from "@ant-design/icons";
 import { FC } from "react";
 import { TEvent } from "../../Models/TEvent.ts";
 
@@ -23,6 +23,13 @@ const ManageEventCard: FC<TEvent> = ({ id, location }) => {
     <Card
       cover={<img alt="example" src={location?.preview?.url} />}
       actions={[
+        <Link
+          to={generatePath(webappRoutes.manageSingleEventRoute, {
+            eventId: id,
+          })}
+        >
+          <UserOutlined key="user" />
+        </Link>,
         <Link
           to={generatePath(webappRoutes.updateEventRoute, {
             eventId: id,

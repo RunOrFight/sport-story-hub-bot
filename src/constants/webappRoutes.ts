@@ -13,6 +13,7 @@ const createEventRoute = `${manageEventsRoute}/create`;
 const updateEventRoute = `${manageEventsRoute}/update/:eventId`;
 const updateLocationRoute = `${adminRoute}${locationsRoute}/update/:locationId`;
 const createLocationRoute = `${adminRoute}${locationsRoute}/create`;
+const manageSingleEventRoute = `${adminRoute}${singleEventRoute}`;
 
 const webappRoutes = {
   emptyRoute,
@@ -29,6 +30,7 @@ const webappRoutes = {
   updateProfileRoute,
   createEventRoute,
   updateEventRoute,
+  manageSingleEventRoute,
 };
 
 export { webappRoutes };

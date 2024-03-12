@@ -116,6 +116,16 @@ const manageEventsRouterEpic = routerEpic(webappRoutes.manageEventsRoute, () =>
   combineEpics(loadEventsEpic, deleteEventEpic),
 );
 
+const manageSingleEventRouterEpic = routerEpic(
+  webappRoutes.manageSingleEventRoute,
+  (match) =>
+    combineEpics(
+      loadEventByIdEpic(
+        getNotNil(match.params.eventId, "manageSingleEventRouterEpic"),
+      ),
+    ),
+);
+
 const clientEventsRouterEpic = routerEpic(
   webappRoutes.eventsRoute,
   () => loadEventsEpic,
@@ -126,6 +136,7 @@ const eventsRootEpic = combineEpics(
   createEventRouterEpic,
   clientEventsRouterEpic,
   updateEventRouterEpic,
+  manageSingleEventRouterEpic,
 );
 
 export { eventsRootEpic };
