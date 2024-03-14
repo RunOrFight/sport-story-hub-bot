@@ -22,13 +22,11 @@ export class Game {
   @Column({ nullable: false })
   name!: string;
 
-  @ManyToOne(() => Event, { nullable: false })
+  @ManyToOne(() => Event, { nullable: false, onDelete: "CASCADE" })
   @JoinColumn({ name: "event_id" })
   event!: Event;
 
-  @OneToMany(() => GameTeam, (gt) => gt.game, {
-    onDelete: "CASCADE",
-  })
+  @OneToMany(() => GameTeam, (gt) => gt.game)
   gameTeams!: GameTeam[];
 
   @OneToMany(() => GameStat, (gs) => gs.game)

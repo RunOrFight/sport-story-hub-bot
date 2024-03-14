@@ -1,4 +1,4 @@
-export enum EGameEvent {
+export enum EGameEventType {
   GOAL = "goal",
   ASSIST = "assist",
 }

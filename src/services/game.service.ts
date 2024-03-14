@@ -10,6 +10,28 @@ import { GameTeam } from "../database/entities/GameTeam";
 import { GameDTO } from "../DTOs/game.DTO";
 
 export class GameService {
+  async getGameById(id: number): Promise<GameDTO> {
+    const game = await db.getRepository(Game).findOne({
+      relations: {
+        gameTeams: {
+          team: {
+            teamsParticipants: { participant: { user: { photo: true } } },
+          },
+        },
+        gameStats: {
+          teamParticipant: { participant: { user: { photo: true } } },
+        },
+        event: true,
+      },
+      where: { id },
+    });
+
+    if (!game) {
+      throw new Error(`Game with id ${id} not found`);
+    }
+
+    return new GameDTO(game);
+  }
   async createGame(payload: TGameCreatePayload): Promise<GameDTO> {
     const { name, eventId, teamIds } = payload;
 

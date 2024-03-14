@@ -6,7 +6,7 @@ import { Team } from "../entities/Team";
 import { Game } from "../entities/Game";
 import { GameTeam } from "../entities/GameTeam";
 import { GameStat } from "../entities/GameStat";
-import { EGameEvent } from "../../enums/game-event.enum";
+import { EGameEventType } from "../../enums/game-event.enum";
 
 export default class UserSeeder extends Seeder {
   private name = "add_games";
@@ -54,7 +54,7 @@ export default class UserSeeder extends Seeder {
                     const gameStat = new GameStat();
                     gameStat.teamParticipant = tp;
                     gameStat.game = game;
-                    gameStat.event = EGameEvent.GOAL;
+                    gameStat.type = EGameEventType.GOAL;
 
                     await dataSource
                       .createEntityManager()
@@ -63,7 +63,7 @@ export default class UserSeeder extends Seeder {
                     const gameStat = new GameStat();
                     gameStat.teamParticipant = tp;
                     gameStat.game = game;
-                    gameStat.event = EGameEvent.ASSIST;
+                    gameStat.type = EGameEventType.ASSIST;
                     await dataSource
                       .createEntityManager()
                       .save<GameStat>(gameStat);
@@ -82,7 +82,7 @@ export default class UserSeeder extends Seeder {
                     const gameStat = new GameStat();
                     gameStat.teamParticipant = tp;
                     gameStat.game = game;
-                    gameStat.event = EGameEvent.GOAL;
+                    gameStat.type = EGameEventType.GOAL;
 
                     await dataSource
                       .createEntityManager()
@@ -91,7 +91,7 @@ export default class UserSeeder extends Seeder {
                     const gameStat = new GameStat();
                     gameStat.teamParticipant = tp;
                     gameStat.game = game;
-                    gameStat.event = EGameEvent.ASSIST;
+                    gameStat.type = EGameEventType.ASSIST;
                     await dataSource
                       .createEntityManager()
                       .save<GameStat>(gameStat);
@@ -110,7 +110,7 @@ export default class UserSeeder extends Seeder {
                     const gameStat = new GameStat();
                     gameStat.teamParticipant = tp;
                     gameStat.game = game;
-                    gameStat.event = EGameEvent.GOAL;
+                    gameStat.type = EGameEventType.GOAL;
 
                     await dataSource
                       .createEntityManager()
@@ -137,14 +137,14 @@ export default class UserSeeder extends Seeder {
                 const gameStat = new GameStat();
                 gameStat.teamParticipant = tp;
                 gameStat.game = game;
-                gameStat.event = EGameEvent.GOAL;
+                gameStat.type = EGameEventType.GOAL;
 
                 await dataSource.createEntityManager().save<GameStat>(gameStat);
               } else if (k === 3) {
                 const gameStat = new GameStat();
                 gameStat.teamParticipant = tp;
                 gameStat.game = game;
-                gameStat.event = EGameEvent.ASSIST;
+                gameStat.type = EGameEventType.ASSIST;
               }
             }
           }

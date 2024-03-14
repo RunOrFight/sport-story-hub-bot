@@ -43,19 +43,13 @@ export class Event {
   @JoinColumn({ name: "location_id" })
   location?: Location | null;
 
-  @OneToMany(() => Participant, (participant) => participant.event, {
-    onDelete: "CASCADE",
-  })
+  @OneToMany(() => Participant, (participant) => participant.event)
   participants!: Participant[];
 
-  @OneToMany(() => Game, (game) => game.event, {
-    onDelete: "CASCADE",
-  })
+  @OneToMany(() => Game, (game) => game.event)
   games!: Game[];
 
-  @OneToMany(() => Team, (team) => team.event, {
-    onDelete: "CASCADE",
-  })
+  @OneToMany(() => Team, (team) => team.event)
   teams!: Team[];
 
   @CreateDateColumn({ name: "created_at" })

@@ -373,7 +373,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"EGameEvent": {
+			"EGameEventType": {
 				"enum": [
 					"goal",
 					"assist"
@@ -459,8 +459,8 @@
 						"type": "number",
 						"format": "double"
 					},
-					"event": {
-						"$ref": "#/components/schemas/EGameEvent"
+					"type": {
+						"$ref": "#/components/schemas/EGameEventType"
 					},
 					"game": {
 						"$ref": "#/components/schemas/Game"
@@ -479,7 +479,7 @@
 				},
 				"required": [
 					"id",
-					"event",
+					"type",
 					"game",
 					"teamParticipant",
 					"createdAt",
@@ -795,6 +795,27 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GameStatDTO": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"teamParticipant": {
+						"$ref": "#/components/schemas/TeamParticipant"
+					},
+					"type": {
+						"$ref": "#/components/schemas/EGameEventType"
+					}
+				},
+				"required": [
+					"id",
+					"teamParticipant",
+					"type"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"GameDTO": {
 				"properties": {
 					"id": {
@@ -812,13 +833,20 @@
 							"$ref": "#/components/schemas/GameTeamDTO"
 						},
 						"type": "array"
+					},
+					"gameStats": {
+						"items": {
+							"$ref": "#/components/schemas/GameStatDTO"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
 					"id",
 					"name",
 					"event",
-					"gameTeams"
+					"gameTeams",
+					"gameStats"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -870,6 +898,44 @@
 				"type": "object"
 			},
 			"TGameDeletePayload": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id"
+				],
+				"type": "object"
+			},
+			"TGameStatAddPayload": {
+				"properties": {
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"teamParticipantId": {
+						"type": "number",
+						"format": "double"
+					},
+					"gameId": {
+						"type": "number",
+						"format": "double"
+					},
+					"type": {
+						"$ref": "#/components/schemas/EGameEventType"
+					}
+				},
+				"required": [
+					"createdAt",
+					"teamParticipantId",
+					"gameId",
+					"type"
+				],
+				"type": "object"
+			},
+			"TGameStatDeletePayload": {
 				"properties": {
 					"id": {
 						"type": "number",
@@ -1520,6 +1586,38 @@
 				}
 			}
 		},
+		"/api/game/getById/{id}": {
+			"get": {
+				"operationId": "GetGameById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GameDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Games"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/api/game/create": {
 			"post": {
 				"operationId": "CreateGame",
@@ -1610,6 +1708,70 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/TGameDeletePayload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/game/stat/add": {
+			"post": {
+				"operationId": "AddGameStat",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GameStat"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Games"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TGameStatAddPayload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/game/stat/delete": {
+			"delete": {
+				"operationId": "DeleteGameStat",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Games"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TGameStatDeletePayload"
 							}
 						}
 					}

@@ -29,7 +29,7 @@ export class Participant {
   @JoinColumn({ name: "user_id" })
   user?: User | null;
 
-  @ManyToOne(() => Event, { nullable: false })
+  @ManyToOne(() => Event, { nullable: false, onDelete: "CASCADE" })
   @JoinColumn({ name: "event_id" })
   event!: Event;
 
@@ -37,9 +37,7 @@ export class Participant {
   @JoinColumn({ name: "parent_participant_id" })
   parentParticipant?: Participant;
 
-  @OneToMany(() => TeamParticipant, (tp) => tp.participant, {
-    onDelete: "CASCADE",
-  })
+  @OneToMany(() => TeamParticipant, (tp) => tp.participant)
   teamsParticipants!: TeamParticipant[];
 
   @CreateDateColumn({ name: "created_at" })

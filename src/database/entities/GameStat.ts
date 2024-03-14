@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { EGameEvent } from "../../enums/game-event.enum";
+import { EGameEventType } from "../../enums/game-event.enum";
 import { Game } from "./Game";
 import { TeamParticipant } from "./TeamParticipant";
 
@@ -19,9 +19,9 @@ export class GameStat {
   @Column({
     nullable: false,
     type: "enum",
-    enum: EGameEvent,
+    enum: EGameEventType,
   })
-  event!: EGameEvent;
+  type!: EGameEventType;
 
   @ManyToOne(() => Game, { nullable: false })
   @JoinColumn({ name: "game_id" })
