@@ -1777,6 +1777,38 @@
 					}
 				}
 			}
+		},
+		"/api/file/delete/{id}": {
+			"delete": {
+				"operationId": "DeleteFile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Files"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
 		}
 	},
 	"servers": [

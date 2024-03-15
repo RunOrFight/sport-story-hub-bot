@@ -6,12 +6,11 @@ import { FileService } from "../services/file.service";
 export class FileController {
   private fileService = new FileService();
 
-  @Post("/add")
   async addFile(payload: Express.Multer.File[]) {
     return this.fileService.addFile(payload);
   }
 
-  @Delete("/delete")
+  @Delete("/delete/:id")
   async deleteFile(@Path() id: number) {
     return this.fileService.deleteFile(id);
   }
