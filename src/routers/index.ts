@@ -5,6 +5,7 @@ import { LocationRouter } from "./location.router";
 import { TeamRouter } from "./team.router";
 import { TeamParticipantRouter } from "./team-participant.router";
 import { GameRouter } from "./game.router";
+import { FileRouter } from "./file.router";
 
 export const MainRouter = Router();
 
@@ -14,3 +15,4 @@ MainRouter.use("/location", LocationRouter);
 MainRouter.use("/team", TeamRouter);
 MainRouter.use("/team-participant", TeamParticipantRouter);
 MainRouter.use("/game", GameRouter);
+MainRouter.use("/file", FileRouter);

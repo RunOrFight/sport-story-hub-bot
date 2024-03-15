@@ -43,6 +43,7 @@ if (process.env.NODE_ENV === "dev") {
 }
 
 app.use("/api", MainRouter);
+app.use("/api/uploads", express.static("uploads"));
 app.use(errorHandler);
 
 (async function () {

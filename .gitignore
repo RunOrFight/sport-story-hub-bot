@@ -5,3 +5,4 @@ build/*
 webapp/dist
 data
 ngrok
+uploads
