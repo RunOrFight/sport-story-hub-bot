@@ -10,6 +10,7 @@ import {
   TEventUpdatePayload,
 } from "../../../../src/types/event.types.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
+import { TTeamParticipantDeletePayload } from "../../../../src/types/team-participant.types.ts";
 
 interface IEventsSlice {
   edges: TEvent[];
@@ -36,6 +37,10 @@ const eventsSlice = createSlice({
     updated: (_, __: PayloadAction<IUpdateEventResponse>) => {},
     delete: (_, __: PayloadAction<TEventDeletePayload>) => {},
     deleted: (_, __: PayloadAction<boolean>) => {},
+    deleteTeamParticipant: (
+      _,
+      __: PayloadAction<TTeamParticipantDeletePayload>,
+    ) => {},
   },
   selectors: {
     edges: (sliceState) => sliceState.edges,

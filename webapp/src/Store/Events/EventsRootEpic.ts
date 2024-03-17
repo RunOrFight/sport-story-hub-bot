@@ -4,6 +4,7 @@ import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { httpRequestEpicFactory } from "../Utils/HttpRequestEpicFactory.ts";
 import { TAppEpic } from "../App/Epics/TAppEpic.ts";
 import {
+  DELETE_TEAM_PARTICIPANT_REQUEST_SYMBOL,
   EVENTS_DELETE_REQUEST_SYMBOL,
   EVENTS_GET_ALL_REQUEST_SYMBOL,
   EVENTS_GET_BY_ID_REQUEST_SYMBOL,
@@ -15,6 +16,7 @@ import { EMPTY, switchMap, tap } from "rxjs";
 import { fromActionCreator } from "../Utils/FromActionCreator.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
 import { message } from "antd";
+import { httpApi } from "../../HttpApi/HttpApi.ts";
 
 const loadEventsEpic: TAppEpic = (_, __, { httpApi }) =>
   httpRequestEpicFactory({
@@ -116,14 +118,46 @@ const manageEventsRouterEpic = routerEpic(webappRoutes.manageEventsRoute, () =>
   combineEpics(loadEventsEpic, deleteEventEpic),
 );
 
+const deleteTeamParticipantEpic =
+  (eventId: string): TAppEpic =>
+  (action$, state$, dependencies) =>
+    action$.pipe(
+      fromActionCreator(eventsSlice.actions.deleteTeamParticipant),
+      switchMap(({ payload }) => {
+        return httpRequestEpicFactory({
+          input: httpApi.deleteTeamParticipant(payload),
+          requestSymbol: DELETE_TEAM_PARTICIPANT_REQUEST_SYMBOL,
+          onSuccess: () => {
+            message.open({
+              type: "success",
+              content: "Deleted",
+            });
+            return loadEventByIdEpic(eventId)(action$, state$, dependencies);
+          },
+          onError: (error) => {
+            message.open({
+              type: "error",
+              content: error,
+            });
+            return EMPTY;
+          },
+        });
+      }),
+    );
+
 const manageSingleEventRouterEpic = routerEpic(
   webappRoutes.manageSingleEventRoute,
-  (match) =>
-    combineEpics(
-      loadEventByIdEpic(
-        getNotNil(match.params.eventId, "manageSingleEventRouterEpic"),
-      ),
-    ),
+  (match) => {
+    const notNilEventId = getNotNil(
+      match.params.eventId,
+      "manageSingleEventRouterEpic",
+    );
+
+    return combineEpics(
+      loadEventByIdEpic(notNilEventId),
+      deleteTeamParticipantEpic(notNilEventId),
+    );
+  },
 );
 
 const clientEventsRouterEpic = routerEpic(
