@@ -71,7 +71,11 @@ const ManageSingleEventTeamPageSuccess = () => {
         path={generatePath(webappRoutes.manageSingleEventRoute, { eventId })}
       />
 
-      <Input placeholder={"Search"} onChange={onChange} value={value} />
+      <Input
+        placeholder={"Search For Event Participants"}
+        onChange={onChange}
+        value={value}
+      />
 
       <Table
         columns={PARTICIPANT_TABLE_COLUMNS}

@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button, Flex } from "antd";
 import { Link } from "react-router-dom";
 import { FC } from "react";
 
@@ -8,13 +8,11 @@ interface IBackButton {
 
 const BackButton: FC<IBackButton> = ({ path }) => {
   return (
-    <Link
-      to={path ?? ".."}
-      relative={"path"}
-      style={{ display: "flex", justifyContent: "flex-end" }}
-    >
-      <Button>{"Back"}</Button>
-    </Link>
+    <Flex justify={"flex-end"}>
+      <Link to={path ?? ".."} relative={"path"}>
+        <Button>{"Back"}</Button>
+      </Link>
+    </Flex>
   );
 };
 export { BackButton };

@@ -1,6 +1,7 @@
 import { ColumnsType } from "antd/es/table";
 import { Participant } from "../../../../src/database/entities/Participant.ts";
 import { Avatar, Typography } from "antd";
+import { getUserFullName } from "../../Utils/GetUserFullName.ts";
 
 const PARTICIPANT_TABLE_COLUMNS: ColumnsType<Participant> = [
   {
@@ -16,10 +17,12 @@ const PARTICIPANT_TABLE_COLUMNS: ColumnsType<Participant> = [
   {
     title: "Username",
     dataIndex: "user",
-    render: ({ username, name }) => {
+    render: ({ username, name, surname }) => {
       return (
         <Typography>
-          <Typography.Title level={5}>{name ?? "No Name"}</Typography.Title>
+          <Typography.Title level={5}>
+            {getUserFullName(name, surname)}
+          </Typography.Title>
 
           <Typography.Text>{username}</Typography.Text>
         </Typography>

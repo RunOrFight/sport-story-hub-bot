@@ -82,8 +82,12 @@ const eventsSlice = createSlice({
 
       return filtered.filter(
         ({ user }) =>
-          user?.username.includes(sliceState.teamParticipantSearchString) ||
-          user?.name?.includes(sliceState.teamParticipantSearchString),
+          user?.username
+            .toLowerCase()
+            .includes(sliceState.teamParticipantSearchString.toLowerCase()) ||
+          user?.name
+            ?.toLowerCase()
+            .includes(sliceState.teamParticipantSearchString.toLowerCase()),
       );
     },
     teamParticipantSearchString: (sliceState) =>
