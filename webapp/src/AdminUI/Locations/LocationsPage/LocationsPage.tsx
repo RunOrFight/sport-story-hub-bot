@@ -13,7 +13,7 @@ import { requestManagerSlice } from "../../../Store/RequestManager/RequestManage
 import { LOCATIONS_GET_ALL_REQUEST_SYMBOL } from "../../../Store/Locations/LocationsVariables.ts";
 import { useParamSelector } from "../../../Hooks/UseParamSelector.ts";
 import { ERequestStatus } from "../../../Store/RequestManager/RequestManagerModels.ts";
-import { CreateButton } from "../../../Components/CreateButton.tsx";
+import { FixedButton } from "../../../Components/FixedButton.tsx";
 
 const LocationCard: FC<Location> = ({ preview, url, address, title, id }) => {
   const dispatch = useDispatch();
@@ -52,7 +52,7 @@ const LocationsPageSuccess = () => {
       ))}
 
       <Link to={webappRoutes.createLocationRoute}>
-        <CreateButton />
+        <FixedButton />
       </Link>
     </Flex>
   );

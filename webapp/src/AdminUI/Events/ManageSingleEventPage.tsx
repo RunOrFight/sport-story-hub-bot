@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Card,
   Collapse,
   CollapseProps,
@@ -21,43 +20,13 @@ import {
   TEventTeams,
 } from "../../Models/TEvent.ts";
 import { FC, useState } from "react";
-import { ColumnsType } from "antd/es/table";
-import { Participant } from "../../../../src/database/entities/Participant.ts";
-import { DeleteOutlined, UserOutlined } from "@ant-design/icons";
+import { UserAddOutlined } from "@ant-design/icons";
 import { isEmpty } from "../../Utils/OneLineUtils.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
-import { TeamParticipant } from "../../../../src/database/entities/TeamParticipant.ts";
-import { AppDispatch } from "../../Store/App/CreateStore.ts";
-
-const COLUMNS: ColumnsType<Participant> = [
-  {
-    title: "#",
-    dataIndex: "user",
-    render: ({ photo }) => (
-      <Avatar size={44} src={photo} icon={photo ? null : <UserOutlined />} />
-    ),
-    width: 50,
-    align: "center",
-  },
-  {
-    title: "Username",
-    dataIndex: "user",
-    render: ({ username, name }) => {
-      return (
-        <Typography>
-          <Typography.Title level={5}>{name ?? "No Name"}</Typography.Title>
-
-          <Typography.Text>{username}</Typography.Text>
-        </Typography>
-      );
-    },
-  },
-  {
-    title: "Elo",
-    dataIndex: ["user", "Elo"],
-    align: "right",
-  },
-];
+import { generatePath, Link } from "react-router-dom";
+import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
+import { teamParticipantRenderItem } from "./UserRenderItem.tsx";
+import { PARTICIPANT_TABLE_COLUMNS } from "./ParticipantTableColumns.tsx";
 
 const GameTeam: FC<TEventGameTeam> = ({ name, teamsParticipants }) => {
   return (
@@ -66,7 +35,7 @@ const GameTeam: FC<TEventGameTeam> = ({ name, teamsParticipants }) => {
 
       <Table
         dataSource={teamsParticipants.map((it) => it.participant)}
-        columns={COLUMNS}
+        columns={PARTICIPANT_TABLE_COLUMNS}
       />
     </Flex>
   );
@@ -112,49 +81,33 @@ const Games: FC<{ games: TEventGame[] }> = ({ games }) => {
   );
 };
 
-const renderItem =
-  (dispatch: AppDispatch, teamId: number) =>
-  ({ id, participant: { user } }: TeamParticipant, index: number) => {
-    const fallback = `https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`;
+interface IEventTeamsProps {
+  teams: TEventTeams;
+  eventId: number;
+}
 
-    const onClick = () => {
-      dispatch(
-        eventsSlice.actions.deleteTeamParticipant({
-          participantId: id,
-          teamId,
-        }),
-      );
-    };
-
-    return (
-      <List.Item
-        key={id}
-        actions={[
-          <span>{user?.Elo}</span>,
-          <DeleteOutlined onClick={onClick} />,
-        ]}
-      >
-        <List.Item.Meta
-          title={user?.name ?? "No Name"}
-          description={user?.username}
-          avatar={<Avatar src={fallback} />}
-        />
-      </List.Item>
-    );
-  };
-
-const EventTeams: FC<{ teams: TEventTeams }> = ({ teams }) => {
+const EventTeams: FC<IEventTeamsProps> = ({ teams, eventId }) => {
   const dispatch = useDispatch();
 
   const items: CollapseProps["items"] = teams.map(
     ({ id, name, teamsParticipants }) => {
       return {
         label: name,
-        key: id,
+        key: `team_${id}`,
+        extra: (
+          <Link
+            to={generatePath(webappRoutes.manageSingleEventTeamRoute, {
+              eventId,
+              teamId: id,
+            })}
+          >
+            <UserAddOutlined />
+          </Link>
+        ),
         children: (
           <List
             dataSource={teamsParticipants}
-            renderItem={renderItem(dispatch, id)}
+            renderItem={teamParticipantRenderItem(dispatch, id)}
           />
         ),
       };
@@ -166,16 +119,16 @@ const EventTeams: FC<{ teams: TEventTeams }> = ({ teams }) => {
 
 const ManageSingleEventPageSuccess = () => {
   const singleEvent = useSelector(eventsSlice.selectors.singleEventNotNil);
-  const { participants, games, teams } = singleEvent;
+  const { participants, games, teams, id } = singleEvent;
 
   return (
     <Flex style={{ padding: 16 }} vertical gap={16}>
       <BackButton />
       <Typography.Title level={4}>{"Teams: "}</Typography.Title>
-      <EventTeams teams={teams} />
+      <EventTeams teams={teams} eventId={id} />
 
       <Typography.Title level={4}>{"Participants: "}</Typography.Title>
-      <Table dataSource={participants} columns={COLUMNS} />
+      <Table dataSource={participants} columns={PARTICIPANT_TABLE_COLUMNS} />
 
       {isEmpty(games) ? (
         <Empty description={"No games"} />

@@ -7,7 +7,7 @@ import { isEmpty } from "../../Utils/OneLineUtils.ts";
 import { Card, Empty, Flex } from "antd";
 import { generatePath, Link } from "react-router-dom";
 import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
-import { CreateButton } from "../../Components/CreateButton.tsx";
+import { FixedButton } from "../../Components/FixedButton.tsx";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -65,7 +65,7 @@ const ManageEventsPageSuccess = () => {
       ))}
 
       <Link to={webappRoutes.createEventRoute}>
-        <CreateButton />
+        <FixedButton />
       </Link>
     </Flex>
   );

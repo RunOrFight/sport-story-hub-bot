@@ -4,6 +4,7 @@ import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { httpRequestEpicFactory } from "../Utils/HttpRequestEpicFactory.ts";
 import { TAppEpic } from "../App/Epics/TAppEpic.ts";
 import {
+  ADD_TEAM_PARTICIPANT_REQUEST_SYMBOL,
   DELETE_TEAM_PARTICIPANT_REQUEST_SYMBOL,
   EVENTS_DELETE_REQUEST_SYMBOL,
   EVENTS_GET_ALL_REQUEST_SYMBOL,
@@ -160,6 +161,48 @@ const manageSingleEventRouterEpic = routerEpic(
   },
 );
 
+const addTeamParticipantEpicFactory =
+  (eventId: string): TAppEpic =>
+  (action$, state$, dependencies) =>
+    action$.pipe(
+      fromActionCreator(eventsSlice.actions.addTeamParticipant),
+      switchMap(({ payload }) => {
+        return httpRequestEpicFactory({
+          input: httpApi.addTeamParticipant(payload),
+          requestSymbol: ADD_TEAM_PARTICIPANT_REQUEST_SYMBOL,
+          onSuccess: () => {
+            message.open({
+              type: "success",
+              content: "Added",
+            });
+            return loadEventByIdEpic(eventId)(action$, state$, dependencies);
+          },
+          onError: (error) => {
+            message.open({
+              type: "error",
+              content: error,
+            });
+            return EMPTY;
+          },
+        });
+      }),
+    );
+
+const manageSingleEventTeamRouterEpic = routerEpic(
+  webappRoutes.manageSingleEventTeamRoute,
+  (match) => {
+    const notNilEventId = getNotNil(
+      match.params.eventId,
+      "manageSingleEventTeamRouterEpic",
+    );
+
+    return combineEpics(
+      loadEventByIdEpic(notNilEventId),
+      addTeamParticipantEpicFactory(notNilEventId),
+    );
+  },
+);
+
 const clientEventsRouterEpic = routerEpic(
   webappRoutes.eventsRoute,
   () => loadEventsEpic,
@@ -171,6 +214,7 @@ const eventsRootEpic = combineEpics(
   clientEventsRouterEpic,
   updateEventRouterEpic,
   manageSingleEventRouterEpic,
+  manageSingleEventTeamRouterEpic,
 );
 
 export { eventsRootEpic };

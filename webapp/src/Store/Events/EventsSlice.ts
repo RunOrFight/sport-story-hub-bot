@@ -10,16 +10,23 @@ import {
   TEventUpdatePayload,
 } from "../../../../src/types/event.types.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
-import { TTeamParticipantDeletePayload } from "../../../../src/types/team-participant.types.ts";
+import {
+  TTeamParticipantAddPayload,
+  TTeamParticipantDeletePayload,
+} from "../../../../src/types/team-participant.types.ts";
 
 interface IEventsSlice {
   edges: TEvent[];
   singleEvent: TEvent | null;
+  teamParticipantSearchString: string;
+  selectedTeamParticipantIds: number[];
 }
 
 const initialState: IEventsSlice = {
   edges: [],
   singleEvent: null,
+  teamParticipantSearchString: "",
+  selectedTeamParticipantIds: [],
 };
 
 const eventsSlice = createSlice({
@@ -41,11 +48,48 @@ const eventsSlice = createSlice({
       _,
       __: PayloadAction<TTeamParticipantDeletePayload>,
     ) => {},
+    searchTeamParticipant: (state, { payload }: PayloadAction<string>) => {
+      state.teamParticipantSearchString = payload;
+    },
+    selectTeamParticipantIds: (state, { payload }: PayloadAction<number[]>) => {
+      state.selectedTeamParticipantIds = payload;
+    },
+    addTeamParticipant: (
+      _,
+      __: PayloadAction<TTeamParticipantAddPayload>,
+    ) => {},
   },
   selectors: {
     edges: (sliceState) => sliceState.edges,
     singleEventNotNil: (sliceState) =>
       getNotNil(sliceState.singleEvent, "singleEventNotNilSelector"),
+    potentialTeamParticipantsBySearchString: (sliceState, teamId: number) => {
+      const event = getNotNil(
+        sliceState.singleEvent,
+        "singleEventNotNilSelector -> event",
+      );
+
+      const team = getNotNil(
+        event.teams.find((it) => it.id === teamId),
+        "singleEventNotNilSelector -> team",
+      );
+
+      const filtered = event.participants.filter(({ user }) => {
+        return !team.teamsParticipants.find(
+          (it) => it.participant?.user?.username === user?.username,
+        );
+      });
+
+      return filtered.filter(
+        ({ user }) =>
+          user?.username.includes(sliceState.teamParticipantSearchString) ||
+          user?.name?.includes(sliceState.teamParticipantSearchString),
+      );
+    },
+    teamParticipantSearchString: (sliceState) =>
+      sliceState.teamParticipantSearchString,
+    selectedTeamParticipantIds: (sliceState) =>
+      sliceState.selectedTeamParticipantIds,
   },
 });
 
