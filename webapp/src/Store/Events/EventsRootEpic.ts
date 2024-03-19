@@ -5,6 +5,7 @@ import { httpRequestEpicFactory } from "../Utils/HttpRequestEpicFactory.ts";
 import { TAppEpic } from "../App/Epics/TAppEpic.ts";
 import {
   ADD_TEAM_PARTICIPANT_REQUEST_SYMBOL,
+  CREATE_EVENT_TEAM_REQUEST_SYMBOL,
   DELETE_TEAM_PARTICIPANT_REQUEST_SYMBOL,
   EVENTS_DELETE_REQUEST_SYMBOL,
   EVENTS_GET_ALL_REQUEST_SYMBOL,
@@ -18,6 +19,7 @@ import { fromActionCreator } from "../Utils/FromActionCreator.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
 import { message } from "antd";
 import { httpApi } from "../../HttpApi/HttpApi.ts";
+import { clearRequestSymbolsEpic } from "../Utils/ClearRequestSymbolsEpic.ts";
 
 const loadEventsEpic: TAppEpic = (_, __, { httpApi }) =>
   httpRequestEpicFactory({
@@ -157,6 +159,7 @@ const manageSingleEventRouterEpic = routerEpic(
     return combineEpics(
       loadEventByIdEpic(notNilEventId),
       deleteTeamParticipantEpic(notNilEventId),
+      clearRequestSymbolsEpic(CREATE_EVENT_TEAM_REQUEST_SYMBOL),
     );
   },
 );
@@ -188,18 +191,41 @@ const addTeamParticipantEpicFactory =
       }),
     );
 
-const manageSingleEventTeamRouterEpic = routerEpic(
-  webappRoutes.manageSingleEventTeamRoute,
+const updateSingleEventTeamRouterEpic = routerEpic(
+  webappRoutes.updateSingleEventTeamRoute,
   (match) => {
     const notNilEventId = getNotNil(
       match.params.eventId,
-      "manageSingleEventTeamRouterEpic",
+      "updateSingleEventTeamRouterEpic",
     );
 
     return combineEpics(
       loadEventByIdEpic(notNilEventId),
       addTeamParticipantEpicFactory(notNilEventId),
     );
+  },
+);
+
+const createEventTeamEpic: TAppEpic = (action$) =>
+  action$.pipe(
+    fromActionCreator(eventsSlice.actions.createSingleEventTeam),
+    switchMap(({ payload }) => {
+      return httpRequestEpicFactory({
+        input: httpApi.createEventTeam(payload),
+        requestSymbol: CREATE_EVENT_TEAM_REQUEST_SYMBOL,
+      });
+    }),
+  );
+
+const createSingleEventTeamRouterEpic = routerEpic(
+  webappRoutes.createSingleEventTeamRoute,
+  (match) => {
+    const notNilEventId = getNotNil(
+      match.params.eventId,
+      "createSingleEventTeamRouterEpic",
+    );
+
+    return combineEpics(loadEventByIdEpic(notNilEventId), createEventTeamEpic);
   },
 );
 
@@ -214,7 +240,8 @@ const eventsRootEpic = combineEpics(
   clientEventsRouterEpic,
   updateEventRouterEpic,
   manageSingleEventRouterEpic,
-  manageSingleEventTeamRouterEpic,
+  updateSingleEventTeamRouterEpic,
+  createSingleEventTeamRouterEpic,
 );
 
 export { eventsRootEpic };

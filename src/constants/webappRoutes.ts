@@ -14,7 +14,8 @@ const updateEventRoute = `${manageEventsRoute}/update/:eventId`;
 const updateLocationRoute = `${adminRoute}${locationsRoute}/update/:locationId`;
 const createLocationRoute = `${adminRoute}${locationsRoute}/create`;
 const manageSingleEventRoute = `${adminRoute}${singleEventRoute}`;
-const manageSingleEventTeamRoute = `${manageSingleEventRoute}/team/:teamId`;
+const createSingleEventTeamRoute = `${manageSingleEventRoute}/team/create`;
+const updateSingleEventTeamRoute = `${manageSingleEventRoute}/team/update/:teamId`;
 
 const webappRoutes = {
   emptyRoute,
@@ -32,7 +33,8 @@ const webappRoutes = {
   createEventRoute,
   updateEventRoute,
   manageSingleEventRoute,
-  manageSingleEventTeamRoute,
+  updateSingleEventTeamRoute,
+  createSingleEventTeamRoute,
 };
 
 export { webappRoutes };

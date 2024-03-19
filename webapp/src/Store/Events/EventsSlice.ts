@@ -14,6 +14,7 @@ import {
   TTeamParticipantAddPayload,
   TTeamParticipantDeletePayload,
 } from "../../../../src/types/team-participant.types.ts";
+import { TTeamCreatePayload } from "../../../../src/types/team.types.ts";
 
 interface IEventsSlice {
   edges: TEvent[];
@@ -58,6 +59,7 @@ const eventsSlice = createSlice({
       _,
       __: PayloadAction<TTeamParticipantAddPayload>,
     ) => {},
+    createSingleEventTeam: (_, __: PayloadAction<TTeamCreatePayload>) => {},
   },
   selectors: {
     edges: (sliceState) => sliceState.edges,
@@ -66,12 +68,12 @@ const eventsSlice = createSlice({
     potentialTeamParticipantsBySearchString: (sliceState, teamId: number) => {
       const event = getNotNil(
         sliceState.singleEvent,
-        "singleEventNotNilSelector -> event",
+        "potentialTeamParticipantsBySearchString -> event",
       );
 
       const team = getNotNil(
         event.teams.find((it) => it.id === teamId),
-        "singleEventNotNilSelector -> team",
+        "potentialTeamParticipantsBySearchString -> team",
       );
 
       const filtered = event.participants.filter(({ user }) => {
@@ -89,6 +91,14 @@ const eventsSlice = createSlice({
             ?.toLowerCase()
             .includes(sliceState.teamParticipantSearchString.toLowerCase()),
       );
+    },
+    singleEventParticipants: (sliceState) => {
+      const event = getNotNil(
+        sliceState.singleEvent,
+        "singleEventParticipants -> event",
+      );
+
+      return event.participants;
     },
     teamParticipantSearchString: (sliceState) =>
       sliceState.teamParticipantSearchString,

@@ -38,13 +38,22 @@ const requestManagerSlice = createSlice({
         error,
       };
     },
-    clear: (state, { payload: { symbol } }: PayloadAction<IWithSymbol>) => {
-      delete state[symbol];
+    clear: (
+      state,
+      {
+        payload: { symbol },
+      }: PayloadAction<IWithSymbol | { symbol: symbol[] }>,
+    ) => {
+      const symbols = Array.isArray(symbol) ? symbol : [symbol];
+
+      symbols.forEach((s) => {
+        delete state[s];
+      });
     },
   },
   selectors: {
     statusBySymbol: (sliceState, symbol: symbol) =>
-      sliceState[symbol].status ?? ERequestStatus.idle,
+      sliceState[symbol]?.status ?? ERequestStatus.idle,
     errorBySymbol: (sliceState, symbol: symbol) =>
       sliceState[symbol].error ?? "Unknown Error",
   },

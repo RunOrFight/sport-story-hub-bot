@@ -26,6 +26,7 @@ import {
   TTeamParticipantAddPayload,
   TTeamParticipantDeletePayload,
 } from "../../../src/types/team-participant.types.ts";
+import { TTeamCreatePayload } from "../../../src/types/team.types.ts";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "No url";
 
@@ -167,6 +168,10 @@ const httpApi = {
   addTeamParticipant: requestWithPayload<TTeamParticipantAddPayload, boolean>(
     "POST",
     "/team-participant/create",
+  ),
+  createEventTeam: requestWithPayload<TTeamCreatePayload, boolean>(
+    "POST",
+    "/team/create",
   ),
 };
 

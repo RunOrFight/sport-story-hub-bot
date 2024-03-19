@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   Collapse,
   CollapseProps,
@@ -20,7 +21,7 @@ import {
   TEventTeams,
 } from "../../Models/TEvent.ts";
 import { FC, useState } from "react";
-import { UserAddOutlined } from "@ant-design/icons";
+import { PlusOutlined, UserAddOutlined } from "@ant-design/icons";
 import { isEmpty } from "../../Utils/OneLineUtils.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
 import { generatePath, Link } from "react-router-dom";
@@ -96,7 +97,7 @@ const EventTeams: FC<IEventTeamsProps> = ({ teams, eventId }) => {
         key: `team_${id}`,
         extra: (
           <Link
-            to={generatePath(webappRoutes.manageSingleEventTeamRoute, {
+            to={generatePath(webappRoutes.updateSingleEventTeamRoute, {
               eventId,
               teamId: id,
             })}
@@ -124,7 +125,18 @@ const ManageSingleEventPageSuccess = () => {
   return (
     <Flex style={{ padding: 16 }} vertical gap={16}>
       <BackButton />
+
       <Typography.Title level={4}>{"Teams: "}</Typography.Title>
+
+      <Link
+        style={{ width: "fit-content" }}
+        to={generatePath(webappRoutes.createSingleEventTeamRoute, {
+          eventId: id,
+        })}
+      >
+        <Button icon={<PlusOutlined />}>{"Add New"}</Button>
+      </Link>
+
       <EventTeams teams={teams} eventId={id} />
 
       <Typography.Title level={4}>{"Participants: "}</Typography.Title>
