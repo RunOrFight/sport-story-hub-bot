@@ -128,7 +128,11 @@ const ManageSingleEventPageSuccess = () => {
       <EventTeams teams={teams} eventId={id} />
 
       <Typography.Title level={4}>{"Participants: "}</Typography.Title>
-      <Table dataSource={participants} columns={PARTICIPANT_TABLE_COLUMNS} />
+      <Table
+        dataSource={participants}
+        columns={PARTICIPANT_TABLE_COLUMNS}
+        showHeader={false}
+      />
 
       {isEmpty(games) ? (
         <Empty description={"No games"} />

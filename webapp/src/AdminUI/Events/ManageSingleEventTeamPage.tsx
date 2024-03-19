@@ -1,4 +1,4 @@
-import { Flex, Input, Table } from "antd";
+import { Flex, Input, Table, Typography } from "antd";
 import { BackButton } from "../../Components/BackButton.tsx";
 import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { generatePath, useParams } from "react-router-dom";
@@ -71,11 +71,9 @@ const ManageSingleEventTeamPageSuccess = () => {
         path={generatePath(webappRoutes.manageSingleEventRoute, { eventId })}
       />
 
-      <Input
-        placeholder={"Search For Event Participants"}
-        onChange={onChange}
-        value={value}
-      />
+      <Typography.Title level={4}>{"Add Team Participants"}</Typography.Title>
+
+      <Input placeholder={"Search"} onChange={onChange} value={value} />
 
       <Table
         columns={PARTICIPANT_TABLE_COLUMNS}
