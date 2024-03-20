@@ -6,6 +6,7 @@ import {
   Empty,
   Flex,
   List,
+  Popconfirm,
   Space,
   Table,
   Typography,
@@ -91,6 +92,10 @@ interface IEventTeamsProps {
 const EventTeams: FC<IEventTeamsProps> = ({ teams, eventId }) => {
   const dispatch = useDispatch();
 
+  const onConfirm = (teamId: number) => () => {
+    dispatch(eventsSlice.actions.deleteSingleEventTeam({ id: teamId }));
+  };
+
   const items: CollapseProps["items"] = teams.map(
     ({ id, name, teamsParticipants }) => {
       return {
@@ -106,8 +111,19 @@ const EventTeams: FC<IEventTeamsProps> = ({ teams, eventId }) => {
             >
               <EditOutlined />
             </Link>
-
-            <DeleteOutlined style={{ color: "red" }} />
+            <Popconfirm
+              onPopupClick={(e) => e.stopPropagation()}
+              title="Delete the team"
+              description="Are you sure to delete this team?"
+              okText="Yes"
+              cancelText="No"
+              onConfirm={onConfirm(id)}
+            >
+              <DeleteOutlined
+                style={{ color: "red" }}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </Popconfirm>
           </Space>
         ),
         children: (

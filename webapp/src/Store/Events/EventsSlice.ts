@@ -13,6 +13,7 @@ import { getNotNil } from "../../Utils/GetNotNil.ts";
 import { TTeamParticipantDeletePayload } from "../../../../src/types/team-participant.types.ts";
 import {
   TTeamCreatePayload,
+  TTeamDeletePayload,
   TTeamUpdatePayload,
 } from "../../../../src/types/team.types.ts";
 
@@ -47,6 +48,7 @@ const eventsSlice = createSlice({
     ) => {},
     createSingleEventTeam: (_, __: PayloadAction<TTeamCreatePayload>) => {},
     updateSingleEventTeam: (_, __: PayloadAction<TTeamUpdatePayload>) => {},
+    deleteSingleEventTeam: (_, __: PayloadAction<TTeamDeletePayload>) => {},
   },
   selectors: {
     edges: (sliceState) => sliceState.edges,

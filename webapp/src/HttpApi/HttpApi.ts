@@ -25,6 +25,7 @@ import {
 import { TTeamParticipantDeletePayload } from "../../../src/types/team-participant.types.ts";
 import {
   TTeamCreatePayload,
+  TTeamDeletePayload,
   TTeamUpdatePayload,
 } from "../../../src/types/team.types.ts";
 
@@ -172,6 +173,10 @@ const httpApi = {
   updateEventTeam: requestWithPayload<TTeamUpdatePayload, boolean>(
     "PUT",
     "/team/update",
+  ),
+  deleteEventTeam: requestWithPayload<TTeamDeletePayload, boolean>(
+    "DELETE",
+    "/team/delete",
   ),
 };
 

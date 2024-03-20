@@ -5,6 +5,7 @@ import { httpRequestEpicFactory } from "../Utils/HttpRequestEpicFactory.ts";
 import { TAppEpic } from "../App/Epics/TAppEpic.ts";
 import {
   CREATE_EVENT_TEAM_REQUEST_SYMBOL,
+  DELETE_EVENT_TEAM_REQUEST_SYMBOL,
   DELETE_TEAM_PARTICIPANT_REQUEST_SYMBOL,
   EVENTS_DELETE_REQUEST_SYMBOL,
   EVENTS_GET_ALL_REQUEST_SYMBOL,
@@ -18,7 +19,6 @@ import { EMPTY, switchMap, tap } from "rxjs";
 import { fromActionCreator } from "../Utils/FromActionCreator.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
 import { message } from "antd";
-import { httpApi } from "../../HttpApi/HttpApi.ts";
 import { clearRequestSymbolsEpic } from "../Utils/ClearRequestSymbolsEpic.ts";
 
 const loadEventsEpic: TAppEpic = (_, __, { httpApi }) =>
@@ -128,8 +128,35 @@ const deleteTeamParticipantEpic =
       fromActionCreator(eventsSlice.actions.deleteTeamParticipant),
       switchMap(({ payload }) => {
         return httpRequestEpicFactory({
-          input: httpApi.deleteTeamParticipant(payload),
+          input: dependencies.httpApi.deleteTeamParticipant(payload),
           requestSymbol: DELETE_TEAM_PARTICIPANT_REQUEST_SYMBOL,
+          onSuccess: () => {
+            message.open({
+              type: "success",
+              content: "Deleted",
+            });
+            return loadEventByIdEpic(eventId)(action$, state$, dependencies);
+          },
+          onError: (error) => {
+            message.open({
+              type: "error",
+              content: error,
+            });
+            return EMPTY;
+          },
+        });
+      }),
+    );
+
+const deleteSingleEventTeamEpicFactory =
+  (eventId: string): TAppEpic =>
+  (action$, state$, dependencies) =>
+    action$.pipe(
+      fromActionCreator(eventsSlice.actions.deleteSingleEventTeam),
+      switchMap(({ payload: { id } }) => {
+        return httpRequestEpicFactory({
+          input: dependencies.httpApi.deleteEventTeam({ id }),
+          requestSymbol: DELETE_EVENT_TEAM_REQUEST_SYMBOL,
           onSuccess: () => {
             message.open({
               type: "success",
@@ -163,11 +190,12 @@ const manageSingleEventRouterEpic = routerEpic(
         CREATE_EVENT_TEAM_REQUEST_SYMBOL,
         UPDATE_EVENT_TEAM_REQUEST_SYMBOL,
       ),
+      deleteSingleEventTeamEpicFactory(notNilEventId),
     );
   },
 );
 
-const updateSingleEventTeamEpicFactory: TAppEpic = (action$) =>
+const updateSingleEventTeamEpicFactory: TAppEpic = (action$, _, { httpApi }) =>
   action$.pipe(
     fromActionCreator(eventsSlice.actions.updateSingleEventTeam),
     switchMap(({ payload }) => {
@@ -193,7 +221,7 @@ const updateSingleEventTeamRouterEpic = routerEpic(
   },
 );
 
-const createEventTeamEpic: TAppEpic = (action$) =>
+const createEventTeamEpic: TAppEpic = (action$, _, { httpApi }) =>
   action$.pipe(
     fromActionCreator(eventsSlice.actions.createSingleEventTeam),
     switchMap(({ payload }) => {
