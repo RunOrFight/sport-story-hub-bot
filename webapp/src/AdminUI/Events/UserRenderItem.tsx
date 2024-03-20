@@ -39,7 +39,7 @@ const UserItem: FC<TUser & { actions?: ListItemProps["actions"] }> = ({
 
 const teamParticipantRenderItem =
   (dispatch: AppDispatch, teamId: number) =>
-  ({ id, participant: { user } }: TeamParticipant) => {
+  ({ participant: { user, id } }: TeamParticipant) => {
     const onClick = () => {
       dispatch(
         eventsSlice.actions.deleteTeamParticipant({
