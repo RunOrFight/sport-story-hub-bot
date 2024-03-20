@@ -51,7 +51,7 @@ interface ISingleEventTeamFromInitialValues {
 
 interface ISingleEventTeamFromFinishValues
   extends ISingleEventTeamFromInitialValues {
-  eventId: string;
+  eventId: number;
 }
 
 interface SingleEventTeamPageFactoryProps {
@@ -68,9 +68,8 @@ const SingleEventTeamPageFactorySuccess: FC<
   const onFormFinish = (values: ISingleEventTeamFromFinishValues) => {
     onFinish({
       ...values,
-      eventId: getNotNil(
-        eventId,
-        "SingleEventTeamPageFactorySuccess -> onFormFinish",
+      eventId: Number(
+        getNotNil(eventId, "SingleEventTeamPageFactorySuccess -> onFormFinish"),
       ),
     });
   };

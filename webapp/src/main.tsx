@@ -20,7 +20,7 @@ import { ManageEventsPage } from "./AdminUI/Events/ManageEventsPage.tsx";
 import { CreateEventForm } from "./AdminUI/Events/CreateEventForm.tsx";
 import { UpdateEventForm } from "./AdminUI/Events/UpdateEventForm.tsx";
 import { ManageSingleEventPage } from "./AdminUI/Events/ManageSingleEventPage.tsx";
-import { ManageSingleEventTeamPage } from "./AdminUI/Events/ManageSingleEventTeamPage.tsx";
+import { UpdateSingleEventTeamPage } from "./AdminUI/Events/UpdateSingleEventTeamPage.tsx";
 import { CreateSingleEventTeamPage } from "./AdminUI/Events/CreateSingleEventTeamPage.tsx";
 
 document.body.setAttribute("data-dev", String(isDev));
@@ -63,7 +63,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
         <Route
           path={webappRoutes.updateSingleEventTeamRoute}
-          element={<ManageSingleEventTeamPage />}
+          element={<UpdateSingleEventTeamPage />}
         />
 
         <Route

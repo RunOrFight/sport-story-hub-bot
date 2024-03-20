@@ -22,11 +22,11 @@ import {
   TEventDeletePayload,
   TEventUpdatePayload,
 } from "../../../src/types/event.types.ts";
+import { TTeamParticipantDeletePayload } from "../../../src/types/team-participant.types.ts";
 import {
-  TTeamParticipantAddPayload,
-  TTeamParticipantDeletePayload,
-} from "../../../src/types/team-participant.types.ts";
-import { TTeamCreatePayload } from "../../../src/types/team.types.ts";
+  TTeamCreatePayload,
+  TTeamUpdatePayload,
+} from "../../../src/types/team.types.ts";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "No url";
 
@@ -165,13 +165,13 @@ const httpApi = {
     TTeamParticipantDeletePayload,
     boolean
   >("DELETE", "/team-participant/delete"),
-  addTeamParticipant: requestWithPayload<TTeamParticipantAddPayload, boolean>(
-    "POST",
-    "/team-participant/create",
-  ),
   createEventTeam: requestWithPayload<TTeamCreatePayload, boolean>(
     "POST",
     "/team/create",
+  ),
+  updateEventTeam: requestWithPayload<TTeamUpdatePayload, boolean>(
+    "PUT",
+    "/team/update",
   ),
 };
 

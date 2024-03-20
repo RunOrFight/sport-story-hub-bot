@@ -10,24 +10,20 @@ import {
   TEventUpdatePayload,
 } from "../../../../src/types/event.types.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
+import { TTeamParticipantDeletePayload } from "../../../../src/types/team-participant.types.ts";
 import {
-  TTeamParticipantAddPayload,
-  TTeamParticipantDeletePayload,
-} from "../../../../src/types/team-participant.types.ts";
-import { TTeamCreatePayload } from "../../../../src/types/team.types.ts";
+  TTeamCreatePayload,
+  TTeamUpdatePayload,
+} from "../../../../src/types/team.types.ts";
 
 interface IEventsSlice {
   edges: TEvent[];
   singleEvent: TEvent | null;
-  teamParticipantSearchString: string;
-  selectedTeamParticipantIds: number[];
 }
 
 const initialState: IEventsSlice = {
   edges: [],
   singleEvent: null,
-  teamParticipantSearchString: "",
-  selectedTeamParticipantIds: [],
 };
 
 const eventsSlice = createSlice({
@@ -49,49 +45,13 @@ const eventsSlice = createSlice({
       _,
       __: PayloadAction<TTeamParticipantDeletePayload>,
     ) => {},
-    searchTeamParticipant: (state, { payload }: PayloadAction<string>) => {
-      state.teamParticipantSearchString = payload;
-    },
-    selectTeamParticipantIds: (state, { payload }: PayloadAction<number[]>) => {
-      state.selectedTeamParticipantIds = payload;
-    },
-    addTeamParticipant: (
-      _,
-      __: PayloadAction<TTeamParticipantAddPayload>,
-    ) => {},
     createSingleEventTeam: (_, __: PayloadAction<TTeamCreatePayload>) => {},
+    updateSingleEventTeam: (_, __: PayloadAction<TTeamUpdatePayload>) => {},
   },
   selectors: {
     edges: (sliceState) => sliceState.edges,
     singleEventNotNil: (sliceState) =>
       getNotNil(sliceState.singleEvent, "singleEventNotNilSelector"),
-    potentialTeamParticipantsBySearchString: (sliceState, teamId: number) => {
-      const event = getNotNil(
-        sliceState.singleEvent,
-        "potentialTeamParticipantsBySearchString -> event",
-      );
-
-      const team = getNotNil(
-        event.teams.find((it) => it.id === teamId),
-        "potentialTeamParticipantsBySearchString -> team",
-      );
-
-      const filtered = event.participants.filter(({ user }) => {
-        return !team.teamsParticipants.find(
-          (it) => it.participant?.user?.username === user?.username,
-        );
-      });
-
-      return filtered.filter(
-        ({ user }) =>
-          user?.username
-            .toLowerCase()
-            .includes(sliceState.teamParticipantSearchString.toLowerCase()) ||
-          user?.name
-            ?.toLowerCase()
-            .includes(sliceState.teamParticipantSearchString.toLowerCase()),
-      );
-    },
     singleEventParticipants: (sliceState) => {
       const event = getNotNil(
         sliceState.singleEvent,
@@ -100,10 +60,17 @@ const eventsSlice = createSlice({
 
       return event.participants;
     },
-    teamParticipantSearchString: (sliceState) =>
-      sliceState.teamParticipantSearchString,
-    selectedTeamParticipantIds: (sliceState) =>
-      sliceState.selectedTeamParticipantIds,
+    singleEventTeamByIdNotNil: (sliceState, id: number) => {
+      const event = getNotNil(
+        sliceState.singleEvent,
+        "singleEventTeamById -> event",
+      );
+
+      return getNotNil(
+        event.teams.find((it) => it.id === id),
+        "singleEventTeamById -> event.teams.find",
+      );
+    },
   },
 });
 

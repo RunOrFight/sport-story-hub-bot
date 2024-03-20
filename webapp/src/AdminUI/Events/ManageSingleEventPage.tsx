@@ -6,6 +6,7 @@ import {
   Empty,
   Flex,
   List,
+  Space,
   Table,
   Typography,
 } from "antd";
@@ -21,7 +22,7 @@ import {
   TEventTeams,
 } from "../../Models/TEvent.ts";
 import { FC, useState } from "react";
-import { PlusOutlined, UserAddOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { isEmpty } from "../../Utils/OneLineUtils.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
 import { generatePath, Link } from "react-router-dom";
@@ -96,14 +97,18 @@ const EventTeams: FC<IEventTeamsProps> = ({ teams, eventId }) => {
         label: name,
         key: `team_${id}`,
         extra: (
-          <Link
-            to={generatePath(webappRoutes.updateSingleEventTeamRoute, {
-              eventId,
-              teamId: id,
-            })}
-          >
-            <UserAddOutlined />
-          </Link>
+          <Space>
+            <Link
+              to={generatePath(webappRoutes.updateSingleEventTeamRoute, {
+                eventId,
+                teamId: id,
+              })}
+            >
+              <EditOutlined />
+            </Link>
+
+            <DeleteOutlined />
+          </Space>
         ),
         children: (
           <List
