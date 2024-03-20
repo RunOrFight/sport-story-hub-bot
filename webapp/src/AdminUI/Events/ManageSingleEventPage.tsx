@@ -107,7 +107,7 @@ const EventTeams: FC<IEventTeamsProps> = ({ teams, eventId }) => {
               <EditOutlined />
             </Link>
 
-            <DeleteOutlined />
+            <DeleteOutlined style={{ color: "red" }} />
           </Space>
         ),
         children: (
