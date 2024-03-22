@@ -54,7 +54,12 @@ const ManageEventsPageSuccess = () => {
 
   if (isEmpty(events)) {
     return (
-      <Empty style={{ paddingTop: 16 }} description={"There are no events"} />
+      <>
+        <Empty style={{ paddingTop: 16 }} description={"There are no events"} />
+        <Link to={webappRoutes.createEventRoute}>
+          <FixedButton />
+        </Link>
+      </>
     );
   }
 
