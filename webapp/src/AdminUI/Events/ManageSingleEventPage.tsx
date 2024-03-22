@@ -25,6 +25,7 @@ import { generatePath, Link } from "react-router-dom";
 import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { teamParticipantRenderItem } from "./UserRenderItem.tsx";
 import { PARTICIPANT_TABLE_COLUMNS } from "./ParticipantTableColumns.tsx";
+import classes from "./Events.module.css";
 
 const Game: FC<TEventGame> = ({ gameTeams }) => {
   const dispatch = useDispatch();
@@ -55,26 +56,33 @@ const EventGames: FC<{ games: TEventGame[] }> = ({ games }) => {
     setActiveTabKey(value);
   };
 
-  const gamesTabs: SegmentedProps<number>["options"] = games.map(
-    ({ name, id }) => ({
-      label: name,
-      value: id,
-    }),
-  );
-
-  const tabList: SegmentedProps<number>["options"] = gamesTabs.concat({
-    icon: <PlusOutlined />,
-    value: -1,
-  });
-
   const game = getNotNil(
     games.find((it) => it.id === activeTabKey),
     "EventGames",
   );
 
+  const defaultTabs: SegmentedProps<number>["options"] = [
+    {
+      icon: <PlusOutlined />,
+      value: -1,
+    },
+  ];
+
+  const tabList: SegmentedProps<number>["options"] = defaultTabs.concat(
+    games.map(({ name, id }) => ({
+      label: name,
+      value: id,
+    })),
+  );
+
   return (
     <Flex vertical gap={16}>
-      <Segmented options={tabList} onChange={onChange} />
+      <Segmented
+        className={classes.segmented}
+        options={tabList}
+        onChange={onChange}
+        defaultValue={activeTabKey}
+      />
       <Game {...game} key={game.id} />
     </Flex>
   );
@@ -161,6 +169,7 @@ const ManageSingleEventPageSuccess = () => {
       <EventGames games={games} />
 
       <Typography.Title level={4}>{"Participants: "}</Typography.Title>
+
       <Table
         dataSource={participants}
         columns={PARTICIPANT_TABLE_COLUMNS}
