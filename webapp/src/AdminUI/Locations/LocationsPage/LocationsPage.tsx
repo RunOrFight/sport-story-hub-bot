@@ -14,6 +14,7 @@ import { LOCATIONS_GET_ALL_REQUEST_SYMBOL } from "../../../Store/Locations/Locat
 import { useParamSelector } from "../../../Hooks/UseParamSelector.ts";
 import { ERequestStatus } from "../../../Store/RequestManager/RequestManagerModels.ts";
 import { FixedButton } from "../../../Components/FixedButton.tsx";
+import { getPreviewSrc } from "../../../Utils/GetPreviewSrc.ts";
 
 const LocationCard: FC<Location> = ({ preview, url, address, title, id }) => {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const LocationCard: FC<Location> = ({ preview, url, address, title, id }) => {
 
   return (
     <Card
-      cover={<img alt="example" src={preview?.url} />}
+      cover={<img alt="example" src={getPreviewSrc(preview?.url)} />}
       actions={[
         <Link
           to={generatePath(webappRoutes.updateLocationRoute, {

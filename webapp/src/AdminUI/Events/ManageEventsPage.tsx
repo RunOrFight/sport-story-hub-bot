@@ -15,6 +15,7 @@ import {
 } from "@ant-design/icons";
 import { FC } from "react";
 import { TEvent } from "../../Models/TEvent.ts";
+import { getPreviewSrc } from "../../Utils/GetPreviewSrc.ts";
 
 const ManageEventCard: FC<TEvent> = ({ id, location }) => {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ const ManageEventCard: FC<TEvent> = ({ id, location }) => {
 
   return (
     <Card
-      cover={<img alt="example" src={location?.preview?.url} />}
+      cover={<img alt="example" src={getPreviewSrc(location?.preview?.url)} />}
       actions={[
         <Link
           to={generatePath(webappRoutes.manageSingleEventRoute, {

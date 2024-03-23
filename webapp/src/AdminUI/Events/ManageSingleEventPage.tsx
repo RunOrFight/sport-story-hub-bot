@@ -2,6 +2,7 @@ import {
   Button,
   Collapse,
   CollapseProps,
+  Empty,
   Flex,
   List,
   Popconfirm,
@@ -26,6 +27,7 @@ import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { teamParticipantRenderItem } from "./UserRenderItem.tsx";
 import { PARTICIPANT_TABLE_COLUMNS } from "./ParticipantTableColumns.tsx";
 import classes from "./Events.module.css";
+import { isEmpty } from "../../Utils/OneLineUtils.ts";
 
 const Game: FC<TEventGame> = ({ gameTeams }) => {
   const dispatch = useDispatch();
@@ -147,6 +149,8 @@ const ManageSingleEventPageSuccess = () => {
   const singleEvent = useSelector(eventsSlice.selectors.singleEventNotNil);
   const { participants, games, teams, id } = singleEvent;
 
+  console.log(games, 123);
+
   return (
     <Flex style={{ padding: 16 }} vertical gap={16}>
       <BackButton />
@@ -166,7 +170,11 @@ const ManageSingleEventPageSuccess = () => {
 
       <Typography.Title level={4}>{"Games: "}</Typography.Title>
 
-      <EventGames games={games} />
+      {isEmpty(games) ? (
+        <Empty description={"No Games"} />
+      ) : (
+        <EventGames games={games} />
+      )}
 
       <Typography.Title level={4}>{"Participants: "}</Typography.Title>
 

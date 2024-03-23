@@ -1,4 +1,14 @@
-import { Button, Flex, Form, Input, Result, Skeleton, Upload } from "antd";
+import {
+  Button,
+  Flex,
+  Form,
+  Input,
+  message,
+  Result,
+  Skeleton,
+  Upload,
+  UploadProps,
+} from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { locationsSelectors } from "../../../Store/Locations/LocationsSelector.ts";
 import { Link } from "react-router-dom";
@@ -9,6 +19,7 @@ import { webappRoutes } from "../../../../../src/constants/webappRoutes.ts";
 import { ComponentType, createElement } from "react";
 import { withProps } from "../../../Utils/WithProps.ts";
 import { ERequestStatus } from "../../../Store/RequestManager/RequestManagerModels.ts";
+import { getNotNil } from "../../../Utils/GetNotNil.ts";
 
 const GoToLocations = () => {
   const dispatch = useDispatch();
@@ -28,7 +39,28 @@ const CreateLocationForm = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const onFinish = (values: TLocationCreatePayload) => {
+    console.log(values);
     dispatch(locationsSlice.actions.create(values));
+  };
+
+  const onChange: UploadProps<{ addedFiles: { id: number }[] }>["onChange"] = (
+    info,
+  ) => {
+    switch (info.file.status) {
+      case "removed":
+        form.setFieldValue("previewId", undefined);
+        break;
+      case "done":
+        message.success(`${info.file.name} file uploaded successfully`);
+        const previewId = getNotNil(
+          info.file?.response?.addedFiles[0].id,
+          "CreateLocationForm -> onChange -> previewId",
+        );
+        form.setFieldValue("previewId", previewId);
+        break;
+      case "error":
+        message.error(`${info.file.name} file upload failed.`);
+    }
   };
 
   return (
@@ -39,7 +71,12 @@ const CreateLocationForm = () => {
         </Link>
       </Flex>
       <Form form={form} onFinish={onFinish}>
-        <Form.Item required label={"Title"} name={"title"}>
+        <Form.Item
+          required
+          label={"Title"}
+          name={"title"}
+          rules={[{ required: true }]}
+        >
           <Input />
         </Form.Item>
 
@@ -51,8 +88,12 @@ const CreateLocationForm = () => {
           <Input />
         </Form.Item>
 
-        <Form.Item label={"Preview"} name={"previewId"} normalize={() => -1}>
-          <Upload>
+        <Form.Item label={"Preview"} name={"previewId"}>
+          <Upload
+            onChange={onChange}
+            action={"http://localhost:5555/api/file/add"}
+            accept={"image/png, image/jpeg"}
+          >
             <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
         </Form.Item>
