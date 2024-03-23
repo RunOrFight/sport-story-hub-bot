@@ -11,6 +11,7 @@ import {
   TLocationUpdatePayload,
 } from "../../../../../src/types/location.types.ts";
 import { locationsLoadEpic } from "./LocationsLoadEpic.ts";
+import { message } from "antd";
 
 const deleteLocationEpic: TAppEpic = (action$, state$, dependencies) =>
   action$.pipe(
@@ -32,7 +33,11 @@ const updateLocationEpic: TAppEpic = (action$, _, dependencies) =>
     ofType("locations/update"),
     switchMap(({ payload }: PayloadAction<TLocationUpdatePayload>) => {
       return from(dependencies.httpApi.updateLocation(payload)).pipe(
-        () => of(locationsSlice.actions.updateSuccess()),
+        switchMap(() => {
+          message.success("Updated");
+
+          return of(locationsSlice.actions.updateSuccess());
+        }),
         catchError(() => of(locationsSlice.actions.updateError())),
       );
     }),

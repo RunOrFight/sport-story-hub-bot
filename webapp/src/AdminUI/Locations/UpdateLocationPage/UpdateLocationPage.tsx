@@ -1,9 +1,8 @@
-import { Button, Flex, Form, Input, Result, Skeleton, Upload } from "antd";
+import { Button, Flex, Form, Input, Result, Skeleton } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { updateLocationFormInitialValuesByIdSelector } from "../../../Store/Locations/LocationsSelector.ts";
 import { Link, useParams } from "react-router-dom";
 import { getNotNil } from "../../../Utils/GetNotNil.ts";
-import { UploadOutlined } from "@ant-design/icons";
 import { locationsSlice } from "../../../Store/Locations/LocationsSlice.ts";
 import { TLocationUpdatePayload } from "../../../../../src/types/location.types.ts";
 import { webappRoutes } from "../../../../../src/constants/webappRoutes.ts";
@@ -11,6 +10,7 @@ import { ComponentType, createElement } from "react";
 import { withProps } from "../../../Utils/WithProps.ts";
 import { userSelectors } from "../../../Store/User/UserSelectors.ts";
 import { ERequestStatus } from "../../../Store/RequestManager/RequestManagerModels.ts";
+import { UploadLocationPreview } from "../UploadLoctionPreview.tsx";
 
 const GoToLocations = () => {
   const dispatch = useDispatch();
@@ -63,9 +63,7 @@ const UpdateLocationForm = () => {
         </Form.Item>
 
         <Form.Item label={"Preview"} name={"previewId"} normalize={() => -1}>
-          <Upload>
-            <Button icon={<UploadOutlined />}>Upload</Button>
-          </Upload>
+          <UploadLocationPreview setFieldValue={form.setFieldValue} />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType={"submit"}>
@@ -97,8 +95,6 @@ const SLICE_STATUS_TO_COMPONENT_TYPE_MAP: Record<
 
 const UpdateLocationPage = () => {
   const status = useSelector(userSelectors.updateStatus);
-
-  console.log(status, 123);
 
   return createElement(SLICE_STATUS_TO_COMPONENT_TYPE_MAP[status]);
 };

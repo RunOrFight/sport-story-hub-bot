@@ -1,9 +1,9 @@
 import { IWithError } from "../Models/IError.ts";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_API_URL = import.meta.env.VITE_API_URL;
 
 try {
-  new URL(BASE_URL);
+  new URL(BASE_API_URL);
 } catch {
   const errorMessage =
     "VITE_API_URL not specified or not valid -> check .env file";
@@ -21,7 +21,7 @@ const simpleGetRequest = <Response>(
   endpoint: string,
 ): (() => Promise<Response | IWithError>) => {
   return async () => {
-    const response = await fetch(`${BASE_URL}/${endpoint}`);
+    const response = await fetch(`${BASE_API_URL}/${endpoint}`);
     if (!response.ok) {
       console.error(response.statusText);
 
@@ -36,7 +36,7 @@ const requestWithPayload = <P extends Record<string, any>, R>(
   endpoint: string,
 ) => {
   return async (payload: P): Promise<R | IWithError> => {
-    const response = await fetch(`${BASE_URL}/${endpoint}`, {
+    const response = await fetch(`${BASE_API_URL}/${endpoint}`, {
       body: JSON.stringify(payload),
       headers: {
         "Content-Type": "application/json",
@@ -52,4 +52,4 @@ const requestWithPayload = <P extends Record<string, any>, R>(
   };
 };
 
-export { simpleGetRequest, requestWithPayload };
+export { simpleGetRequest, requestWithPayload, BASE_API_URL };

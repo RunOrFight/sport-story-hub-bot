@@ -1,4 +1,6 @@
+import { BASE_API_URL } from "../HttpApi/RequestUtils.ts";
+
 const getPreviewSrc = (previewUrl?: string) =>
-  previewUrl ? `http://localhost:5555/api/${previewUrl}` : undefined;
+  previewUrl ? `${BASE_API_URL}/${previewUrl}` : undefined;
 
 export { getPreviewSrc };
