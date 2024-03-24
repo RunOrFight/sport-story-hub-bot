@@ -19,6 +19,8 @@ services:
       - postgres
     env_file:
       - .env
+    volumes:
+      - ./uploads:/app/uploads
     restart: on-failure
     command: sh -c "npm run typeorm:migrate && npm run production"
 
