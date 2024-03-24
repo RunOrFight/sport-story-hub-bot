@@ -56,6 +56,7 @@ interface IEventGamesProps {
 const EventGames: FC<IEventGamesProps> = ({ games, eventId }) => {
   const [activeTabKey, setActiveTabKey] = useState<number>(games[0].id);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const onChange: SegmentedProps<number>["onChange"] = (value) => {
     if (value === -1) {
@@ -72,19 +73,16 @@ const EventGames: FC<IEventGamesProps> = ({ games, eventId }) => {
     "EventGames",
   );
 
-  const defaultTabs: SegmentedProps<number>["options"] = [
-    {
-      icon: <PlusOutlined />,
-      value: -1,
-    },
-  ];
-
-  const tabList: SegmentedProps<number>["options"] = defaultTabs.concat(
-    games.map(({ name, id }) => ({
+  const tabList: SegmentedProps<number>["options"] = games.map(
+    ({ name, id }) => ({
       label: name,
       value: id,
-    })),
+    }),
   );
+
+  const onConfirm = (id: number) => () => {
+    dispatch(eventsSlice.actions.deleteSingleEventGame({ id }));
+  };
 
   return (
     <Flex vertical gap={16}>
@@ -94,7 +92,32 @@ const EventGames: FC<IEventGamesProps> = ({ games, eventId }) => {
         onChange={onChange}
         defaultValue={activeTabKey}
       />
-      <Game {...game} key={game.id} />
+      <Flex vertical>
+        <Flex justify={"space-between"} align={"center"}>
+          <Typography.Title level={5}>{game.name} </Typography.Title>
+          <Space>
+            <Link
+              to={generatePath(webappRoutes.updateSingleEventGameRoute, {
+                eventId,
+                gameId: game.id,
+              })}
+            >
+              <EditOutlined />
+            </Link>
+            <Popconfirm
+              onPopupClick={(e) => e.stopPropagation()}
+              title="Delete the game"
+              description="Are you sure to delete this game?"
+              okText="Yes"
+              cancelText="No"
+              onConfirm={onConfirm(game.id)}
+            >
+              <DeleteOutlined style={{ color: "red" }} />
+            </Popconfirm>
+          </Space>
+        </Flex>
+        <Game {...game} key={game.id} />
+      </Flex>
     </Flex>
   );
 };
@@ -177,6 +200,15 @@ const ManageSingleEventPageSuccess = () => {
 
       <Typography.Title level={4}>{"Games: "}</Typography.Title>
 
+      <Link
+        style={{ width: "fit-content" }}
+        to={generatePath(webappRoutes.createSingleEventGameRoute, {
+          eventId: id,
+        })}
+      >
+        <Button icon={<PlusOutlined />}>{"Add New"}</Button>
+      </Link>
+
       {isEmpty(games) ? (
         <Empty description={"No Games"} />
       ) : (
@@ -186,6 +218,7 @@ const ManageSingleEventPageSuccess = () => {
       <Typography.Title level={4}>{"Participants: "}</Typography.Title>
 
       <Table
+        rowKey={"id"}
         dataSource={participants}
         columns={PARTICIPANT_TABLE_COLUMNS}
         showHeader={false}

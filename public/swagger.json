@@ -729,10 +729,6 @@
 						},
 						"type": "array"
 					},
-					"eventId": {
-						"type": "number",
-						"format": "double"
-					},
 					"name": {
 						"type": "string"
 					},

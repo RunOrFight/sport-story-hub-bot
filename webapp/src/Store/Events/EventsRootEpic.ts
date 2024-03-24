@@ -22,7 +22,10 @@ import { getNotNil } from "../../Utils/GetNotNil.ts";
 import { message } from "antd";
 import { clearRequestSymbolsEpic } from "../Utils/ClearRequestSymbolsEpic.ts";
 import { loadEventByIdEpic } from "./LoadEventByIdEpic.ts";
-import { singleEventGameRootEpic } from "./SingleEventGameRootEpic.ts";
+import {
+  deleteSingleEventGameEpicFactory,
+  singleEventGameRootEpic,
+} from "./SingleEventGameRootEpic.ts";
 
 const loadEventsEpic: TAppEpic = (_, __, { httpApi }) =>
   httpRequestEpicFactory({
@@ -187,6 +190,7 @@ const manageSingleEventRouterEpic = routerEpic(
         UPDATE_EVENT_GAME_REQUEST_SYMBOL,
       ),
       deleteSingleEventTeamEpicFactory(notNilEventId),
+      deleteSingleEventGameEpicFactory(notNilEventId),
     );
   },
 );

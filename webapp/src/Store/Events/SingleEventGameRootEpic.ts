@@ -6,7 +6,7 @@ import { getNotNil } from "../../Utils/GetNotNil.ts";
 import { TAppEpic } from "../App/Epics/TAppEpic.ts";
 import { fromActionCreator } from "../Utils/FromActionCreator.ts";
 import { eventsSlice } from "./EventsSlice.ts";
-import { EMPTY, switchMap } from "rxjs";
+import { switchMap } from "rxjs";
 import { httpRequestEpicFactory } from "../Utils/HttpRequestEpicFactory.ts";
 import {
   CREATE_EVENT_GAME_REQUEST_SYMBOL,
@@ -15,24 +15,26 @@ import {
 } from "./EventsVariables.ts";
 import { message } from "antd";
 
-const deleteEventGameEpic: TAppEpic = (action$, _, { httpApi }) =>
-  action$.pipe(
-    fromActionCreator(eventsSlice.actions.deleteSingleEventGame),
-    switchMap(({ payload }) =>
-      httpRequestEpicFactory({
-        input: httpApi.deleteEventGame(payload),
-        requestSymbol: DELETE_EVENT_GAME_REQUEST_SYMBOL,
-        onSuccess: () => {
-          message.success("Deleted");
-          return EMPTY;
-        },
-        onError: (e) => {
-          message.error(e);
-          return EMPTY;
-        },
-      }),
-    ),
-  );
+const deleteSingleEventGameEpicFactory =
+  (eventId: string): TAppEpic =>
+  (action$, state$, dependencies) =>
+    action$.pipe(
+      fromActionCreator(eventsSlice.actions.deleteSingleEventGame),
+      switchMap(({ payload }) =>
+        httpRequestEpicFactory({
+          input: dependencies.httpApi.deleteEventGame(payload),
+          requestSymbol: DELETE_EVENT_GAME_REQUEST_SYMBOL,
+          onSuccess: () => {
+            message.success("Deleted");
+            return loadEventByIdEpic(eventId)(action$, state$, dependencies);
+          },
+          onError: (e) => {
+            message.error(e);
+            return loadEventByIdEpic(eventId)(action$, state$, dependencies);
+          },
+        }),
+      ),
+    );
 
 const updateEventGameEpic: TAppEpic = (action$, _, { httpApi }) =>
   action$.pipe(
@@ -46,7 +48,7 @@ const updateEventGameEpic: TAppEpic = (action$, _, { httpApi }) =>
   );
 
 const updateEventGameRouterEpic = routerEpic(
-  webappRoutes.createSingleEventGameRoute,
+  webappRoutes.updateSingleEventGameRoute,
   (match) => {
     const eventId = getNotNil(
       match.params.eventId,
@@ -83,7 +85,6 @@ const createEventGameRouterEpic = routerEpic(
 const singleEventGameRootEpic = combineEpics(
   updateEventGameRouterEpic,
   createEventGameRouterEpic,
-  deleteEventGameEpic,
 );
 
-export { singleEventGameRootEpic };
+export { singleEventGameRootEpic, deleteSingleEventGameEpicFactory };
