@@ -4,13 +4,14 @@ import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { httpRequestEpicFactory } from "../Utils/HttpRequestEpicFactory.ts";
 import { TAppEpic } from "../App/Epics/TAppEpic.ts";
 import {
+  CREATE_EVENT_GAME_REQUEST_SYMBOL,
   CREATE_EVENT_TEAM_REQUEST_SYMBOL,
   DELETE_EVENT_TEAM_REQUEST_SYMBOL,
   DELETE_TEAM_PARTICIPANT_REQUEST_SYMBOL,
   EVENTS_DELETE_REQUEST_SYMBOL,
   EVENTS_GET_ALL_REQUEST_SYMBOL,
-  EVENTS_GET_BY_ID_REQUEST_SYMBOL,
   EVENTS_UPDATE_REQUEST_SYMBOL,
+  UPDATE_EVENT_GAME_REQUEST_SYMBOL,
   UPDATE_EVENT_TEAM_REQUEST_SYMBOL,
 } from "./EventsVariables.ts";
 import { eventsSlice } from "./EventsSlice.ts";
@@ -20,6 +21,8 @@ import { fromActionCreator } from "../Utils/FromActionCreator.ts";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
 import { message } from "antd";
 import { clearRequestSymbolsEpic } from "../Utils/ClearRequestSymbolsEpic.ts";
+import { loadEventByIdEpic } from "./LoadEventByIdEpic.ts";
+import { singleEventGameRootEpic } from "./SingleEventGameRootEpic.ts";
 
 const loadEventsEpic: TAppEpic = (_, __, { httpApi }) =>
   httpRequestEpicFactory({
@@ -27,15 +30,6 @@ const loadEventsEpic: TAppEpic = (_, __, { httpApi }) =>
     requestSymbol: EVENTS_GET_ALL_REQUEST_SYMBOL,
     receivedActionCreator: eventsSlice.actions.received,
   });
-
-const loadEventByIdEpic =
-  (eventId: string): TAppEpic =>
-  (_, __, { httpApi }) =>
-    httpRequestEpicFactory({
-      input: httpApi.getEventById(eventId),
-      requestSymbol: EVENTS_GET_BY_ID_REQUEST_SYMBOL,
-      receivedActionCreator: eventsSlice.actions.singleEventReceived,
-    });
 
 const createEventEpic: TAppEpic = (action$) =>
   action$.pipe(
@@ -189,6 +183,8 @@ const manageSingleEventRouterEpic = routerEpic(
       clearRequestSymbolsEpic(
         CREATE_EVENT_TEAM_REQUEST_SYMBOL,
         UPDATE_EVENT_TEAM_REQUEST_SYMBOL,
+        CREATE_EVENT_GAME_REQUEST_SYMBOL,
+        UPDATE_EVENT_GAME_REQUEST_SYMBOL,
       ),
       deleteSingleEventTeamEpicFactory(notNilEventId),
     );
@@ -257,6 +253,7 @@ const eventsRootEpic = combineEpics(
   manageSingleEventRouterEpic,
   updateSingleEventTeamRouterEpic,
   createSingleEventTeamRouterEpic,
+  singleEventGameRootEpic,
 );
 
 export { eventsRootEpic };

@@ -8,7 +8,7 @@ import { FC } from "react";
 import { useSelector } from "react-redux";
 import { TableRowSelection } from "antd/es/table/interface";
 import { Participant } from "../../../../src/database/entities/Participant.ts";
-import { PARTICIPANT_TABLE_COLUMNS } from "./ParticipantTableColumns.tsx";
+import { PARTICIPANT_TABLE_COLUMNS } from "./TableColumns.tsx";
 import { RequestStatusToComponent } from "../../Components/RequestStatusToComponent.tsx";
 import { withProps } from "../../Utils/WithProps.ts";
 import { EVENTS_GET_BY_ID_REQUEST_SYMBOL } from "../../Store/Events/EventsVariables.ts";

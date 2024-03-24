@@ -32,6 +32,11 @@ import {
   TTeamDeletePayload,
   TTeamUpdatePayload,
 } from "../../../src/types/team.types.ts";
+import {
+  TGameCreatePayload,
+  TGameDeletePayload,
+  TGameUpdatePayload,
+} from "../../../src/types/game.types.ts";
 
 const httpApi = {
   getAllEvents: simpleGetRequest<IGetAllEventsResponse>("event/all"),
@@ -39,15 +44,15 @@ const httpApi = {
     simpleGetRequest<IWithEvent>(`/event/getById/${eventId}`)(),
   createEvent: requestWithPayload<TEventCreatePayload, undefined>(
     "POST",
-    "/event/create",
+    "event/create",
   ),
   updateEvent: requestWithPayload<TEventUpdatePayload, IUpdateEventResponse>(
     "PUT",
-    "/event/update",
+    "event/update",
   ),
   deleteEvent: requestWithPayload<TEventDeletePayload, boolean>(
     "DELETE",
-    "/event/delete",
+    "event/delete",
   ),
   getEventsLocations: simpleGetRequest<IGetAllEventsResponse>("location/all"),
   getAllUsers: async (): Promise<{ users: TUser[] }> => {
@@ -170,15 +175,27 @@ const httpApi = {
   >("DELETE", "/team-participant/delete"),
   createEventTeam: requestWithPayload<TTeamCreatePayload, boolean>(
     "POST",
-    "/team/create",
+    "team/create",
   ),
   updateEventTeam: requestWithPayload<TTeamUpdatePayload, boolean>(
     "PUT",
-    "/team/update",
+    "team/update",
   ),
   deleteEventTeam: requestWithPayload<TTeamDeletePayload, boolean>(
     "DELETE",
-    "/team/delete",
+    "team/delete",
+  ),
+  createEventGame: requestWithPayload<TGameCreatePayload, boolean>(
+    "POST",
+    "game/create",
+  ),
+  updateEventGame: requestWithPayload<TGameUpdatePayload, boolean>(
+    "PUT",
+    "game/update",
+  ),
+  deleteEventGame: requestWithPayload<TGameDeletePayload, boolean>(
+    "DELETE",
+    "game/delete",
   ),
 };
 

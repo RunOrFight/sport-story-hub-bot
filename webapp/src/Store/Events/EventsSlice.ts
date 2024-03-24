@@ -16,6 +16,11 @@ import {
   TTeamDeletePayload,
   TTeamUpdatePayload,
 } from "../../../../src/types/team.types.ts";
+import {
+  TGameCreatePayload,
+  TGameDeletePayload,
+  TGameUpdatePayload,
+} from "../../../../src/types/game.types.ts";
 
 interface IEventsSlice {
   edges: TEvent[];
@@ -49,6 +54,9 @@ const eventsSlice = createSlice({
     createSingleEventTeam: (_, __: PayloadAction<TTeamCreatePayload>) => {},
     updateSingleEventTeam: (_, __: PayloadAction<TTeamUpdatePayload>) => {},
     deleteSingleEventTeam: (_, __: PayloadAction<TTeamDeletePayload>) => {},
+    createSingleEventGame: (_, __: PayloadAction<TGameCreatePayload>) => {},
+    updateSingleEventGame: (_, __: PayloadAction<TGameUpdatePayload>) => {},
+    deleteSingleEventGame: (_, __: PayloadAction<TGameDeletePayload>) => {},
   },
   selectors: {
     edges: (sliceState) => sliceState.edges,
@@ -71,6 +79,25 @@ const eventsSlice = createSlice({
       return getNotNil(
         event.teams.find((it) => it.id === id),
         "singleEventTeamById -> event.teams.find",
+      );
+    },
+    singleEventTeams: (sliceState) => {
+      const event = getNotNil(
+        sliceState.singleEvent,
+        "singleEventParticipants -> event",
+      );
+
+      return event.teams;
+    },
+    singleEventGameByIdNotNil: (sliceState, id: number) => {
+      const event = getNotNil(
+        sliceState.singleEvent,
+        "singleEventGameByIdNotNil -> event",
+      );
+
+      return getNotNil(
+        event.games.find((it) => it.id === id),
+        "singleEventGameByIdNotNil -> event.games.find",
       );
     },
   },

@@ -2,6 +2,8 @@ import { ColumnsType } from "antd/es/table";
 import { Participant } from "../../../../src/database/entities/Participant.ts";
 import { Avatar, Typography } from "antd";
 import { getUserFullName } from "../../Utils/GetUserFullName.ts";
+import { Team } from "../../../../src/database/entities/Team.ts";
+import { UserOutlined } from "@ant-design/icons";
 
 const PARTICIPANT_TABLE_COLUMNS: ColumnsType<Participant> = [
   {
@@ -36,4 +38,23 @@ const PARTICIPANT_TABLE_COLUMNS: ColumnsType<Participant> = [
   },
 ];
 
-export { PARTICIPANT_TABLE_COLUMNS };
+const TEAM_TABLE_COLUMNS: ColumnsType<Team> = [
+  {
+    title: "Name",
+    dataIndex: "name",
+  },
+  {
+    title: "Participants",
+    dataIndex: "teamsParticipants",
+    align: "right",
+    render: (value) => {
+      return (
+        <span>
+          {value.length} <UserOutlined />
+        </span>
+      );
+    },
+  },
+];
+
+export { PARTICIPANT_TABLE_COLUMNS, TEAM_TABLE_COLUMNS };

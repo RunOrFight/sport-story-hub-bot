@@ -22,10 +22,10 @@ import { TEventGame, TEventTeams } from "../../Models/TEvent.ts";
 import { FC, useState } from "react";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
-import { generatePath, Link } from "react-router-dom";
+import { generatePath, Link, useNavigate } from "react-router-dom";
 import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { teamParticipantRenderItem } from "./UserRenderItem.tsx";
-import { PARTICIPANT_TABLE_COLUMNS } from "./ParticipantTableColumns.tsx";
+import { PARTICIPANT_TABLE_COLUMNS } from "./TableColumns.tsx";
 import classes from "./Events.module.css";
 import { isEmpty } from "../../Utils/OneLineUtils.ts";
 
@@ -48,11 +48,20 @@ const Game: FC<TEventGame> = ({ gameTeams }) => {
   return <Collapse items={items} />;
 };
 
-const EventGames: FC<{ games: TEventGame[] }> = ({ games }) => {
+interface IEventGamesProps {
+  games: TEventGame[];
+  eventId: number;
+}
+
+const EventGames: FC<IEventGamesProps> = ({ games, eventId }) => {
   const [activeTabKey, setActiveTabKey] = useState<number>(games[0].id);
+  const navigate = useNavigate();
 
   const onChange: SegmentedProps<number>["onChange"] = (value) => {
     if (value === -1) {
+      navigate(
+        generatePath(webappRoutes.createSingleEventGameRoute, { eventId }),
+      );
       return;
     }
     setActiveTabKey(value);
@@ -149,8 +158,6 @@ const ManageSingleEventPageSuccess = () => {
   const singleEvent = useSelector(eventsSlice.selectors.singleEventNotNil);
   const { participants, games, teams, id } = singleEvent;
 
-  console.log(games, 123);
-
   return (
     <Flex style={{ padding: 16 }} vertical gap={16}>
       <BackButton />
@@ -173,7 +180,7 @@ const ManageSingleEventPageSuccess = () => {
       {isEmpty(games) ? (
         <Empty description={"No Games"} />
       ) : (
-        <EventGames games={games} />
+        <EventGames games={games} eventId={id} />
       )}
 
       <Typography.Title level={4}>{"Participants: "}</Typography.Title>
