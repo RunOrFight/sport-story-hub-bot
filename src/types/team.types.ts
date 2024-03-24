@@ -1,12 +1,13 @@
 export type TTeamCreatePayload = {
   name: string;
   eventId: number;
+  participantIds?: number[];
 };
 
 export type TTeamUpdatePayload = {
   id: number;
   name?: string;
-  eventId?: number;
+  participantIds?: number[];
 };
 
 export type TTeamDeletePayload = {

@@ -699,6 +699,13 @@
 			},
 			"TTeamCreatePayload": {
 				"properties": {
+					"participantIds": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
 					"eventId": {
 						"type": "number",
 						"format": "double"
@@ -715,6 +722,13 @@
 			},
 			"TTeamUpdatePayload": {
 				"properties": {
+					"participantIds": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
 					"eventId": {
 						"type": "number",
 						"format": "double"
