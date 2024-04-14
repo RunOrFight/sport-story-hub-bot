@@ -21,6 +21,10 @@ import {
   TGameDeletePayload,
   TGameUpdatePayload,
 } from "../../../../src/types/game.types.ts";
+import {
+  TGameStatAddPayload,
+  TGameStatDeletePayload,
+} from "../../../../src/types/game-stat.types.ts";
 
 interface IEventsSlice {
   edges: TEvent[];
@@ -57,6 +61,11 @@ const eventsSlice = createSlice({
     createSingleEventGame: (_, __: PayloadAction<TGameCreatePayload>) => {},
     updateSingleEventGame: (_, __: PayloadAction<TGameUpdatePayload>) => {},
     deleteSingleEventGame: (_, __: PayloadAction<TGameDeletePayload>) => {},
+    addSingleEventGameStat: (_, __: PayloadAction<TGameStatAddPayload>) => {},
+    deleteSingleEventGameStat: (
+      _,
+      __: PayloadAction<TGameStatDeletePayload>,
+    ) => {},
   },
   selectors: {
     edges: (sliceState) => sliceState.edges,

@@ -37,6 +37,10 @@ import {
   TGameDeletePayload,
   TGameUpdatePayload,
 } from "../../../src/types/game.types.ts";
+import {
+  TGameStatAddPayload,
+  TGameStatDeletePayload,
+} from "../../../src/types/game-stat.types.ts";
 
 const httpApi = {
   getAllEvents: simpleGetRequest<IGetAllEventsResponse>("event/all"),
@@ -196,6 +200,14 @@ const httpApi = {
   deleteEventGame: requestWithPayload<TGameDeletePayload, boolean>(
     "DELETE",
     "game/delete",
+  ),
+  addEventGameStat: requestWithPayload<TGameStatAddPayload, boolean>(
+    "POST",
+    "game/stat/add",
+  ),
+  deleteEventGameStat: requestWithPayload<TGameStatDeletePayload, boolean>(
+    "DELETE",
+    "game/stat/delete",
   ),
 };
 
