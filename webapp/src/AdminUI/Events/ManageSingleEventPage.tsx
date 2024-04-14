@@ -5,7 +5,6 @@ import {
   Empty,
   Flex,
   List,
-  Popconfirm,
   Segmented,
   SegmentedProps,
   Space,
@@ -20,7 +19,7 @@ import { RequestStatusToComponent } from "../../Components/RequestStatusToCompon
 import { EVENTS_GET_BY_ID_REQUEST_SYMBOL } from "../../Store/Events/EventsVariables.ts";
 import { TEventGame, TEventTeams } from "../../Models/TEvent.ts";
 import { FC, useState } from "react";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { getNotNil } from "../../Utils/GetNotNil.ts";
 import { generatePath, Link, useNavigate } from "react-router-dom";
 import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
@@ -28,6 +27,7 @@ import { teamParticipantRenderItem } from "./UserRenderItem.tsx";
 import { PARTICIPANT_TABLE_COLUMNS } from "./TableColumns.tsx";
 import classes from "./Events.module.css";
 import { isEmpty } from "../../Utils/OneLineUtils.ts";
+import { DeleteButton } from "../../Components/DeleteButton.tsx";
 
 const Game: FC<TEventGame> = ({ gameTeams }) => {
   const dispatch = useDispatch();
@@ -53,10 +53,11 @@ interface IEventGamesProps {
   eventId: number;
 }
 
+const DELETE_GAME_TITLE = "Delete Game?";
+
 const EventGames: FC<IEventGamesProps> = ({ games, eventId }) => {
   const [activeTabKey, setActiveTabKey] = useState<number>(games[0].id);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const onChange: SegmentedProps<number>["onChange"] = (value) => {
     if (value === -1) {
@@ -80,10 +81,6 @@ const EventGames: FC<IEventGamesProps> = ({ games, eventId }) => {
     }),
   );
 
-  const onConfirm = (id: number) => () => {
-    dispatch(eventsSlice.actions.deleteSingleEventGame({ id }));
-  };
-
   return (
     <Flex vertical gap={16}>
       <Segmented
@@ -104,16 +101,11 @@ const EventGames: FC<IEventGamesProps> = ({ games, eventId }) => {
             >
               <EditOutlined />
             </Link>
-            <Popconfirm
-              onPopupClick={(e) => e.stopPropagation()}
-              title="Delete the game"
-              description="Are you sure to delete this game?"
-              okText="Yes"
-              cancelText="No"
-              onConfirm={onConfirm(game.id)}
-            >
-              <DeleteOutlined style={{ color: "red" }} />
-            </Popconfirm>
+            <DeleteButton
+              actionCreator={eventsSlice.actions.deleteSingleEventGame}
+              id={game.id}
+              title={DELETE_GAME_TITLE}
+            />
           </Space>
         </Flex>
         <Game {...game} key={game.id} />
@@ -122,6 +114,8 @@ const EventGames: FC<IEventGamesProps> = ({ games, eventId }) => {
   );
 };
 
+const DELETE_TEAM_TITLE = "Delete Team?";
+
 interface IEventTeamsProps {
   teams: TEventTeams;
   eventId: number;
@@ -129,10 +123,6 @@ interface IEventTeamsProps {
 
 const EventTeams: FC<IEventTeamsProps> = ({ teams, eventId }) => {
   const dispatch = useDispatch();
-
-  const onConfirm = (teamId: number) => () => {
-    dispatch(eventsSlice.actions.deleteSingleEventTeam({ id: teamId }));
-  };
 
   const items: CollapseProps["items"] = teams.map(
     ({ id, name, teamsParticipants }) => {
@@ -149,19 +139,11 @@ const EventTeams: FC<IEventTeamsProps> = ({ teams, eventId }) => {
             >
               <EditOutlined />
             </Link>
-            <Popconfirm
-              onPopupClick={(e) => e.stopPropagation()}
-              title="Delete the team"
-              description="Are you sure to delete this team?"
-              okText="Yes"
-              cancelText="No"
-              onConfirm={onConfirm(id)}
-            >
-              <DeleteOutlined
-                style={{ color: "red" }}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </Popconfirm>
+            <DeleteButton
+              title={DELETE_TEAM_TITLE}
+              actionCreator={eventsSlice.actions.deleteSingleEventTeam}
+              id={id}
+            />
           </Space>
         ),
         children: (

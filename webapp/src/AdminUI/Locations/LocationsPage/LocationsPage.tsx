@@ -4,33 +4,25 @@ import { ComponentType, createElement, FC, Fragment } from "react";
 import { withProps } from "../../../Utils/WithProps.ts";
 import { Card, Flex, Skeleton } from "antd";
 import { Location } from "../../../../../src/database/entities/Location.ts";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 import AnchorLink from "antd/es/anchor/AnchorLink";
 import { generatePath, Link } from "react-router-dom";
 import { webappRoutes } from "../../../../../src/constants/webappRoutes.ts";
-import { locationsSlice } from "../../../Store/Locations/LocationsSlice.ts";
 import { requestManagerSlice } from "../../../Store/RequestManager/RequestManagerSlice.ts";
 import { LOCATIONS_GET_ALL_REQUEST_SYMBOL } from "../../../Store/Locations/LocationsVariables.ts";
 import { useParamSelector } from "../../../Hooks/UseParamSelector.ts";
 import { ERequestStatus } from "../../../Store/RequestManager/RequestManagerModels.ts";
 import { FixedButton } from "../../../Components/FixedButton.tsx";
 import { getPreviewSrc } from "../../../Utils/GetPreviewSrc.ts";
-import { useActionCreator } from "../../../Hooks/UseActionCreator.ts";
-import { useConfirmAction } from "../../../Hooks/UseConfirmAction.ts";
+import { DeleteButton } from "../../../Components/DeleteButton.tsx";
+import { locationsSlice } from "../../../Store/Locations/LocationsSlice.ts";
+
+const DELETE_LOCATION_TITLE = "Delete Location?";
 
 const LocationCard: FC<Location> = ({ preview, url, address, title, id }) => {
-  const deleteLocation = useActionCreator(locationsSlice.actions.delete, {
-    id,
-  });
-
   const updateLocationUrl = generatePath(webappRoutes.updateLocationRoute, {
     locationId: id,
   });
-
-  const [contextHolder, onClick] = useConfirmAction(
-    deleteLocation,
-    "Delete Location?",
-  );
 
   return (
     <Card
@@ -39,10 +31,13 @@ const LocationCard: FC<Location> = ({ preview, url, address, title, id }) => {
         <Link to={updateLocationUrl}>
           <EditOutlined key="edit" />
         </Link>,
-        <DeleteOutlined key="delete" onClick={onClick} />,
+        <DeleteButton
+          actionCreator={locationsSlice.actions.delete}
+          title={DELETE_LOCATION_TITLE}
+          id={id}
+        />,
       ]}
     >
-      {contextHolder}
       <Card.Meta title={title} description={address} />
       {url ? <AnchorLink href={url} title={"Url"} /> : url}
     </Card>

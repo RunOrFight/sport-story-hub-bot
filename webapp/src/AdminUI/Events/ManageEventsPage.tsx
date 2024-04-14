@@ -1,5 +1,5 @@
 import { eventsSlice } from "../../Store/Events/EventsSlice.ts";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { withProps } from "../../Utils/WithProps.ts";
 import { RequestStatusToComponent } from "../../Components/RequestStatusToComponent.tsx";
 import { EVENTS_GET_ALL_REQUEST_SYMBOL } from "../../Store/Events/EventsVariables.ts";
@@ -8,22 +8,15 @@ import { Card, Empty, Flex } from "antd";
 import { generatePath, Link } from "react-router-dom";
 import { webappRoutes } from "../../../../src/constants/webappRoutes.ts";
 import { FixedButton } from "../../Components/FixedButton.tsx";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  InfoCircleOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { FC } from "react";
 import { TEvent } from "../../Models/TEvent.ts";
 import { getPreviewSrc } from "../../Utils/GetPreviewSrc.ts";
+import { DeleteButton } from "../../Components/DeleteButton.tsx";
+
+const DELETE_EVENT_TITLE = "Delete Event?";
 
 const ManageEventCard: FC<TEvent> = ({ id, location }) => {
-  const dispatch = useDispatch();
-
-  const onClick = () => {
-    dispatch(eventsSlice.actions.delete({ id }));
-  };
-
   return (
     <Card
       cover={<img alt="example" src={getPreviewSrc(location?.preview?.url)} />}
@@ -42,7 +35,11 @@ const ManageEventCard: FC<TEvent> = ({ id, location }) => {
         >
           <EditOutlined key="edit" />
         </Link>,
-        <DeleteOutlined key="delete" onClick={onClick} />,
+        <DeleteButton
+          actionCreator={eventsSlice.actions.delete}
+          id={id}
+          title={DELETE_EVENT_TITLE}
+        />,
       ]}
     >
       <Card.Meta title={location?.title} description={location?.address} />
