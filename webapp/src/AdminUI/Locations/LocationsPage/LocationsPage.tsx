@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { locationsSelectors } from "../../../Store/Locations/LocationsSelector.ts";
 import { ComponentType, createElement, FC, Fragment } from "react";
 import { withProps } from "../../../Utils/WithProps.ts";
@@ -15,28 +15,34 @@ import { useParamSelector } from "../../../Hooks/UseParamSelector.ts";
 import { ERequestStatus } from "../../../Store/RequestManager/RequestManagerModels.ts";
 import { FixedButton } from "../../../Components/FixedButton.tsx";
 import { getPreviewSrc } from "../../../Utils/GetPreviewSrc.ts";
+import { useActionCreator } from "../../../Hooks/UseActionCreator.ts";
+import { useConfirmAction } from "../../../Hooks/UseConfirmAction.ts";
 
 const LocationCard: FC<Location> = ({ preview, url, address, title, id }) => {
-  const dispatch = useDispatch();
+  const deleteLocation = useActionCreator(locationsSlice.actions.delete, {
+    id,
+  });
 
-  const onClick = () => {
-    dispatch(locationsSlice.actions.delete({ id }));
-  };
+  const updateLocationUrl = generatePath(webappRoutes.updateLocationRoute, {
+    locationId: id,
+  });
+
+  const [contextHolder, onClick] = useConfirmAction(
+    deleteLocation,
+    "Delete Location?",
+  );
 
   return (
     <Card
       cover={<img alt="example" src={getPreviewSrc(preview?.url)} />}
       actions={[
-        <Link
-          to={generatePath(webappRoutes.updateLocationRoute, {
-            locationId: id,
-          })}
-        >
+        <Link to={updateLocationUrl}>
           <EditOutlined key="edit" />
         </Link>,
         <DeleteOutlined key="delete" onClick={onClick} />,
       ]}
     >
+      {contextHolder}
       <Card.Meta title={title} description={address} />
       {url ? <AnchorLink href={url} title={"Url"} /> : url}
     </Card>
@@ -59,14 +65,16 @@ const LocationsPageSuccess = () => {
   );
 };
 
+const Loading = withProps(Skeleton)({
+  style: { padding: "16px" },
+});
+
 const SLICE_STATUS_TO_COMPONENT_TYPE_MAP: Record<
   ERequestStatus,
   ComponentType
 > = {
   [ERequestStatus.idle]: Fragment,
-  [ERequestStatus.loading]: withProps(Skeleton)({
-    style: { padding: "16px" },
-  }),
+  [ERequestStatus.loading]: Loading,
   [ERequestStatus.error]: Fragment,
   [ERequestStatus.success]: LocationsPageSuccess,
 };
